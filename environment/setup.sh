@@ -9,7 +9,7 @@ uv pip install --system torch torchvision torchaudio --index-url https://downloa
 # Install scientific computing packages
 uv pip install --system \
     numpy scipy scikit-learn networkx \
-    pygraphviz matplotlib pandas
+    matplotlib pandas
 
 # Install the paper's library from the cloned repo
 cd /home/user/method/repo/lib

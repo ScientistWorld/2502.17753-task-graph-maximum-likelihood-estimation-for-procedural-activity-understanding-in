@@ -2,7 +2,7 @@
   "experiments": {
     "captaincook4d_task_graph": {
       "description": "Task graph generation on CaptainCook4D (24 cooking procedures). Primary metric: F1 score. DO is the proposed Direct Optimization method; TGT-text uses text embeddings.",
-      "weight": 0.34,
+      "weight": 1.0,
       "primary_metric": "f1",
       "metrics": {
         "precision": {"higher_is_better": true, "coefficient": 1.0},
@@ -17,44 +17,6 @@
         "msg2": {"type": "baseline", "precision": 73.3, "recall": 73.6, "f1": 73.3},
         "tgt_text": {"type": "proposed", "precision": 79.9, "recall": 81.9, "f1": 80.8, "std_f1": 8.0},
         "do": {"type": "proposed", "precision": 86.4, "recall": 89.7, "f1": 87.8, "std_f1": 1.5}
-      }
-    },
-    "egoper_task_graph": {
-      "description": "Task graph generation on EgoPER (5 cooking tasks). Primary metric: F1 score.",
-      "weight": 0.33,
-      "primary_metric": "f1",
-      "metrics": {
-        "precision": {"higher_is_better": true, "coefficient": 1.0},
-        "recall": {"higher_is_better": true, "coefficient": 1.0},
-        "f1": {"higher_is_better": true, "coefficient": 1.5},
-        "std_f1": {"higher_is_better": false, "coefficient": -0.3}
-      },
-      "results": {
-        "msgi": {"type": "baseline", "precision": 48.0, "recall": 54.0, "f1": 50.6},
-        "llama3": {"type": "baseline", "precision": 47.4, "recall": 54.5, "f1": 50.6},
-        "count_based": {"type": "baseline", "precision": 82.5, "recall": 79.5, "f1": 80.8},
-        "msg2": {"type": "baseline", "precision": 65.0, "recall": 70.5, "f1": 67.5},
-        "tgt_text": {"type": "proposed", "precision": 82.6, "recall": 87.7, "f1": 85.0, "std_f1": 8.8},
-        "do": {"type": "proposed", "precision": 88.8, "recall": 93.5, "f1": 91.0, "std_f1": 2.1}
-      }
-    },
-    "egoprocel_task_graph": {
-      "description": "Task graph generation on EgoProceL (13 procedures). Primary metric: F1 score. EgoProceL annotations were newly created by the paper's authors.",
-      "weight": 0.33,
-      "primary_metric": "f1",
-      "metrics": {
-        "precision": {"higher_is_better": true, "coefficient": 1.0},
-        "recall": {"higher_is_better": true, "coefficient": 1.0},
-        "f1": {"higher_is_better": true, "coefficient": 1.5},
-        "std_f1": {"higher_is_better": false, "coefficient": -0.3}
-      },
-      "results": {
-        "msgi": {"type": "baseline", "precision": 23.4, "recall": 22.9, "f1": 22.9},
-        "llama3": {"type": "baseline", "precision": 61.8, "recall": 56.6, "f1": 58.7},
-        "count_based": {"type": "baseline", "precision": 56.5, "recall": 44.4, "f1": 49.5},
-        "msg2": {"type": "baseline", "precision": 55.3, "recall": 56.0, "f1": 55.4},
-        "tgt_text": {"type": "proposed", "precision": 67.5, "recall": 66.6, "f1": 66.9, "std_f1": 3.0},
-        "do": {"type": "proposed", "precision": 72.3, "recall": 72.6, "f1": 72.3, "std_f1": 2.2}
       }
     }
   }

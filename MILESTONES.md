@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-05 04:20] - method_runs
+- Scoped the benchmark and scoring files to the implemented CaptainCook4D experiment so reference and scores can be compared honestly
+- Updated the run script to delete stale scores, rerun the baseline and DO pipeline, and validate the fresh outputs
+- Simplified `environment/setup.sh` to avoid a likely `pygraphviz` build failure on compute
+
 ### [2026-04-05 03:55] - method_runs
 - Audited the local DO/TGML pipeline against the released repository bundled in `method/repo`
 - Confirmed the implementation is the paper's algorithm, but found fidelity bugs that block a justified `core_claim`

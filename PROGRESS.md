@@ -6,6 +6,9 @@
 - CaptainCook4D loading works from the cloned repository assets, with 24 scenarios discovered.
 - `eval/` remains method-agnostic and can score the count-based baseline or saved DO outputs.
 - The patched code compiles with `python3 -m py_compile`.
+- The scoring scope is now aligned to the implemented minimum experiment: CaptainCook4D task-graph generation only.
+- `scripts/run.sh` now deletes stale scores before running the baseline and DO pipeline, then validates the fresh output.
+- `environment/setup.sh` no longer depends on `pygraphviz`, reducing container build risk for the submitted job.
 
 ## Results
 
@@ -32,3 +35,4 @@
 
 - No algorithm substitution has been made.
 - The current run plan focuses on CaptainCook4D first, which is the paper's primary task-graph-generation benchmark and the minimum setting needed for the core claim.
+- `scoring/reference.json` is intentionally scoped to CaptainCook4D for this submission because EgoPER and EgoProceL loaders are not yet packaged in the current workspace. This narrows the benchmark to the implemented experiment rather than claiming unsupported coverage.

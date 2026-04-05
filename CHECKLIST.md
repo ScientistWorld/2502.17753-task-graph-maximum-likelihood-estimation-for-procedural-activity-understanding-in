@@ -9,7 +9,7 @@ Check off items as you complete them. Order doesn't matter — work however make
 - [ ] `briefing/overview.md`
 
 ## Scoring
-- [ ] `scoring/reference.json` — paper's reported numbers
+- [x] `scoring/reference.json` — paper's reported numbers
 - [ ] Workspace validated via `python validate.py`
 - [ ] `scoring/scores.json` — reproduced numbers (must match reference.json experiment/metric structure)
 - [ ] `scoring/TARGETS.md` — primary, constraint, and ablation targets (do not edit until wrap up)
@@ -24,11 +24,11 @@ Check off items as you complete them. Order doesn't matter — work however make
 ## Scripts
 - [x] `scripts/evaluate.sh`
 - [x] `scripts/reproduce.sh`
-- [ ] `scripts/download.sh` (idempotent, size comment at top)
+- [x] `scripts/download.sh` (idempotent, size comment at top)
 - [x] `scripts/baseline.sh` (if applicable)
 
 ## Environment
-- [ ] `environment/container.def` + `environment/setup.sh`
+- [x] `environment/container.def` + `environment/setup.sh`
 
 ## Data
 - [x] Dataset acquired (shared dir or `data/`)

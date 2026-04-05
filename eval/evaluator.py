@@ -280,6 +280,8 @@ def write_scores_json(
         "recall": agg["mean_recall"],
         "f1": agg["mean_f1"],
     }
+    if method_name == "do":
+        scores["experiments"][dataset]["results"][method_name]["std_f1"] = agg["std_f1"]
 
     with open(output_path, "w") as f:
         json.dump(scores, f, indent=2)
