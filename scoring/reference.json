@@ -7,7 +7,8 @@
       "metrics": {
         "precision": {"higher_is_better": true, "coefficient": 1.0},
         "recall": {"higher_is_better": true, "coefficient": 1.0},
-        "f1": {"higher_is_better": true, "coefficient": 1.5}
+        "f1": {"higher_is_better": true, "coefficient": 1.5},
+        "std_f1": {"higher_is_better": false, "coefficient": -0.3}
       },
       "results": {
         "msgi": {"type": "baseline", "precision": 11.3, "recall": 13.3, "f1": 12.2},
@@ -25,7 +26,8 @@
       "metrics": {
         "precision": {"higher_is_better": true, "coefficient": 1.0},
         "recall": {"higher_is_better": true, "coefficient": 1.0},
-        "f1": {"higher_is_better": true, "coefficient": 1.5}
+        "f1": {"higher_is_better": true, "coefficient": 1.5},
+        "std_f1": {"higher_is_better": false, "coefficient": -0.3}
       },
       "results": {
         "msgi": {"type": "baseline", "precision": 48.0, "recall": 54.0, "f1": 50.6},
@@ -43,7 +45,8 @@
       "metrics": {
         "precision": {"higher_is_better": true, "coefficient": 1.0},
         "recall": {"higher_is_better": true, "coefficient": 1.0},
-        "f1": {"higher_is_better": true, "coefficient": 1.5}
+        "f1": {"higher_is_better": true, "coefficient": 1.5},
+        "std_f1": {"higher_is_better": false, "coefficient": -0.3}
       },
       "results": {
         "msgi": {"type": "baseline", "precision": 23.4, "recall": 22.9, "f1": 22.9},

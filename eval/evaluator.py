@@ -4,19 +4,20 @@ Evaluation code for task graph generation.
 Evaluates predicted task graphs against ground truth using
 precision, recall, and F1 score on edge prediction.
 Uses the paper's evaluation approach.
+
+This module has NO imports from method/, ensuring separation
+between problem definition (eval/) and solution (method/).
 """
 
 import json
 import numpy as np
-import torch
 import os
 import networkx as nx
 from typing import Dict, List, Tuple, Any, Optional
 from dataclasses import dataclass
 
 from data.loader import TaskGraphData, load_data
-from method.tgml import (
-    DirectOptimization,
+from eval.metrics import (
     compute_precision_recall_f1,
     delete_redundant_edges, delete_cycles
 )
@@ -33,32 +34,19 @@ class EvaluationResult:
     method: str
 
 
-def evaluate_do(
-    model: DirectOptimization,
-    sequences: List[List[int]],
-    gt_adj: np.ndarray,
-    device: str = "cpu"
+def evaluate_from_adjacency(
+    pred_core: np.ndarray,
+    gt_adj: np.ndarray
 ) -> Tuple[float, float, float]:
     """
-    Evaluate DO model predictions against ground truth.
-
-    Uses the paper's evaluation approach:
-    1. Extract core nodes: pred[1:-1, 1:-1]
-    2. Threshold at 1/n
-    3. Add boundary edges (START/END)
-    4. Transitive reduction
-    5. Compare with GT
+    Evaluate a predicted adjacency matrix against ground truth.
 
     Parameters
     ----------
-    model : DirectOptimization
-        Trained DO model.
-    sequences : List[List[int]]
-        Training sequences (unused, kept for API compatibility).
+    pred_core : np.ndarray
+        Core predicted adjacency matrix (n_gt x n_gt), raw scores.
     gt_adj : np.ndarray
-        Ground truth adjacency matrix (n_gt) x (n_gt), indexed by GT node ID.
-    device : str
-        Device for computation.
+        Ground truth adjacency matrix (n_gt x n_gt).
 
     Returns
     -------
@@ -66,47 +54,57 @@ def evaluate_do(
         (precision, recall, f1)
     """
     n_gt = gt_adj.shape[0]
+    pred_adj = post_process_pred_adj(pred_core, n_gt)
+    return compute_precision_recall_f1(gt_adj, pred_adj)
+
+
+def post_process_pred_adj(
+    pred_core: np.ndarray,
+    n_gt: int
+) -> np.ndarray:
+    """
+    Post-process predicted adjacency matrix following the paper's approach:
+    1. Binarize at 1/n threshold
+    2. Add boundary edges
+    3. Transitive reduction
+    4. Cycle removal
+
+    Parameters
+    ----------
+    pred_core : np.ndarray
+        Raw predicted scores (n_gt x n_gt).
+    n_gt : int
+        Number of GT nodes.
+
+    Returns
+    -------
+    np.ndarray
+        Processed binary adjacency matrix.
+    """
     threshold = 1.0 / n_gt
-
-    model.eval()
-    with torch.no_grad():
-        Z = model.get_adjacency_matrix().cpu().numpy()
-
-    # Extract core nodes: remove beta (row/col 0) and gamma (row/col -1)
-    pred_core = Z[1:-1, 1:-1]  # (n_gt) x (n_gt)
-
-    # Binarize
     pred_binary = (pred_core > threshold).astype(float)
 
-    # Build NetworkX graph
     GP = nx.DiGraph(pred_binary)
 
-    # Add boundary edges (matching paper's approach)
-    id_start = 0  # GT node ID
-    id_end = n_gt - 1  # GT node ID
+    id_start = 0
+    id_end = n_gt - 1
 
-    # Nodes with no incoming edges (except END) → connect from END
     in_degree_zeros = [n for n in GP.nodes if GP.in_degree(n) == 0 and n != id_end]
     for node in in_degree_zeros:
         GP.add_edge(id_end, node)
 
-    # Nodes with no outgoing edges (except START) → connect to START
     out_degree_zeros = [n for n in GP.nodes if GP.out_degree(n) == 0 and n != id_start]
     for node in out_degree_zeros:
         GP.add_edge(node, id_start)
 
-    # Transitive reduction
     delete_redundant_edges(GP)
-
-    # Cycle removal
     delete_cycles(GP)
 
-    # Convert back to adjacency matrix
     pred_adj = np.zeros((n_gt, n_gt), dtype=np.float32)
     for u, v in GP.edges():
         pred_adj[v, u] = 1.0
 
-    return compute_precision_recall_f1(gt_adj, pred_adj)
+    return pred_adj
 
 
 def evaluate_count_based(
@@ -187,7 +185,7 @@ def evaluate_all_scenarios(
     seeds : List[int]
         List of seeds for DO (for averaging).
     device : str
-        Device for computation.
+        Device for computation (unused, for API compatibility).
 
     Returns
     -------
@@ -215,7 +213,10 @@ def evaluate_all_scenarios(
             }
         elif method == "do":
             if do_predictions_dir and os.path.exists(do_predictions_dir):
-                result_file = os.path.join(do_predictions_dir, f"{scenario_name.lower().replace(' ', '_')}_results.json")
+                result_file = os.path.join(
+                    do_predictions_dir,
+                    f"{scenario_name.lower().replace(' ', '_')}_results.json"
+                )
                 if os.path.exists(result_file):
                     with open(result_file) as f:
                         saved = json.load(f)
