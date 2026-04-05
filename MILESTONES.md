@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-05 04:45] - method_runs
+- Audited the inherited workspace and confirmed the method is DO/TGML rather than a surrogate
+- Found a training-time supervision leak: `method/train.py` was selecting the best epoch using ground-truth graph F1, which is not allowed in the paper's weakly supervised setup
+- Replaced GT-based model selection with the official sequence-accuracy early-stopping criterion so the next run can support an honest milestone claim
+
 ### [2026-04-05 04:20] - method_runs
 - Scoped the benchmark and scoring files to the implemented CaptainCook4D experiment so reference and scores can be compared honestly
 - Updated the run script to delete stale scores, rerun the baseline and DO pipeline, and validate the fresh outputs

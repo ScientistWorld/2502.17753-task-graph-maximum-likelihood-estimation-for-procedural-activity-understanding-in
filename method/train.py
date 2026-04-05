@@ -29,6 +29,31 @@ from method.tgml import (
 from sklearn.metrics import precision_score, recall_score, f1_score
 
 
+def extract_predecessors(graph: nx.DiGraph) -> dict[int, list[int]]:
+    """Match the released utility: node -> list of predecessor nodes."""
+    predecessors = {}
+    for current_node in graph.nodes:
+        predecessors[current_node] = list(graph.successors(current_node))
+    return predecessors
+
+
+def sequences_accuracy(sequences: np.ndarray, pred_predecessors: dict[int, list[int]]) -> float:
+    """Score how well a predicted graph explains the observed sequences."""
+    accuracy = 0.0
+    for sequence in sequences:
+        correct = 0.0
+        for i in range(len(sequence)):
+            if len(sequence[:i]) == 0 and len(pred_predecessors[sequence[i]]) == 0:
+                correct += 1.0
+            elif len(sequence[:i]) > 0 and len(pred_predecessors[sequence[i]]) > 0:
+                correct += (
+                    len(set(sequence[:i]).intersection(set(pred_predecessors[sequence[i]])))
+                    / len(pred_predecessors[sequence[i]])
+                )
+        accuracy += correct / len(sequence)
+    return accuracy / len(sequences) if len(sequences) > 0 else 0.0
+
+
 def post_process_prediction(pred_core: np.ndarray, n_gt: int, threshold: float) -> np.ndarray:
     """Mirror the official DO post-processing used before scoring."""
     pred_binary = (pred_core > threshold).astype(float)
@@ -97,14 +122,21 @@ def train_do(
     model = DirectOptimization(n_matrix, device=device).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
-    # Ground truth adjacency (n_gt x n_gt), indexed by GT node ID
+    # Ground truth adjacency (n_gt x n_gt), indexed by GT node ID.
+    # This is used only for reporting final metrics, not for model selection.
     gt_adj = scenario_data.gt_adj_matrix
+
+    # Official DO early stopping uses sequence accuracy on sequences without beta/gamma.
+    train_seq_no_beta_gamma = np.array(
+        [[0] + [step - 1 for step in seq[2:-2]] + [n_gt - 1] for seq in sequences],
+        dtype=np.int64,
+    )
 
     # Threshold: 1 / n_gt (matching the paper's approach)
     threshold = 1.0 / n_gt
 
     # Training loop
-    best_f1 = -1
+    best_sequence_accuracy = -1.0
     best_state = None
     early_stop_counter = 0
 
@@ -125,9 +157,8 @@ def train_do(
             pred_core = Z[1:-1, 1:-1]  # (n_gt) x (n_gt)
 
             # Binarize
-            pred_binary = (pred_core > threshold).astype(float)
-
             pred_adj = post_process_prediction(pred_core, n_gt, threshold)
+            pred_graph = nx.DiGraph(pred_adj.T)
 
             # Flatten for sklearn metrics
             gt_flat = gt_adj.flatten()
@@ -136,16 +167,29 @@ def train_do(
             precision = precision_score(gt_flat, pred_flat, zero_division=0) * 100
             recall = recall_score(gt_flat, pred_flat, zero_division=0) * 100
             f1 = f1_score(gt_flat, pred_flat, zero_division=0) * 100
+            sequence_accuracy = 0.0
+            if nx.is_directed_acyclic_graph(pred_graph):
+                sequence_accuracy = sequences_accuracy(
+                    train_seq_no_beta_gamma,
+                    extract_predecessors(pred_graph),
+                )
 
             if verbose and (epoch % 50 == 0 or epoch == max_epochs - 1):
-                print(f"  Epoch {epoch}: loss={loss.item():.4f}, P={precision:.1f}, R={recall:.1f}, F1={f1:.1f}")
+                print(
+                    f"  Epoch {epoch}: loss={loss.item():.4f}, "
+                    f"P={precision:.1f}, R={recall:.1f}, F1={f1:.1f}, "
+                    f"seq_acc={sequence_accuracy:.3f}"
+                )
 
-            if f1 > best_f1:
-                best_f1 = f1
-                best_state = {k: v.cpu().clone() for k, v in model.state_dict().items()}
-                early_stop_counter = 0
-            else:
-                early_stop_counter += 1
+            if sequence_accuracy > 0.95:
+                if sequence_accuracy == 1.0 and sequence_accuracy == best_sequence_accuracy:
+                    early_stop_counter += 1
+                elif sequence_accuracy >= best_sequence_accuracy:
+                    best_sequence_accuracy = sequence_accuracy
+                    best_state = {k: v.cpu().clone() for k, v in model.state_dict().items()}
+                    early_stop_counter = 0
+                else:
+                    early_stop_counter += 1
 
             if early_stop_counter >= early_stopping_patience:
                 if verbose:
@@ -162,9 +206,8 @@ def train_do(
         Z = model.get_adjacency_matrix().cpu().numpy()
 
     pred_core = Z[1:-1, 1:-1]
-    pred_binary = (pred_core > threshold).astype(float)
-
     pred_adj = post_process_prediction(pred_core, n_gt, threshold)
+    pred_graph = nx.DiGraph(pred_adj.T)
 
     gt_flat = gt_adj.flatten()
     pred_flat = pred_adj.flatten()
@@ -172,15 +215,25 @@ def train_do(
     precision = precision_score(gt_flat, pred_flat, zero_division=0) * 100
     recall = recall_score(gt_flat, pred_flat, zero_division=0) * 100
     f1 = f1_score(gt_flat, pred_flat, zero_division=0) * 100
+    final_sequence_accuracy = 0.0
+    if nx.is_directed_acyclic_graph(pred_graph):
+        final_sequence_accuracy = sequences_accuracy(
+            train_seq_no_beta_gamma,
+            extract_predecessors(pred_graph),
+        )
 
     if verbose:
-        print(f"  Final: P={precision:.1f}, R={recall:.1f}, F1={f1:.1f}")
+        print(
+            f"  Final: P={precision:.1f}, R={recall:.1f}, "
+            f"F1={f1:.1f}, seq_acc={final_sequence_accuracy:.3f}"
+        )
 
     return {
         "precision": float(precision),
         "recall": float(recall),
         "f1": float(f1),
-        "best_epoch": epoch - early_stop_counter
+        "best_epoch": epoch - early_stop_counter,
+        "sequence_accuracy": float(final_sequence_accuracy),
     }
 
 

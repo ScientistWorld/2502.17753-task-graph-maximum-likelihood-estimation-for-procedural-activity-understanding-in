@@ -9,11 +9,12 @@
 - The scoring scope is now aligned to the implemented minimum experiment: CaptainCook4D task-graph generation only.
 - `scripts/run.sh` now deletes stale scores before running the baseline and DO pipeline, then validates the fresh output.
 - `environment/setup.sh` no longer depends on `pygraphviz`, reducing container build risk for the submitted job.
+- The DO training loop no longer uses ground-truth graph F1 for checkpoint selection; it now follows the paper's weakly supervised sequence-accuracy stopping rule.
 
 ## Results
 
 - Current trustworthy milestone is still `method_runs`.
-- Previously saved CaptainCook4D numbers in `scoring/scores.json` are not treated as valid for the corrected reproduction because they were produced before the preprocessing/evaluation fixes.
+- Previously saved CaptainCook4D numbers in `scoring/scores.json` are not treated as valid for the corrected reproduction because the old training loop used ground-truth graph F1 for model selection.
 - Paper reference target for the core claim: CaptainCook4D DO F1 = 87.8, compared against Count-Based F1 = 60.2.
 
 ## Remaining
@@ -29,6 +30,7 @@
 - The prior workspace state had two correctness problems:
 - CaptainCook4D sequences were missing the explicit `START` token required by the official DO code.
 - `scripts/evaluate.sh` and `eval/evaluator.py` could fall back to the count-based baseline while labeling the result as `do`.
+- `method/train.py` used ground-truth graph F1 to choose the best checkpoint, which leaks supervision and invalidates any milestone above `method_runs` from that run.
 - Some workspace files such as `data/loader.py` live under ignored paths, so the compute run depends on the working tree rather than only committed files.
 
 ## Deviations from Paper

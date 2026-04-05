@@ -5,4 +5,4 @@ action: submit
 gpus: 1
 test: false
 milestone: method_runs
-notes: "Run a clean CaptainCook4D reproduction: count-based baseline plus corrected DO/TGML pipeline, then write fresh scoring/scores.json."
+notes: "Audit found GT-graph leakage in checkpoint selection. Re-run CaptainCook4D baseline plus corrected weakly supervised DO/TGML pipeline and regenerate fresh scores."
