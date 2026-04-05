@@ -9,6 +9,9 @@ cd /home/user
 
 echo "Running Direct Optimization (DO) model on CaptainCook4D..."
 
+# Remove previous outputs so evaluation only sees results from this run.
+rm -rf checkpoints/do_captaincook4d
+
 # Train DO on CaptainCook4D
 python3 method/train.py \
     --dataset captaincook4d \

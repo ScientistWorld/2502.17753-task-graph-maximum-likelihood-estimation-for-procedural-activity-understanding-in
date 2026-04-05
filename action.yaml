@@ -1,8 +1,8 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: pending
+action: submit
 gpus: 1
 test: false
 milestone: method_runs
-notes: ""
+notes: "Run a clean CaptainCook4D reproduction: count-based baseline plus corrected DO/TGML pipeline, then write fresh scoring/scores.json."

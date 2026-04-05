@@ -19,6 +19,7 @@
 - Regenerate `checkpoints/do_captaincook4d/*.json` and `scoring/scores.json` from the corrected pipeline.
 - Compare the corrected DO result against the count-based baseline and determine whether the core claim is supported.
 - If the CaptainCook4D result supports the claim, update milestone and wrap-up docs; otherwise iterate on any remaining implementation issues.
+- The next submission is configured to run the count-based baseline and corrected DO method in one clean job, with stale `scores.json` and old DO outputs removed before execution.
 
 ## Issues
 

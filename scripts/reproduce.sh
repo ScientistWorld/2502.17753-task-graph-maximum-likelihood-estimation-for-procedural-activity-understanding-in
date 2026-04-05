@@ -16,6 +16,9 @@ cd /home/user
 echo "=== Reproducing TGML Paper Results ==="
 echo ""
 
+# Start from a clean score file so this run cannot inherit stale numbers.
+rm -f scoring/scores.json
+
 # Step 1: Run Count-Based baseline
 echo "[1/2] Running Count-Based baseline..."
 bash scripts/baseline.sh
