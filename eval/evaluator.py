@@ -19,7 +19,9 @@ from dataclasses import dataclass
 from data.loader import TaskGraphData, load_data
 from eval.metrics import (
     compute_precision_recall_f1,
-    delete_redundant_edges, delete_cycles
+    delete_redundant_edges,
+    delete_cycles,
+    add_boundary_edges,
 )
 from baseline.count_based import count_based_with_threshold
 
@@ -89,13 +91,7 @@ def post_process_pred_adj(
     id_start = 0
     id_end = n_gt - 1
 
-    in_degree_zeros = [n for n in GP.nodes if GP.in_degree(n) == 0 and n != id_end]
-    for node in in_degree_zeros:
-        GP.add_edge(id_end, node)
-
-    out_degree_zeros = [n for n in GP.nodes if GP.out_degree(n) == 0 and n != id_start]
-    for node in out_degree_zeros:
-        GP.add_edge(node, id_start)
+    add_boundary_edges(GP, id_start=id_start, id_end=id_end)
 
     delete_redundant_edges(GP)
     delete_cycles(GP)
@@ -143,13 +139,7 @@ def evaluate_count_based(
     id_start = 0
     id_end = n_gt - 1
 
-    in_degree_zeros = [n for n in GP.nodes if GP.in_degree(n) == 0 and n != id_end]
-    for node in in_degree_zeros:
-        GP.add_edge(id_end, node)
-
-    out_degree_zeros = [n for n in GP.nodes if GP.out_degree(n) == 0 and n != id_start]
-    for node in out_degree_zeros:
-        GP.add_edge(node, id_start)
+    add_boundary_edges(GP, id_start=id_start, id_end=id_end)
 
     delete_redundant_edges(GP)
     delete_cycles(GP)
@@ -212,31 +202,24 @@ def evaluate_all_scenarios(
                 "f1": float(f1)
             }
         elif method == "do":
-            if do_predictions_dir and os.path.exists(do_predictions_dir):
-                result_file = os.path.join(
-                    do_predictions_dir,
-                    f"{scenario_name.lower().replace(' ', '_')}_results.json"
+            if not do_predictions_dir or not os.path.exists(do_predictions_dir):
+                raise FileNotFoundError(
+                    f"DO evaluation requires a valid predictions directory, got: {do_predictions_dir}"
                 )
-                if os.path.exists(result_file):
-                    with open(result_file) as f:
-                        saved = json.load(f)
-                    results[scenario_name] = {
-                        "precision": saved.get("precision", 0),
-                        "recall": saved.get("recall", 0),
-                        "f1": saved.get("f1", 0)
-                    }
-                    continue
-
-            # Run count-based as fallback
-            precision, recall, f1 = evaluate_count_based(
-                scenario_data.sequences,
-                scenario_data.gt_adj_matrix,
-                threshold
+            result_file = os.path.join(
+                do_predictions_dir,
+                f"{scenario_name.lower().replace(' ', '_')}_results.json"
             )
+            if not os.path.exists(result_file):
+                raise FileNotFoundError(
+                    f"Missing DO result file for {scenario_name}: {result_file}"
+                )
+            with open(result_file) as f:
+                saved = json.load(f)
             results[scenario_name] = {
-                "precision": float(precision),
-                "recall": float(recall),
-                "f1": float(f1)
+                "precision": saved.get("precision", 0),
+                "recall": saved.get("recall", 0),
+                "f1": saved.get("f1", 0)
             }
 
     # Aggregate

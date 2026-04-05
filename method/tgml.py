@@ -11,12 +11,13 @@ Based on the paper:
 (arXiv:2502.17753)
 """
 
+import copy
+from typing import List, Optional
+
+import networkx as nx
 import numpy as np
 import torch
 import torch.nn as nn
-from typing import List, Optional
-import networkx as nx
-import copy
 
 
 def task_graph_maximum_likelihood_loss(
@@ -43,32 +44,25 @@ def task_graph_maximum_likelihood_loss(
     torch.Tensor
         Scalar loss value.
     """
-    # All possible node indices (excluding beta and gamma)
-    # The actual key steps are in range 1..(n), where n = A.shape[0] - 2
+    # Official DO loss uses all nodes except beta and gamma.
     n_matrix = A.shape[0]
-    all_nodes = torch.arange(1, n_matrix - 1, device=A.device).float()
+    all_nodes = torch.arange(1, n_matrix - 1, device=A.device)
 
     total_loss = 0.0
 
     for seq in y:
-        seq = seq.float()
         seq_len = len(seq)
 
-        for t in range(1, seq_len - 1):  # Skip START and END positions
+        for t in range(1, seq_len - 1):
             current = seq[t].long()
 
             # Indices of previously observed nodes
             observed = seq[:t].long()
 
             # Mask for unobserved nodes (excluding beta=0 and gamma=n_matrix-1)
-            mask = torch.ones(n_matrix, dtype=torch.bool, device=A.device)
-            for obs in observed:
-                mask[obs.item()] = False
-
-            # Unobserved nodes in the range 1..n_matrix-2
-            unobserved = torch.nonzero(mask).squeeze(-1)
-            # Filter to only key steps (1..n)
-            unobserved = unobserved[(unobserved > 0) & (unobserved < n_matrix - 1)]
+            mask = torch.ones(len(all_nodes), dtype=torch.bool, device=A.device)
+            mask[torch.isin(all_nodes, observed)] = False
+            unobserved = all_nodes[mask]
 
             if len(unobserved) == 0:
                 continue
@@ -103,12 +97,10 @@ def task_graph_maximum_likelihood_loss_efficient(
     batch_size, seq_len = y.shape
     n_matrix = A.shape[0]
 
-    # Handle variable-length sequences by using attention mask
     total_loss = torch.tensor(0.0, device=device)
 
     for b in range(batch_size):
         seq = y[b]
-        # Find actual sequence length (up to first 0 or padding)
         valid_len = seq_len
         for i in range(seq_len):
             if seq[i].item() == 0 and i > 0:
@@ -119,11 +111,8 @@ def task_graph_maximum_likelihood_loss_efficient(
             current = seq[t].item()
             observed = seq[:t]  # nodes before position t
 
-            # Compute numerator: A[current, observed]
             num = A[current, observed].sum()
 
-            # Compute denominator: sum_{h in unobserved} A[h, observed]
-            # Create mask for unobserved nodes
             observed_set = set(observed.tolist())
             unobserved_indices = [i for i in range(1, n_matrix - 1) if i not in observed_set]
 
@@ -172,42 +161,23 @@ class DirectOptimization(nn.Module):
         self.num_nodes = num_nodes
         self.device = device
 
-        # Learnable scoring matrix
-        self.scoring_matrix = nn.Parameter(torch.randn(num_nodes, num_nodes) * 0.1)
-
-        # Build DAG mask
+        self.adjacency_matrix = TaskGraph(num_nodes)
         self.register_buffer("mask", self._build_dag_mask())
 
     def _build_dag_mask(self) -> torch.Tensor:
         """
-        Build mask to enforce DAG constraints:
-        - No self-loops (diagonal = False)
-        - Row 0 (beta) = False (beta has no outgoing edges)
-        - Row 1 (START) = False except [1, 0] (START has only beta as successor)
-        - Column -1 (gamma) = False (nothing points to gamma)
-        - Column -2 (END) = False except [-2, -1] (END has only gamma as successor)
+        Match the official DO masking logic from the released code.
         """
         mask = torch.ones(self.num_nodes, self.num_nodes, dtype=torch.bool)
-
-        # No self-loops
-        for i in range(self.num_nodes):
-            mask[i, i] = False
-
-        # Row 0 (beta): no outgoing edges, only row 0 col 1 is allowed (beta -> START)
         mask[0, :] = False
-        mask[0, 1] = True  # beta -> START
-
-        # Row 1 (START): no outgoing edges, START has no preconditions
         mask[1, :] = False
-
-        # Column -1 (gamma): nothing points to gamma
+        mask[1, 0] = True
         mask[:, -1] = False
-
-        # Column -2 (END): END has no preconditions except gamma
-        mask[:-1, -2] = False
-        mask[-1, -2] = True  # gamma -> END
-
-        return mask
+        mask[:, -2] = False
+        mask[-1, :] = False
+        mask[-1, -2] = True
+        identity = torch.eye(self.num_nodes, dtype=torch.bool)
+        return mask & (~identity)
 
     def get_adjacency_matrix(self) -> torch.Tensor:
         """
@@ -218,15 +188,12 @@ class DirectOptimization(nn.Module):
         torch.Tensor
             Adjacency matrix Z = softmax(A) with masked positions set to 0.
         """
-        # Apply mask: set forbidden positions to -inf
         masked_scores = torch.where(
             self.mask,
-            self.scoring_matrix,
-            torch.tensor(-1e10, device=self.device)
+            self.adjacency_matrix(),
+            torch.tensor(float("-inf"), device=self.device),
         )
-        # Row-wise softmax
-        Z = torch.softmax(masked_scores, dim=1)
-        return Z
+        return torch.softmax(masked_scores, dim=1)
 
     def forward(self, y: torch.Tensor, beta: float = 0.005, eps: float = 1e-6) -> torch.Tensor:
         """

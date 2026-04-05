@@ -10,7 +10,7 @@ cd /home/user
 echo "Running Direct Optimization (DO) model on CaptainCook4D..."
 
 # Train DO on CaptainCook4D
-python method/train.py \
+python3 method/train.py \
     --dataset captaincook4d \
     --repo_data_path /home/user/method/repo/data/captaincook4d \
     --output checkpoints/do_captaincook4d \

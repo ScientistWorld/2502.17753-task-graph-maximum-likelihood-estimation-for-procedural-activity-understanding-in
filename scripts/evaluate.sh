@@ -20,7 +20,7 @@ METHOD_NAME="${1:-captaincook4d_do}"
 CHECKPOINT_DIR="${2:-checkpoints/}"
 
 # Run evaluation
-python -c "
+python3 -c "
 import sys
 sys.path.insert(0, '/home/user')
 from eval.evaluator import evaluate_all_scenarios, write_scores_json
@@ -38,16 +38,11 @@ if 'count' in '$METHOD_NAME':
     print(f'Count-Based: F1={results[\"aggregate\"][\"mean_f1\"]:.1f}')
     write_scores_json(results, '$METHOD_NAME')
 else:
-    # DO predictions
-    if '$CHECKPOINT_DIR' != 'checkpoints/' and '$CHECKPOINT_DIR' != '':
-        results = evaluate_all_scenarios(data, do_predictions_dir='$CHECKPOINT_DIR', method='do')
-        print(f'DO: F1={results[\"aggregate\"][\"mean_f1\"]:.1f}')
-        write_scores_json(results, '$METHOD_NAME')
-    else:
-        # Run count-based as proxy if no DO checkpoints available
-        results = evaluate_all_scenarios(data, method='count_based')
-        print(f'(No checkpoints, using Count-Based): F1={results[\"aggregate\"][\"mean_f1\"]:.1f}')
-        write_scores_json(results, '$METHOD_NAME')
+    if '$CHECKPOINT_DIR' == '' or '$CHECKPOINT_DIR' == 'checkpoints/':
+        raise SystemExit('DO evaluation requires an explicit checkpoint/results directory.')
+    results = evaluate_all_scenarios(data, do_predictions_dir='$CHECKPOINT_DIR', method='do')
+    print(f'DO: F1={results[\"aggregate\"][\"mean_f1\"]:.1f}')
+    write_scores_json(results, '$METHOD_NAME')
 
 print('Scores written to scoring/scores.json')
 "

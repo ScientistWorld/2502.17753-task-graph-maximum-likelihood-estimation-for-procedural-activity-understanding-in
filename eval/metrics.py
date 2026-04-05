@@ -72,6 +72,23 @@ def delete_cycles(G: nx.DiGraph) -> None:
             break
 
 
+def add_boundary_edges(G: nx.DiGraph, id_start: int, id_end: int) -> None:
+    """Match the official boundary-edge insertion used by DO."""
+    in_degree_zeros = [
+        node for node in G.nodes
+        if G.in_degree(node) == 0 and node != id_end and node != id_start
+    ]
+    for node in in_degree_zeros:
+        G.add_edge(id_end, node)
+
+    out_degree_zeros = [
+        node for node in G.nodes
+        if G.out_degree(node) == 0 and node != id_end and node != id_start
+    ]
+    for node in out_degree_zeros:
+        G.add_edge(node, id_start)
+
+
 def post_process_adjacency(
     pred_core: np.ndarray,
     n_gt: int
@@ -109,15 +126,7 @@ def post_process_adjacency(
     id_start = 0  # GT node ID
     id_end = n_gt - 1  # GT node ID
 
-    # Nodes with no incoming edges (except END) → connect from END
-    in_degree_zeros = [n for n in GP.nodes if GP.in_degree(n) == 0 and n != id_end]
-    for node in in_degree_zeros:
-        GP.add_edge(id_end, node)
-
-    # Nodes with no outgoing edges (except START) → connect to START
-    out_degree_zeros = [n for n in GP.nodes if GP.out_degree(n) == 0 and n != id_start]
-    for node in out_degree_zeros:
-        GP.add_edge(node, id_start)
+    add_boundary_edges(GP, id_start=id_start, id_end=id_end)
 
     # Transitive reduction
     delete_redundant_edges(GP)

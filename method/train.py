@@ -9,11 +9,13 @@ Usage:
 
 import argparse
 import json
-import numpy as np
-import torch
 import os
 import sys
 from pathlib import Path
+
+import networkx as nx
+import numpy as np
+import torch
 
 # Add workspace to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -22,11 +24,40 @@ from data.loader import load_data, TaskGraphData
 from method.tgml import (
     DirectOptimization,
     delete_redundant_edges, delete_cycles,
-    compute_precision_recall_f1
 )
-import networkx as nx
 
 from sklearn.metrics import precision_score, recall_score, f1_score
+
+
+def post_process_prediction(pred_core: np.ndarray, n_gt: int, threshold: float) -> np.ndarray:
+    """Mirror the official DO post-processing used before scoring."""
+    pred_binary = (pred_core > threshold).astype(float)
+    graph = nx.DiGraph(pred_binary)
+
+    id_start = 0
+    id_end = n_gt - 1
+
+    in_degree_zeros = [
+        node for node in graph.nodes
+        if graph.in_degree(node) == 0 and node != id_end and node != id_start
+    ]
+    for node in in_degree_zeros:
+        graph.add_edge(id_end, node)
+
+    out_degree_zeros = [
+        node for node in graph.nodes
+        if graph.out_degree(node) == 0 and node != id_end and node != id_start
+    ]
+    for node in out_degree_zeros:
+        graph.add_edge(node, id_start)
+
+    delete_redundant_edges(graph)
+    delete_cycles(graph)
+
+    pred_adj = np.zeros((n_gt, n_gt), dtype=np.float32)
+    for u, v in graph.edges():
+        pred_adj[v, u] = 1.0
+    return pred_adj
 
 
 def train_do(
@@ -96,34 +127,7 @@ def train_do(
             # Binarize
             pred_binary = (pred_core > threshold).astype(float)
 
-            # Build NetworkX graph
-            GP = nx.DiGraph(pred_binary)
-
-            # Add edges from isolated nodes to match paper's evaluation
-            # id_start = 1 (GT node 0 = START), id_end = n_gt - 1 (GT node n-1 = END)
-            id_start = 0  # GT node ID
-            id_end = n_gt - 1  # GT node ID
-
-            # Nodes with no incoming edges (except START) → connect from END
-            in_degree_zeros = [n for n in GP.nodes if GP.in_degree(n) == 0 and n != id_end]
-            for node in in_degree_zeros:
-                GP.add_edge(id_end, node)
-
-            # Nodes with no outgoing edges (except END) → connect to START
-            out_degree_zeros = [n for n in GP.nodes if GP.out_degree(n) == 0 and n != id_start]
-            for node in out_degree_zeros:
-                GP.add_edge(node, id_start)
-
-            # Transitive reduction
-            delete_redundant_edges(GP)
-
-            # Also try cycle removal as a safety net
-            delete_cycles(GP)
-
-            # Convert GP back to adjacency matrix for comparison
-            pred_adj = np.zeros((n_gt, n_gt), dtype=np.float32)
-            for u, v in GP.edges():
-                pred_adj[v, u] = 1.0
+            pred_adj = post_process_prediction(pred_core, n_gt, threshold)
 
             # Flatten for sklearn metrics
             gt_flat = gt_adj.flatten()
@@ -160,25 +164,7 @@ def train_do(
     pred_core = Z[1:-1, 1:-1]
     pred_binary = (pred_core > threshold).astype(float)
 
-    GP = nx.DiGraph(pred_binary)
-
-    id_start = 0
-    id_end = n_gt - 1
-
-    in_degree_zeros = [n for n in GP.nodes if GP.in_degree(n) == 0 and n != id_end]
-    for node in in_degree_zeros:
-        GP.add_edge(id_end, node)
-
-    out_degree_zeros = [n for n in GP.nodes if GP.out_degree(n) == 0 and n != id_start]
-    for node in out_degree_zeros:
-        GP.add_edge(node, id_start)
-
-    delete_redundant_edges(GP)
-    delete_cycles(GP)
-
-    pred_adj = np.zeros((n_gt, n_gt), dtype=np.float32)
-    for u, v in GP.edges():
-        pred_adj[v, u] = 1.0
+    pred_adj = post_process_prediction(pred_core, n_gt, threshold)
 
     gt_flat = gt_adj.flatten()
     pred_flat = pred_adj.flatten()
@@ -222,6 +208,8 @@ def main():
                         help="Verbose output")
     parser.add_argument("--num_scenarios", type=int, default=5,
                         help="Number of synthetic scenarios")
+    parser.add_argument("--scenario_filter", type=str, default=None,
+                        help="Optional substring filter for scenario names")
     args = parser.parse_args()
 
     # Load data
@@ -230,6 +218,10 @@ def main():
         data = data[:args.num_scenarios]
     else:
         data = load_data(repo_data_path=args.repo_data_path)
+
+    if args.scenario_filter:
+        needle = args.scenario_filter.lower()
+        data = [d for d in data if needle in d.scenario_name.lower()]
 
     print(f"Loaded {len(data)} scenarios")
     for d in data:
