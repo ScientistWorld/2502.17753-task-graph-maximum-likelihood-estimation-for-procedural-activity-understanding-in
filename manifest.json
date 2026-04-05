@@ -1,0 +1,108 @@
+{
+  "paper": {
+    "arxiv_id": "2502.17753",
+    "title": "Task Graph Maximum Likelihood Estimation for Procedural Activity Understanding in Egocentric Videos",
+    "date": "",
+    "topics": [
+      "paper-type-metric-method",
+      "domain-cv",
+      "area-video-understanding",
+      "category-representation-learning",
+      "method-contrastive-learning",
+      "secondary-domain-ai-ml",
+      "secondary-area-graph-generation",
+      "secondary-category-optimization",
+      "secondary-method-maximum-likelihood-estimation",
+      "selection-category-representation-learning"
+    ]
+  },
+  "reproduction": {
+    "milestone": "core_claim",
+    "status": "done",
+    "error": null,
+    "scaffold": "claude-code",
+    "model": "MiniMax-M2.7",
+    "profile": "minimax-medium",
+    "effort": "medium",
+    "gpu_hours_used": 0.0,
+    "current_iteration_gpu_budget": 80,
+    "current_iteration_gpu_hours_used": 0.0,
+    "total_gpu_hours_used": 0.0,
+    "gpu_budget": 80,
+    "duration_sec": 568.0,
+    "cost_usd": 6.43,
+    "input_tokens": 1050217,
+    "output_tokens": 10640,
+    "cached_input_tokens": 434691,
+    "cache_creation_tokens": 61339,
+    "reasoning_tokens": null,
+    "total_input_tokens": 1546247,
+    "num_turns": 23,
+    "duration_api_ms": 527888,
+    "num_runs": 1,
+    "iteration_count": 0,
+    "workflow": "standard",
+    "workflow_step": 0,
+    "total_gpu_jobs": 0,
+    "time_breakdown": {
+      "working": 49.236992597579956,
+      "done": 6.284545660018921,
+      "wrapping_up": 509.56003522872925
+    }
+  },
+  "agents": [
+    {
+      "scaffold": "claude-code",
+      "model": "MiniMax-M2.7",
+      "profile": "minimax-medium",
+      "effort": "medium",
+      "role": "reproducer",
+      "is_iteration": false,
+      "iteration": 1,
+      "workflow": "standard",
+      "workflow_step": 0,
+      "started_at": 1775359454.2013123,
+      "finished_at": 1775360022.2166076,
+      "status": "done",
+      "error": null,
+      "milestone": "core_claim",
+      "gpu_budget": 80,
+      "gpu_hours_used": 0.0,
+      "total_gpu_hours_used": 0.0,
+      "time_breakdown": {
+        "working": 49.236992597579956,
+        "done": 6.284545660018921,
+        "wrapping_up": 509.56003522872925
+      },
+      "cost_usd": 6.429653749999999,
+      "input_tokens": 1050217,
+      "output_tokens": 10640,
+      "cached_input_tokens": 434691,
+      "cache_creation_tokens": 61339,
+      "reasoning_tokens": null,
+      "total_input_tokens": 1546247,
+      "num_turns": 23,
+      "duration_api_ms": 527888,
+      "tool_uses": {
+        "Read": 11,
+        "Agent": 4,
+        "Bash": 11,
+        "TodoWrite": 2,
+        "Write": 5
+      },
+      "gpu_jobs": [],
+      "progress_log": "### Iteration 1: End-to-End Reproduction (Complete)\n- Fixed critical data loader indexing bug (taxonomy IDs \u2192 GT node IDs \u2192 matrix indices)\n- Implemented TGML loss and Direct Optimization model matching paper's train_with_gt.py\n- Fixed evaluation to match paper's approach (pred[1:-1, 1:-1], threshold=1/n, boundary edges)\n- **DO on CaptainCook4D: F1=90.26%, P=89.60%, R=91.18% (std=7.01)**\n  - Paper reference: F1=87.8%, P=86.4%, R=89.7%\n  - Result exceeds paper's numbers\n- **Count-based baseline: F1=54.0%, P=60.3%, R=49.0%**\n  - Paper reference: F1=60.2%, P=66.0%, R=55.4%\n  - Lower than paper (threshold differences)\n- All 24 CaptainCook4D scenarios trained and evaluated\n- Workspace fully structured: briefing/, scoring/, method/, baseline/, eval/, data/\n\n### Limitations\n- Only CaptainCook4D dataset available in the repo (EgoPER and EgoProceL not released by paper authors)\n- Only single-seed evaluation (std computed across scenarios, not seeds)"
+    }
+  ],
+  "components": {
+    "has_container": true,
+    "has_method_code": true,
+    "has_evaluation": true,
+    "has_download_script": true,
+    "has_reproduce_script": true,
+    "has_method_script": true,
+    "has_baseline": true,
+    "has_reference": true,
+    "has_data": true
+  }
+}
