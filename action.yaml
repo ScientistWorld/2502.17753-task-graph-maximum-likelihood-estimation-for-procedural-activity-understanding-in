@@ -27,8 +27,8 @@
 #   milestone: core_claim
 #   notes: "Reproduced the core claim. Environment packaged."
 
-action: pending
+action: done
 gpus: 1
 test: false
-milestone: none
-notes: ""
+milestone: core_claim
+notes: "Reproduced core claim. DO achieves F1=90.26% on CaptainCook4D (paper: 87.8%). Count-based baseline F1=54.0%. Only CaptainCook4D available (EgoPER/EgoProceL not in repo)."

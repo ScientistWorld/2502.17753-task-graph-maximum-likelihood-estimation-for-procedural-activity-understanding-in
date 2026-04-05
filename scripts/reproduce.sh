@@ -9,16 +9,21 @@
 #   - Container is built (environment/container.sif)
 #   - Data and models are downloaded (via scripts/download.sh)
 #   - Working directory is /home/user
-#
-# This is the "gold standard" reproduction — 
-# You do not need to run this, but keep this in good shape
-# so other agents can easily run a full loop of reproduction and get the paper's numbers.
 
 set -e
-
 cd /home/user
 
-# TODO: implement full reproduction pipeline
-# e.g.:
-#   bash scripts/baseline.sh
-#   bash scripts/method.sh
+echo "=== Reproducing TGML Paper Results ==="
+echo ""
+
+# Step 1: Run Count-Based baseline
+echo "[1/2] Running Count-Based baseline..."
+bash scripts/baseline.sh
+
+# Step 2: Run DO method
+echo "[2/2] Running DO method..."
+bash scripts/method.sh
+
+echo ""
+echo "=== Reproduction complete ==="
+echo "Results in scoring/scores.json"

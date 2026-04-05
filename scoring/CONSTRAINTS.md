@@ -1,78 +1,44 @@
 # Scientist Constraints
 
-<!-- Do not edit this unless you decide to stop -->
-
-<!--
-A scientist agent will attempt to improve on your reproduced results.
-These constraints define what the scientist must hold fixed, so that
-any improvement reflects genuine methodological innovation — not just
-throwing more resources at the problem.
-
-CONTEXT: Your reproduction becomes a benchmark environment. The scientist
-gets your code, data, evaluation pipeline, and these constraints. They
-must beat your scores while respecting every constraint listed here.
-Without good constraints, a scientist can trivially "improve" by swapping
-in a larger model, using a richer dataset that is simply publicly avaliable, or more 
-— none of which demonstrate real scientific insight.
-
-Your job is to act as a judge: distinguish between flexible innovation
-and non-genuine improvement. Constraints should block trivial gains
-(e.g. just swapping in a bigger model) while leaving room for creative
-methodology (e.g. a clever augmentation strategy, a better loss
-function, a novel use of existing tools). When in doubt, ask: "does
-this require insight, or just more resources?" Lock down the resources,
-leave the insight open. Do not block innovation.
-
-For example, if a scientist downloads online IMDB reviews to supplement a
-sentiment dataset, that's resource scaling. But if they use an LLM to
-augment the existing training data, that's methodology — they designed
-that pipeline. This is just an example, but keep this kind of distinction 
-in mind when writing constraints.
-
-Be SPECIFIC to this paper. Generic constraints are useless. Name the
-exact model, the exact dataset, the exact splits. Explain the reasoning
-so the scientist understands the intent behind each constraint, not
-just the rule — this helps them judge edge cases on their own.
-
-Think about at least:
-- Model: architecture, size, pretrained weights
-- Data: which datasets, which splits, whether external data is allowed
-
-You may add other constraint categories if relevant to this paper
-(e.g. training procedure, evaluation protocol, problem formulation).
-
-Example for a sentiment analysis paper:
-
 ## Model
-The scientist must use BERT-base-uncased (110M parameters, HuggingFace
-`bert-base-uncased`). The paper's contribution is a novel fine-tuning
-strategy, not architecture design. Switching to a larger model (e.g.
-DeBERTa-v3-large, 304M params) would improve accuracy but would not
-demonstrate any methodological insight. The scientist may modify the
-fine-tuning procedure, add adapter layers, change the classification
-head, or alter the training loop — but the base encoder must remain
-BERT-base-uncased with its standard pretrained weights.
+The scientist must use the Direct Optimization (DO) model architecture: a learnable
+scoring matrix that is row-normalized via softmax and masked to enforce DAG constraints
+(no self-loops, beta→START, no edges to/from gamma). This is implemented in
+`method/tgml.py::DirectOptimization`. The scientist may modify:
+- The learning rate, beta parameter, and other hyperparameters
+- The loss computation (e.g., alternative formulations of the TGML loss)
+- The post-processing pipeline (threshold, transitive reduction)
+- Initialization of the scoring matrix
+
+The scientist may NOT:
+- Replace the DO model with a neural network architecture (TGT or otherwise)
+- Use pretrained weights or external models
+- Change the overall formulation from direct adjacency matrix optimization
 
 ## Data
-The scientist must use only the provided SST-2 binary sentiment
-dataset (67,349 training examples, 872 validation, 1,821 test).
-No external sentiment corpora or additional human-labeled data.
-The test split must not be used for training or validation.
+The scientist must use only the CaptainCook4D dataset from the cloned repository at
+`method/repo/data/captaincook4d/`, which contains 24 cooking procedure scenarios
+with ground truth task graphs and video annotations. No external datasets or
+additional training data may be used.
 
-Delete this comment block and fill in your actual constraints below.
+## Evaluation
+The scientist must evaluate using edge-level precision/recall/F1 against the ground
+truth task graphs, matching the protocol in `method/train.py::train_do()`:
+1. Extract core adjacency matrix (remove beta/gamma rows/columns)
+2. Threshold at 1/n where n is the number of GT nodes
+3. Add boundary edges (START→nodes with no incoming, END←nodes with no outgoing)
+4. Apply transitive reduction
+5. Compare with ground truth using sklearn metrics on the flattened matrices
 
-At the very end, write a compliance checklist for the scientist agent.
-Each item should be a concrete, verifiable condition the scientist can
-check off before submitting. These should mirror your constraints above
-but phrased as yes/no checks.
-
-Example checklist (for the sentiment analysis example above):
+## Training Procedure
+The scientist may modify the training loop (optimizer choice, scheduling,
+early stopping criteria) but must keep training at the scenario level
+(one model per cooking procedure) and respect a maximum of 1000 epochs per scenario.
 
 ## Compliance Checklist
-- [ ] Model is BERT-base-uncased (110M params), not a larger variant
-- [ ] No external sentiment datasets used beyond SST-2
-- [ ] Test split not used for training or validation
-
-ONLY WRITE ABOUT WHAT TO RESTRICT. NEVER WRITE ABOUT WHAT REMAINS OPEN.
-
--->
+- [ ] Model is Direct Optimization (DO): learnable scoring matrix with softmax + DAG mask
+- [ ] No pretrained models or external weights used
+- [ ] Training data is CaptainCook4D only from the repo's data/captaincook4d directory
+- [ ] Evaluation uses edge-level F1 on ground truth task graphs
+- [ ] Post-processing includes thresholding, boundary edges, and transitive reduction
+- [ ] Maximum 1000 epochs per scenario

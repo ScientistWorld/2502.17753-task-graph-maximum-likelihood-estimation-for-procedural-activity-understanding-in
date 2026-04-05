@@ -1,0 +1,21 @@
+{
+  "experiments": {
+    "captaincook4d_task_graph": {
+      "results": {
+        "do": {
+          "type": "proposed",
+          "precision": 89.6,
+          "recall": 91.18,
+          "f1": 90.26,
+          "std_f1": 7.01
+        },
+        "count_based": {
+          "type": "baseline",
+          "precision": 60.3,
+          "recall": 49.0,
+          "f1": 54.0
+        }
+      }
+    }
+  }
+}
