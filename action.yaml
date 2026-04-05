@@ -1,9 +1,8 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-
-action: done
+action: pending
 gpus: 1
 test: false
-milestone: core_claim
-notes: "Reproduced core claim. DO achieves F1=90.26% on CaptainCook4D (paper: 87.8%). Count-based baseline F1=54.0%. All validation checks pass. Workspace committed."
+milestone: method_runs
+notes: ""
