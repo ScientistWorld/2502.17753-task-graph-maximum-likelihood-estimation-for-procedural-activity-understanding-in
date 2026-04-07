@@ -45,6 +45,11 @@
 - Updated `environment/container.def` to use the host-side absolute workspace path from the scheduler log for `base_container.sif`
 - Kept the milestone at `method_runs`; no experiment results changed
 
+### [2026-04-07 10:02] - method_runs
+- The host-path localimage retry reached rootfs extraction but failed on `set_attributes` ownership changes inside the unpacked image, so the remaining issue is builder-side chown behavior rather than missing bootstrap inputs
+- Replaced the bootstrap strategy with a `Bootstrap: scratch` recipe that copies the local Python/bash runtime via `%files`, avoiding external registries, host `debootstrap`, and localimage unpack ownership rewrites
+- Kept the milestone at `method_runs`; this is still an environment-only correction before the CaptainCook4D DO rerun
+
 ### [2026-04-07 00:00] - method_runs
 - Replaced the simplified local count-based baseline with a transition-graph implementation that matches the paper's released baseline logic closely
 - Verified on CaptainCook4D annotations that the corrected baseline reaches about 61.4 mean F1 locally, which is on the same scale as the paper's reported 60.2 baseline

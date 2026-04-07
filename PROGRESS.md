@@ -37,6 +37,8 @@
 - The debootstrap retry failed because `debootstrap` is not installed on the builder host, so the recipe now uses `Bootstrap: localimage` from the existing `/home/user/environment/base_container.sif` instead of any external bootstrap mechanism.
 - The first localimage retry failed because the builder does not see the workspace at `/home/user` during build, so `From:` was changed to the workspace-relative path `environment/base_container.sif`.
 - The relative localimage path was then resolved against the scheduler's infrastructure checkout rather than the paper workspace, so `From:` is now set to the host-side workspace path reported by the build logs.
+- The host-path localimage retry progressed into unpacking the cached `.sif` but then failed while changing ownership inside the extracted rootfs (`set_attributes ... Invalid argument`), which points to a fakeroot/chown incompatibility rather than a missing file.
+- The next retry replaces bootstrap unpacking entirely with a `Bootstrap: scratch` recipe that copies only the required host runtime pieces through `%files`, avoiding OCI pulls, `debootstrap`, and localimage ownership rewrites.
 
 ## Issues
 
@@ -48,6 +50,7 @@
 - `eval/evaluator.py` had been post-processing the Count-Based baseline output a second time, which inverted the useful prediction structure and caused an invalid 0.0-F1 result until corrected.
 - Some workspace files such as `data/loader.py` live under ignored paths, so the compute run depends on the working tree rather than only committed files.
 - The local login-node Python environment does not currently include all package dependencies, so full end-to-end verification must come from the submitted containerized job rather than this shell alone.
+- Repeated Apptainer builder failures have all happened before `setup.sh` runs, so the current blocker is the base container recipe rather than Python package installation.
 
 ## Deviations from Paper
 
