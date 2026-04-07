@@ -32,6 +32,7 @@
 - CaptainCook4D is still the only packaged experiment for this turn; downstream tasks and extra datasets remain out of scope for the pending submission.
 - The environment build must be retried after switching `environment/container.def` from `Bootstrap: library` to `Bootstrap: docker`, because this cluster has no default Apptainer library remote configured.
 - The Docker-backed retry then failed on Docker Hub anonymous pull limits, so the container base was moved again to a non-Docker-Hub public registry.
+- The Quay retry also failed before build execution with malformed registry metadata, so the base image was moved again to Microsoft Container Registry (`mcr.microsoft.com`) for the next attempt.
 
 ## Issues
 

@@ -20,6 +20,11 @@
 - Switched the Docker bootstrap image to `quay.io/toolbx/ubuntu-toolbox:22.04` to avoid Docker Hub rate limiting while keeping an Ubuntu 22.04 base
 - Kept the milestone at `method_runs`; this is still an environment-only fix before the actual DO rerun
 
+### [2026-04-07 09:40] - method_runs
+- The Quay-based retry failed before `%post` with malformed registry metadata (`invalid character 's' after top-level value`)
+- Switched the Docker bootstrap image to `mcr.microsoft.com/devcontainers/base:jammy` for another public Ubuntu 22.04-compatible source
+- Kept the milestone at `method_runs`; no experiment outputs changed
+
 ### [2026-04-07 00:00] - method_runs
 - Replaced the simplified local count-based baseline with a transition-graph implementation that matches the paper's released baseline logic closely
 - Verified on CaptainCook4D annotations that the corrected baseline reaches about 61.4 mean F1 locally, which is on the same scale as the paper's reported 60.2 baseline

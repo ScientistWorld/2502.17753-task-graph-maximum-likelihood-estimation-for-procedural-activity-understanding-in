@@ -3,7 +3,7 @@
 # Build:  apptainer build container.sif container.def
 #
 Bootstrap: docker
-From: quay.io/toolbx/ubuntu-toolbox:22.04
+From: mcr.microsoft.com/devcontainers/base:jammy
 
 %post
     apt-get update && apt-get install -y --no-install-recommends \
