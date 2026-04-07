@@ -3,7 +3,7 @@
 # Build:  apptainer build container.sif container.def
 #
 Bootstrap: docker
-From: ubuntu:22.04
+From: quay.io/toolbx/ubuntu-toolbox:22.04
 
 %post
     apt-get update && apt-get install -y --no-install-recommends \

@@ -15,6 +15,11 @@
 - Switched the container base to `Bootstrap: docker` with the same `ubuntu:22.04` image so Apptainer does not depend on an unavailable library remote
 - Kept the milestone at `method_runs`; no experiment results changed, this is only an environment fix before resubmission
 
+### [2026-04-07 09:38] - method_runs
+- The second submit attempt failed while fetching `ubuntu:22.04` from Docker Hub due to unauthenticated pull-rate limits
+- Switched the Docker bootstrap image to `quay.io/toolbx/ubuntu-toolbox:22.04` to avoid Docker Hub rate limiting while keeping an Ubuntu 22.04 base
+- Kept the milestone at `method_runs`; this is still an environment-only fix before the actual DO rerun
+
 ### [2026-04-07 00:00] - method_runs
 - Replaced the simplified local count-based baseline with a transition-graph implementation that matches the paper's released baseline logic closely
 - Verified on CaptainCook4D annotations that the corrected baseline reaches about 61.4 mean F1 locally, which is on the same scale as the paper's reported 60.2 baseline
