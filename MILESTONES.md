@@ -40,6 +40,11 @@
 - Changed the localimage source to the workspace-relative path `environment/base_container.sif` so it resolves inside the build context instead of assuming the runtime mount point
 - Kept the milestone at `method_runs`; still an environment-only fix
 
+### [2026-04-07 09:49] - method_runs
+- The relative localimage retry failed because the builder resolved `environment/base_container.sif` against its infrastructure checkout instead of the paper workspace
+- Updated `environment/container.def` to use the host-side absolute workspace path from the scheduler log for `base_container.sif`
+- Kept the milestone at `method_runs`; no experiment results changed
+
 ### [2026-04-07 00:00] - method_runs
 - Replaced the simplified local count-based baseline with a transition-graph implementation that matches the paper's released baseline logic closely
 - Verified on CaptainCook4D annotations that the corrected baseline reaches about 61.4 mean F1 locally, which is on the same scale as the paper's reported 60.2 baseline

@@ -36,6 +36,7 @@
 - The MCR retry produced the same malformed OCI metadata error, so the recipe now avoids OCI registries entirely by switching to `Bootstrap: debootstrap` for Ubuntu Jammy.
 - The debootstrap retry failed because `debootstrap` is not installed on the builder host, so the recipe now uses `Bootstrap: localimage` from the existing `/home/user/environment/base_container.sif` instead of any external bootstrap mechanism.
 - The first localimage retry failed because the builder does not see the workspace at `/home/user` during build, so `From:` was changed to the workspace-relative path `environment/base_container.sif`.
+- The relative localimage path was then resolved against the scheduler's infrastructure checkout rather than the paper workspace, so `From:` is now set to the host-side workspace path reported by the build logs.
 
 ## Issues
 
