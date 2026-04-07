@@ -2,8 +2,8 @@
 #
 # Build:  apptainer build container.sif container.def
 #
-Bootstrap: docker
-From: nvidia/cuda:12.1.0-runtime-ubuntu22.04
+Bootstrap: library
+From: ubuntu:22.04
 
 %post
     apt-get update && apt-get install -y --no-install-recommends \
