@@ -3,7 +3,7 @@
 # Build:  apptainer build container.sif container.def
 #
 Bootstrap: localimage
-From: /home/user/environment/base_container.sif
+From: environment/base_container.sif
 
 %post
     apt-get update && apt-get install -y --no-install-recommends \

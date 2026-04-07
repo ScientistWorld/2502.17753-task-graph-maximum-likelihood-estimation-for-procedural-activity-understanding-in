@@ -35,6 +35,7 @@
 - The Quay retry also failed before build execution with malformed registry metadata, so the base image was moved again to Microsoft Container Registry (`mcr.microsoft.com`) for the next attempt.
 - The MCR retry produced the same malformed OCI metadata error, so the recipe now avoids OCI registries entirely by switching to `Bootstrap: debootstrap` for Ubuntu Jammy.
 - The debootstrap retry failed because `debootstrap` is not installed on the builder host, so the recipe now uses `Bootstrap: localimage` from the existing `/home/user/environment/base_container.sif` instead of any external bootstrap mechanism.
+- The first localimage retry failed because the builder does not see the workspace at `/home/user` during build, so `From:` was changed to the workspace-relative path `environment/base_container.sif`.
 
 ## Issues
 

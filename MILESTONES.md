@@ -35,6 +35,11 @@
 - Repointed `environment/container.def` to `Bootstrap: localimage` using the existing `/home/user/environment/base_container.sif` so the next build can clone a local base image without network/bootstrap dependencies
 - Kept the milestone at `method_runs`; no experimental results changed
 
+### [2026-04-07 09:47] - method_runs
+- The first localimage retry failed because the builder could not resolve `/home/user/environment/base_container.sif`
+- Changed the localimage source to the workspace-relative path `environment/base_container.sif` so it resolves inside the build context instead of assuming the runtime mount point
+- Kept the milestone at `method_runs`; still an environment-only fix
+
 ### [2026-04-07 00:00] - method_runs
 - Replaced the simplified local count-based baseline with a transition-graph implementation that matches the paper's released baseline logic closely
 - Verified on CaptainCook4D annotations that the corrected baseline reaches about 61.4 mean F1 locally, which is on the same scale as the paper's reported 60.2 baseline
