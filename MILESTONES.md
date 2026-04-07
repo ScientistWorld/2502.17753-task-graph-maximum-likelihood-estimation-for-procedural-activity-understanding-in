@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-07 00:00] - method_runs
+- Replaced the simplified local count-based baseline with a transition-graph implementation that matches the paper's released baseline logic closely
+- Verified on CaptainCook4D annotations that the corrected baseline reaches about 61.4 mean F1 locally, which is on the same scale as the paper's reported 60.2 baseline
+- Kept the milestone at `method_runs` because the proposed DO result still needs a fresh run after the baseline-fidelity correction
+
 ### [2026-04-05 04:45] - method_runs
 - Audited the inherited workspace and confirmed the method is DO/TGML rather than a surrogate
 - Found a training-time supervision leak: `method/train.py` was selecting the best epoch using ground-truth graph F1, which is not allowed in the paper's weakly supervised setup

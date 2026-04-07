@@ -26,8 +26,6 @@ from method.tgml import (
     delete_redundant_edges, delete_cycles,
 )
 
-from sklearn.metrics import precision_score, recall_score, f1_score
-
 
 def extract_predecessors(graph: nx.DiGraph) -> dict[int, list[int]]:
     """Match the released utility: node -> list of predecessor nodes."""
@@ -97,7 +95,7 @@ def train_do(
 ) -> dict:
     """
     Train DO model for a single scenario.
-    Returns a dict with metrics.
+    Returns a dict with saved prediction artifacts and weakly supervised metadata.
     """
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -121,10 +119,6 @@ def train_do(
     # Create DO model
     model = DirectOptimization(n_matrix, device=device).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-
-    # Ground truth adjacency (n_gt x n_gt), indexed by GT node ID.
-    # This is used only for reporting final metrics, not for model selection.
-    gt_adj = scenario_data.gt_adj_matrix
 
     # Official DO early stopping uses sequence accuracy on sequences without beta/gamma.
     train_seq_no_beta_gamma = np.array(
@@ -160,13 +154,6 @@ def train_do(
             pred_adj = post_process_prediction(pred_core, n_gt, threshold)
             pred_graph = nx.DiGraph(pred_adj.T)
 
-            # Flatten for sklearn metrics
-            gt_flat = gt_adj.flatten()
-            pred_flat = pred_adj.flatten()
-
-            precision = precision_score(gt_flat, pred_flat, zero_division=0) * 100
-            recall = recall_score(gt_flat, pred_flat, zero_division=0) * 100
-            f1 = f1_score(gt_flat, pred_flat, zero_division=0) * 100
             sequence_accuracy = 0.0
             if nx.is_directed_acyclic_graph(pred_graph):
                 sequence_accuracy = sequences_accuracy(
@@ -177,7 +164,6 @@ def train_do(
             if verbose and (epoch % 50 == 0 or epoch == max_epochs - 1):
                 print(
                     f"  Epoch {epoch}: loss={loss.item():.4f}, "
-                    f"P={precision:.1f}, R={recall:.1f}, F1={f1:.1f}, "
                     f"seq_acc={sequence_accuracy:.3f}"
                 )
 
@@ -209,12 +195,6 @@ def train_do(
     pred_adj = post_process_prediction(pred_core, n_gt, threshold)
     pred_graph = nx.DiGraph(pred_adj.T)
 
-    gt_flat = gt_adj.flatten()
-    pred_flat = pred_adj.flatten()
-
-    precision = precision_score(gt_flat, pred_flat, zero_division=0) * 100
-    recall = recall_score(gt_flat, pred_flat, zero_division=0) * 100
-    f1 = f1_score(gt_flat, pred_flat, zero_division=0) * 100
     final_sequence_accuracy = 0.0
     if nx.is_directed_acyclic_graph(pred_graph):
         final_sequence_accuracy = sequences_accuracy(
@@ -224,14 +204,11 @@ def train_do(
 
     if verbose:
         print(
-            f"  Final: P={precision:.1f}, R={recall:.1f}, "
-            f"F1={f1:.1f}, seq_acc={final_sequence_accuracy:.3f}"
+            f"  Final: seq_acc={final_sequence_accuracy:.3f}"
         )
 
     return {
-        "precision": float(precision),
-        "recall": float(recall),
-        "f1": float(f1),
+        "pred_core": pred_core.astype(np.float32),
         "best_epoch": epoch - early_stop_counter,
         "sequence_accuracy": float(final_sequence_accuracy),
     }
@@ -303,52 +280,56 @@ def main():
             result["seed"] = seed
             seed_results.append(result)
 
-        # Average results
-        avg_f1 = np.mean([r["f1"] for r in seed_results])
-        avg_p = np.mean([r["precision"] for r in seed_results])
-        avg_r = np.mean([r["recall"] for r in seed_results])
-        std_f1 = np.std([r["f1"] for r in seed_results])
+        avg_sequence_accuracy = np.mean([r["sequence_accuracy"] for r in seed_results])
+        std_sequence_accuracy = np.std([r["sequence_accuracy"] for r in seed_results])
 
-        print(f"  Average: P={avg_p:.1f}, R={avg_r:.1f}, F1={avg_f1:.1f} +/- {std_f1:.1f}")
+        print(
+            f"  Average weakly-supervised seq_acc={avg_sequence_accuracy:.3f} "
+            f"+/- {std_sequence_accuracy:.3f}"
+        )
         all_results[scenario_name] = {
-            "precision": avg_p,
-            "recall": avg_r,
-            "f1": avg_f1,
-            "std_f1": std_f1
+            "sequence_accuracy": avg_sequence_accuracy,
+            "std_sequence_accuracy": std_sequence_accuracy
         }
 
-        # Save per-scenario results
+        # Save raw DO predictions for method-agnostic evaluation in eval/.
         safe_name = scenario_name.lower().replace(" ", "_")
+        pred_cores = np.stack([r["pred_core"] for r in seed_results], axis=0)
+        np.savez_compressed(
+            os.path.join(args.output, f"{safe_name}_predictions.npz"),
+            pred_cores=pred_cores,
+            seeds=np.array([r["seed"] for r in seed_results], dtype=np.int64),
+        )
+
+        # Save per-scenario weak supervision metadata only.
         with open(os.path.join(args.output, f"{safe_name}_results.json"), "w") as f:
             json.dump({
                 "scenario": scenario_name,
-                "precision": avg_p,
-                "recall": avg_r,
-                "f1": avg_f1,
-                "std_f1": std_f1,
-                "per_seed": seed_results
+                "sequence_accuracy": avg_sequence_accuracy,
+                "std_sequence_accuracy": std_sequence_accuracy,
+                "per_seed": [
+                    {
+                        "seed": r["seed"],
+                        "best_epoch": r["best_epoch"],
+                        "sequence_accuracy": r["sequence_accuracy"],
+                    }
+                    for r in seed_results
+                ]
             }, f, indent=2)
 
-    # Overall averages
-    overall_f1 = np.mean([r["f1"] for r in all_results.values()])
-    overall_p = np.mean([r["precision"] for r in all_results.values()])
-    overall_r = np.mean([r["recall"] for r in all_results.values()])
-    overall_std = np.std([r["f1"] for r in all_results.values()])
+    overall_sequence_accuracy = np.mean([r["sequence_accuracy"] for r in all_results.values()])
+    overall_std = np.std([r["sequence_accuracy"] for r in all_results.values()])
 
     print(f"\n=== OVERALL ===")
-    print(f"Precision: {overall_p:.1f}")
-    print(f"Recall: {overall_r:.1f}")
-    print(f"F1: {overall_f1:.1f} +/- {overall_std:.1f}")
+    print(f"Sequence accuracy: {overall_sequence_accuracy:.3f} +/- {overall_std:.3f}")
 
-    # Save overall results
+    # Save overall weak supervision metadata only.
     with open(os.path.join(args.output, "overall_results.json"), "w") as f:
         json.dump({
             "dataset": args.dataset,
             "overall": {
-                "precision": overall_p,
-                "recall": overall_r,
-                "f1": overall_f1,
-                "std_f1": overall_std
+                "sequence_accuracy": overall_sequence_accuracy,
+                "std_sequence_accuracy": overall_std
             },
             "per_scenario": all_results
         }, f, indent=2)

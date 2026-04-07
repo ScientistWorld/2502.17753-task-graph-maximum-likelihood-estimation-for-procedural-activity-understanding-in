@@ -206,20 +206,27 @@ def evaluate_all_scenarios(
                 raise FileNotFoundError(
                     f"DO evaluation requires a valid predictions directory, got: {do_predictions_dir}"
                 )
-            result_file = os.path.join(
+            prediction_file = os.path.join(
                 do_predictions_dir,
-                f"{scenario_name.lower().replace(' ', '_')}_results.json"
+                f"{scenario_name.lower().replace(' ', '_')}_predictions.npz"
             )
-            if not os.path.exists(result_file):
+            if not os.path.exists(prediction_file):
                 raise FileNotFoundError(
-                    f"Missing DO result file for {scenario_name}: {result_file}"
+                    f"Missing DO prediction file for {scenario_name}: {prediction_file}"
                 )
-            with open(result_file) as f:
-                saved = json.load(f)
+            saved = np.load(prediction_file)
+            pred_cores = saved["pred_cores"] if "pred_cores" in saved else saved["pred_core"][None, ...]
+            per_seed_metrics = [
+                evaluate_from_adjacency(pred_core, scenario_data.gt_adj_matrix)
+                for pred_core in pred_cores
+            ]
+            precision = float(np.mean([metric[0] for metric in per_seed_metrics]))
+            recall = float(np.mean([metric[1] for metric in per_seed_metrics]))
+            f1 = float(np.mean([metric[2] for metric in per_seed_metrics]))
             results[scenario_name] = {
-                "precision": saved.get("precision", 0),
-                "recall": saved.get("recall", 0),
-                "f1": saved.get("f1", 0)
+                "precision": precision,
+                "recall": recall,
+                "f1": f1
             }
 
     # Aggregate

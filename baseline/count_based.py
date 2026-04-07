@@ -1,211 +1,163 @@
-"""
-Count-Based baseline for task graph learning.
+"""Count-Based baseline matching the paper's transition-graph procedure."""
 
-This baseline estimates precondition relationships by counting co-occurrences
-of steps in action sequences. If step A frequently appears before step B
-across multiple sequences, A is likely a precondition of B.
+from __future__ import annotations
 
-Based on the paper's approach.
-"""
+import copy
+from typing import Dict, List
 
-import numpy as np
-from typing import List, Dict, Tuple
 import networkx as nx
+import numpy as np
 
 
-def count_based_baseline(
-    sequences: List[List[int]],
-    threshold: float = 0.0
-) -> np.ndarray:
-    """
-    Compute adjacency matrix using the count-based method.
-
-    For each pair of nodes (i, j), count how many times j appears before i
-    across all sequences. The weight is the count normalized by frequency.
-
-    Parameters
-    ----------
-    sequences : List[List[int]]
-        List of sequences. Each sequence is a list of step IDs (1..n for steps,
-        0=START, n+1=END). Note: step IDs are 1-indexed in sequences.
-    threshold : float
-        Minimum count threshold (fraction of total sequences) for an edge.
-
-    Returns
-    -------
-    np.ndarray
-        Adjacency matrix (n+2) x (n+2).
-    """
-    if not sequences:
-        return np.zeros((2, 2))
-
-    # Determine matrix size
-    all_ids = set()
+def _strip_matrix_tokens(sequences: List[List[int]], n_gt: int) -> List[List[int]]:
+    """Convert matrix-index sequences [beta, START, ..., END, gamma] to GT node ids."""
+    gt_sequences: List[List[int]] = []
     for seq in sequences:
-        all_ids.update(seq)
-    max_id = max(all_ids)
-    n_matrix = max_id + 1  # 0-indexed
+        gt_seq = [node - 1 for node in seq[1:-1] if 1 <= node <= n_gt]
+        if gt_seq:
+            gt_sequences.append(gt_seq)
+    return gt_sequences
 
-    # Count co-occurrences
-    # cooccur[i, j] = number of times node j appears before node i
-    cooccur = np.zeros((n_matrix, n_matrix), dtype=np.float32)
 
+def _build_transition_matrix(sequences: List[List[int]], n_gt: int) -> np.ndarray:
+    """Reproduce the transition matrix used by the released Count-Based baseline."""
+    transitions = np.zeros((n_gt, n_gt), dtype=np.float32)
     for seq in sequences:
-        # Remove beta and gamma (0 and max_id)
-        # Actually, let's keep all
-        seq = list(seq)
-        for i in range(len(seq)):
-            for j in range(i):
-                # seq[i] appears after seq[j]
-                cooccur[seq[i], seq[j]] += 1
+        deduped: List[int] = []
+        for step in seq:
+            if step not in deduped:
+                deduped.append(step)
+        for i in range(len(deduped) - 1):
+            transitions[deduped[i], deduped[i + 1]] += 1.0
 
-    # The paper's count-based method: edge from j to i exists if
-    # j frequently appears before i in the sequences
-    # We normalize by the total number of occurrences of i
-    adj = np.zeros((n_matrix, n_matrix), dtype=np.float32)
+    row_sums = transitions.sum(axis=1, keepdims=True)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        transitions = np.divide(transitions, row_sums, out=np.zeros_like(transitions), where=row_sums > 0)
+    return transitions
 
-    for i in range(n_matrix):
-        total_before_i = cooccur[i, :].sum()
-        if total_before_i > 0:
-            # Edge weight = count / total appearances
-            adj[i, :] = cooccur[i, :] / total_before_i
 
-    return adj
+def _sorted_preconditions(transitions: np.ndarray, step_id: int) -> Dict[int, float]:
+    """Return P(pred=A | current=step_id), sorted descending."""
+    denom = transitions[:, step_id].sum()
+    if denom <= 0:
+        return {}
+    scores = {
+        action: float(transitions[action, step_id] / denom)
+        for action in range(transitions.shape[0])
+        if transitions[action, step_id] > 0
+    }
+    return dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
+
+
+def _sorted_futures(transitions: np.ndarray, step_id: int) -> Dict[int, float]:
+    """Return P(next=A | current=step_id), sorted descending."""
+    scores = {
+        action: float(transitions[step_id, action])
+        for action in range(transitions.shape[0])
+        if transitions[step_id, action] > 0
+    }
+    return dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
+
+
+def _remove_redundant_edges(graph: nx.DiGraph) -> None:
+    graph_copy = copy.deepcopy(graph)
+    for current_node in graph.nodes:
+        for successor in list(graph_copy.successors(current_node)):
+            graph.remove_edge(current_node, successor)
+            if not nx.has_path(graph, current_node, successor):
+                graph.add_edge(current_node, successor)
+
+
+def _remove_cycles_with_min_transition(graph: nx.DiGraph, transitions: np.ndarray) -> None:
+    for cycle in list(nx.simple_cycles(graph)):
+        if len(cycle) < 2:
+            if graph.has_edge(cycle[0], cycle[0]):
+                graph.remove_edge(cycle[0], cycle[0])
+            continue
+
+        min_edge = None
+        min_prob = float("inf")
+        extended = cycle + [cycle[0]]
+        for src, dst in zip(extended[:-1], extended[1:]):
+            prob = float(transitions[src, dst])
+            if prob < min_prob:
+                min_prob = prob
+                min_edge = (src, dst)
+        if min_edge is not None and graph.has_edge(*min_edge):
+            graph.remove_edge(*min_edge)
 
 
 def count_based_with_threshold(
     sequences: List[List[int]],
     threshold: float = 0.5,
-    n_gt: int = None
+    n_gt: int | None = None,
 ) -> np.ndarray:
     """
-    Count-based baseline with explicit thresholding.
+    Reproduce the paper's Count-Based baseline from action sequences.
 
-    An edge j->i exists if at least `threshold` fraction of sequences
-    have j appearing before i.
-
-    Parameters
-    ----------
-    sequences : List[List[int]]
-        Training sequences using matrix indices [0=beta, 1..n=GTnodes, n+1=gamma].
-    threshold : float
-        Fraction threshold for edge existence.
-    n_gt : int
-        Number of GT nodes (for correct output size). If None, inferred.
+    The `threshold` argument is accepted for API compatibility but the released
+    baseline keeps the highest-probability predecessor(s) per node rather than
+    applying a global threshold.
     """
+    del threshold
+
     if not sequences:
-        return np.zeros((2, 2))
+        return np.zeros((2, 2), dtype=np.float32)
 
-    # Determine GT size from sequences
-    # Matrix indices: 0=beta, 1..n=GT, n+1=gamma
-    # GT node IDs are matrix_index - 1, ranging from 0 to (n_gt - 1)
-    max_id = max(max(seq) for seq in sequences)
+    if n_gt is None:
+        raise ValueError("count_based_with_threshold requires n_gt")
 
-    if n_gt is not None:
-        n_matrix = n_gt + 1  # matrix has one more for beta
-    else:
-        # Infer: max_id = n_gt (gamma) → n_gt = max_id - 1
-        # But could also be n_matrix - 1 if max_id is a step
-        n_matrix = max_id + 1
+    gt_sequences = _strip_matrix_tokens(sequences, n_gt)
+    transitions = _build_transition_matrix(gt_sequences, n_gt)
 
-    # Count occurrences
-    cooccur = np.zeros((n_matrix, n_matrix), dtype=np.float32)
-    total_occurrences = np.zeros(n_matrix, dtype=np.float32)
+    # Build the graph in the same direction as the released baseline before its final reverse:
+    # predecessor -> current step.
+    graph = nx.DiGraph()
+    graph.add_nodes_from(range(n_gt))
 
-    for seq in sequences:
-        for i in range(len(seq)):
-            if seq[i] >= n_matrix:
-                continue
-            total_occurrences[seq[i]] += 1
-            for j in range(i):
-                if seq[j] < n_matrix:
-                    cooccur[seq[i], seq[j]] += 1
-
-    # Binary adjacency (matrix indices)
-    adj = np.zeros((n_matrix, n_matrix), dtype=np.float32)
-    for i in range(n_matrix):
-        if total_occurrences[i] > 0:
-            for j in range(n_matrix):
-                fraction = cooccur[i, j] / total_occurrences[i]
-                if fraction >= threshold:
-                    adj[i, j] = 1.0
-
-    # Extract core (GT nodes only, 1..n-1) → convert to GT node IDs (0..n-2)
-    if n_gt is not None:
-        # Extract [1:n_gt+1, 1:n_gt+1] and shift to GT node IDs
-        adj_gt = adj[1:n_gt+1, 1:n_gt+1]
-        return adj_gt
-
-    return adj
-
-
-def count_based_from_paper(
-    sequences: List[List[int]]
-) -> Dict[int, List[int]]:
-    """
-    Count-based baseline as described in the paper (Ashutosh et al., 2024).
-    Matches video segments and counts co-occurrences.
-
-    Returns a dictionary: node_id -> list of precondition IDs.
-    """
-    if not sequences:
-        return {}
-
-    # Build eligibility vectors
-    eligibility = {}  # node -> list of binary vectors
-    nodes = sorted(set(node for seq in sequences for node in seq))
-
-    for seq in sequences:
-        for i, node in enumerate(seq):
-            if node not in eligibility:
-                eligibility[node] = []
-            ev = np.zeros(len(nodes))
-            for j, n in enumerate(nodes):
-                if n in seq[:i]:
-                    ev[j] = 1
-            eligibility[node].append(ev)
-
-    # Count how often each potential precondition appears with each node
-    preconditions = {}
-    node_to_idx = {n: i for i, n in enumerate(nodes)}
-
-    for node, evs in eligibility.items():
-        evs_array = np.array(evs)
-        # For each potential precondition
-        node_idx = node_to_idx.get(node, -1)
-        if node_idx < 0:
+    for action in range(n_gt):
+        preconditions = _sorted_preconditions(transitions, action)
+        if not preconditions:
             continue
+        max_score = max(preconditions.values())
+        for precondition, score in preconditions.items():
+            if score == max_score and precondition != action:
+                graph.add_edge(precondition, action)
 
-        node_preconditions = []
-        for j, other_node in enumerate(nodes):
-            if other_node == node:
-                continue
-            # Count: how often does other_node appear before node?
-            count = evs_array[:, j].sum()
-            # Also consider: how often does node appear without other_node?
-            # The paper uses a simple approach: if j appears before node in
-            # most sequences where node appears, it's a precondition
-            if count >= len(evs) * 0.5:  # threshold of 50%
-                node_preconditions.append(other_node)
+    _remove_cycles_with_min_transition(graph, transitions)
 
-        preconditions[node] = node_preconditions
+    # Match the released fallback logic for isolated nodes while preserving acyclicity.
+    for node in list(graph.nodes()):
+        if graph.in_degree(node) == 0 and node != 0:
+            for precondition in _sorted_preconditions(transitions, node):
+                graph.add_edge(precondition, node)
+                if not nx.is_directed_acyclic_graph(graph):
+                    graph.remove_edge(precondition, node)
+                else:
+                    break
 
-    return preconditions
+    for node in list(graph.nodes()):
+        if graph.out_degree(node) == 0 and node != (n_gt - 1):
+            for future in _sorted_futures(transitions, node):
+                graph.add_edge(node, future)
+                if not nx.is_directed_acyclic_graph(graph):
+                    graph.remove_edge(node, future)
+                else:
+                    break
 
+    # Boundary edges are inserted before reversing, matching the released code.
+    in_degree_zeros = [node for node in graph.nodes if graph.in_degree(node) == 0 and node not in (0, n_gt - 1)]
+    for node in in_degree_zeros:
+        graph.add_edge(0, node)
 
-def adjacency_to_networkx_count_based(
-    adj: np.ndarray,
-    threshold: float = 0.5
-) -> nx.DiGraph:
-    """
-    Convert count-based adjacency matrix to NetworkX graph.
-    """
-    binary = (adj >= threshold).astype(float)
-    G = nx.DiGraph(binary)
+    out_degree_zeros = [node for node in graph.nodes if graph.out_degree(node) == 0 and node not in (0, n_gt - 1)]
+    for node in out_degree_zeros:
+        graph.add_edge(node, n_gt - 1)
 
-    # Remove self-loops
-    for i in range(min(G.number_of_nodes(), adj.shape[0])):
-        if G.has_edge(i, i):
-            G.remove_edge(i, i)
+    graph = graph.reverse(copy=True)
+    _remove_redundant_edges(graph)
 
-    return G
+    pred_adj = np.zeros((n_gt, n_gt), dtype=np.float32)
+    for src, dst in graph.edges():
+        pred_adj[dst, src] = 1.0
+    return pred_adj
