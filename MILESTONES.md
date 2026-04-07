@@ -30,6 +30,11 @@
 - Switched `environment/container.def` to `Bootstrap: debootstrap` with Ubuntu Jammy to bypass OCI registry pulls entirely
 - Kept the milestone at `method_runs`; still an environment-only correction before the actual experiment run
 
+### [2026-04-07 09:45] - method_runs
+- The debootstrap-based retry failed because `debootstrap` is not available on the builder host
+- Repointed `environment/container.def` to `Bootstrap: localimage` using the existing `/home/user/environment/base_container.sif` so the next build can clone a local base image without network/bootstrap dependencies
+- Kept the milestone at `method_runs`; no experimental results changed
+
 ### [2026-04-07 00:00] - method_runs
 - Replaced the simplified local count-based baseline with a transition-graph implementation that matches the paper's released baseline logic closely
 - Verified on CaptainCook4D annotations that the corrected baseline reaches about 61.4 mean F1 locally, which is on the same scale as the paper's reported 60.2 baseline
