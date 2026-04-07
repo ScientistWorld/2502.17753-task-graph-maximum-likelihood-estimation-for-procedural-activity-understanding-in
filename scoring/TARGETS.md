@@ -1,18 +1,21 @@
 # Evaluation Targets
 
-## Primary: task_graph_edge_prediction_f1
-Task graph edge prediction F1 score on CaptainCook4D (24 cooking procedures).
-The model predicts directed edges between task steps from action sequences, and F1 measures
-how well the predicted prerequisite graph matches the ground truth.
-- **Metric**: f1 (higher is better)
-- **How to run**: `python method/train.py --dataset captaincook4d --repo_data_path method/repo/data/captaincook4d --output checkpoints/`
+## Experiment: `captaincook4d_task_graph`
+This workspace is currently scoped to the paper's CaptainCook4D task-graph generation benchmark, averaged over 24 cooking procedures.
 
-## Constraint: recall_above_baseline
-Recall must remain above the count-based baseline (~54%), ensuring the method
-discovers genuine edges rather than overfitting to precision by predicting too few edges.
-- **Metric**: recall (higher is better, must exceed count-based baseline)
+## Primary Target
+- **Metric**: `f1`
+- **Goal**: reproduce the paper's central claim that Direct Optimization (DO) substantially improves edge-prediction F1 over prior approaches on CaptainCook4D.
 
-## Ablation: vs_count_baseline
-F1 improvement over the count-based co-occurrence baseline demonstrates that the
-TGML loss captures graph structure beyond simple statistical patterns.
-- **Metric**: f1_gap (DO F1 minus count-based F1, higher is better)
+## Constraint Target
+- **Metric**: `std_f1`
+- **Goal**: keep run-to-run variability low, reflecting the paper's claim that DO is stable across seeds.
+
+## Required Comparison
+- **Compared methods in `scores.json`**: `count_based`, `do`
+- **Claim checked**: `do.f1` should clearly exceed `count_based.f1`, while `do.recall` should remain strong rather than winning only through conservative edge prediction.
+
+## How To Run
+- `bash scripts/baseline.sh`
+- `bash scripts/method.sh`
+- `python validate.py --compare`

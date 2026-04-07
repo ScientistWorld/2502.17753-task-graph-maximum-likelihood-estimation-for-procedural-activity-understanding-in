@@ -12,6 +12,7 @@
 - The DO training loop no longer uses ground-truth graph F1 for checkpoint selection; it now follows the paper's weakly supervised sequence-accuracy stopping rule.
 - The local count-based baseline now follows the released transition-graph logic instead of a simplified co-occurrence heuristic.
 - A local CPU check on CaptainCook4D shows the corrected count-based baseline reaches about 67.1 precision, 56.8 recall, and 61.4 F1, which is close to the paper's 66.0 / 55.4 / 60.2.
+- The evaluator now scores the Count-Based baseline correctly instead of post-processing its already-final adjacency a second time.
 
 ## Results
 
@@ -19,6 +20,7 @@
 - Previously saved CaptainCook4D numbers in `scoring/scores.json` are not treated as valid for the corrected reproduction because the old training loop used ground-truth graph F1 for model selection.
 - Paper reference target for the core claim: CaptainCook4D DO F1 = 87.8, compared against Count-Based F1 = 60.2.
 - Local pre-submission sanity check for the corrected baseline: CaptainCook4D Count-Based F1 ≈ 61.4 from direct execution on the bundled annotations and graphs.
+- `python validate.py --compare` now passes locally with fresh baseline scores written to `scoring/scores.json`.
 
 ## Remaining
 
@@ -27,6 +29,7 @@
 - Compare the corrected DO result against the count-based baseline and determine whether the core claim is supported.
 - If the CaptainCook4D result supports the claim, update milestone and wrap-up docs; otherwise iterate on any remaining implementation issues.
 - The next submission is configured to run the corrected count-based baseline and corrected DO method in one clean job, with stale `scores.json` and old DO outputs removed before execution.
+- CaptainCook4D is still the only packaged experiment for this turn; downstream tasks and extra datasets remain out of scope for the pending submission.
 
 ## Issues
 
@@ -35,7 +38,9 @@
 - `scripts/evaluate.sh` and `eval/evaluator.py` could fall back to the count-based baseline while labeling the result as `do`.
 - `method/train.py` used ground-truth graph F1 to choose the best checkpoint, which leaks supervision and invalidates any milestone above `method_runs` from that run.
 - The previous local count-based implementation was too simplified relative to the paper's released transition-graph baseline, making the baseline comparison less trustworthy before this turn's fix.
+- `eval/evaluator.py` had been post-processing the Count-Based baseline output a second time, which inverted the useful prediction structure and caused an invalid 0.0-F1 result until corrected.
 - Some workspace files such as `data/loader.py` live under ignored paths, so the compute run depends on the working tree rather than only committed files.
+- The local login-node Python environment does not currently include all package dependencies, so full end-to-end verification must come from the submitted containerized job rather than this shell alone.
 
 ## Deviations from Paper
 

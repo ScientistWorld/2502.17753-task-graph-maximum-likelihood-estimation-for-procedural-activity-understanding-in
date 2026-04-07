@@ -30,13 +30,13 @@ For mistake detection: F1 score on detecting correct vs. mistake actions (averag
 
 ## Evaluation Protocol
 
-1. **Dataset**: The paper evaluates on CaptainCook4D (24 cooking procedures), EgoPER (5 cooking tasks), and EgoProceL (13 procedures from CMU-MMAC, EGTEA Gaze+, and EPIC-Tent). Each dataset has ground truth task graphs and annotated action sequences.
+1. **Dataset**: The paper evaluates task graph generation on CaptainCook4D (24 cooking procedures), EgoPER (5 procedures), and EgoProceL (13 procedures). Each procedure has annotated action sequences and a ground-truth task graph used only for evaluation.
 
-2. **Train/Test split**: For task graph generation, sequences are split per procedure — each procedure has its own task graph. The split ensures approximately 50% of scenarios appear in training and 50% in testing.
+2. **Per-procedure learning**: Models are learned separately for each procedure/task graph from that procedure's action sequences. The final reported score is the mean across procedures in the dataset.
 
-3. **Training**: Models are trained per procedure on training sequences only. No graph supervision is used (weakly supervised setting — only sequence labels are available).
+3. **Weak supervision**: During training, models observe only action sequences. Ground-truth graphs are not used for optimization.
 
-4. **Evaluation**: After training, the predicted adjacency matrix is thresholded (threshold = 1/n where n is the number of key-steps), then post-processed (transitive reduction, cycle removal, adding START/END edges) to produce a binary DAG. The binary DAG is compared against ground truth using precision, recall, and F1.
+4. **Evaluation**: After learning, the predicted adjacency matrix is thresholded at `1/n`, post-processed into a valid DAG, and then compared against the ground-truth graph with precision, recall, and F1 over directed edges.
 
 5. **Reporting**: Results are averaged across all procedures in the dataset. The paper reports mean and standard deviation over 5 random seeds for their method, and single numbers for baselines (deterministic methods).
 

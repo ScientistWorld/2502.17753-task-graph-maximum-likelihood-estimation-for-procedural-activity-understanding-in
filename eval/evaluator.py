@@ -128,27 +128,15 @@ def evaluate_count_based(
     n_gt = gt_adj.shape[0]
     pred_adj = count_based_with_threshold(sequences, threshold=threshold, n_gt=n_gt)
 
-    # Resize to match GT
-    pred_resized = np.zeros((n_gt, n_gt), dtype=np.float32)
-    min_n = min(pred_adj.shape[0], n_gt)
-    pred_resized[:min_n, :min_n] = pred_adj[:min_n, :min_n]
+    if pred_adj.shape != gt_adj.shape:
+        pred_resized = np.zeros((n_gt, n_gt), dtype=np.float32)
+        min_n = min(pred_adj.shape[0], n_gt)
+        pred_resized[:min_n, :min_n] = pred_adj[:min_n, :min_n]
+        pred_adj = pred_resized
 
-    # Post-process
-    GP = nx.DiGraph(pred_resized)
-
-    id_start = 0
-    id_end = n_gt - 1
-
-    add_boundary_edges(GP, id_start=id_start, id_end=id_end)
-
-    delete_redundant_edges(GP)
-    delete_cycles(GP)
-
-    pred_final = np.zeros((n_gt, n_gt), dtype=np.float32)
-    for u, v in GP.edges():
-        pred_final[v, u] = 1.0
-
-    return compute_precision_recall_f1(gt_adj, pred_final)
+    # The baseline implementation already matches the released code's boundary
+    # handling, cycle removal, transitive reduction, and adjacency orientation.
+    return compute_precision_recall_f1(gt_adj, pred_adj)
 
 
 def evaluate_all_scenarios(
