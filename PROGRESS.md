@@ -33,6 +33,7 @@
 - The environment build must be retried after switching `environment/container.def` from `Bootstrap: library` to `Bootstrap: docker`, because this cluster has no default Apptainer library remote configured.
 - The Docker-backed retry then failed on Docker Hub anonymous pull limits, so the container base was moved again to a non-Docker-Hub public registry.
 - The Quay retry also failed before build execution with malformed registry metadata, so the base image was moved again to Microsoft Container Registry (`mcr.microsoft.com`) for the next attempt.
+- The MCR retry produced the same malformed OCI metadata error, so the recipe now avoids OCI registries entirely by switching to `Bootstrap: debootstrap` for Ubuntu Jammy.
 
 ## Issues
 

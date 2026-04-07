@@ -2,8 +2,9 @@
 #
 # Build:  apptainer build container.sif container.def
 #
-Bootstrap: docker
-From: mcr.microsoft.com/devcontainers/base:jammy
+Bootstrap: debootstrap
+OSVersion: jammy
+MirrorURL: http://archive.ubuntu.com/ubuntu/
 
 %post
     apt-get update && apt-get install -y --no-install-recommends \

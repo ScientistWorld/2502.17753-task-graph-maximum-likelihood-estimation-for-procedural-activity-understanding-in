@@ -25,6 +25,11 @@
 - Switched the Docker bootstrap image to `mcr.microsoft.com/devcontainers/base:jammy` for another public Ubuntu 22.04-compatible source
 - Kept the milestone at `method_runs`; no experiment outputs changed
 
+### [2026-04-07 09:42] - method_runs
+- The MCR-based retry hit the same malformed OCI metadata failure, indicating a broader OCI-registry fetch problem on the builder
+- Switched `environment/container.def` to `Bootstrap: debootstrap` with Ubuntu Jammy to bypass OCI registry pulls entirely
+- Kept the milestone at `method_runs`; still an environment-only correction before the actual experiment run
+
 ### [2026-04-07 00:00] - method_runs
 - Replaced the simplified local count-based baseline with a transition-graph implementation that matches the paper's released baseline logic closely
 - Verified on CaptainCook4D annotations that the corrected baseline reaches about 61.4 mean F1 locally, which is on the same scale as the paper's reported 60.2 baseline
