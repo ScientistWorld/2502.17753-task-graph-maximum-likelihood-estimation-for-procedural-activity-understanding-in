@@ -10,6 +10,11 @@
 - Tightened `TARGETS.md`, `CHECKLIST.md`, and briefing docs so they reflect the actual scoped CaptainCook4D experiment that the next submission will score
 - Kept the milestone at `method_runs` because fresh DO results from the corrected pipeline are still pending the submitted job
 
+### [2026-04-07 09:36] - method_runs
+- The first submit attempt failed during container build because `environment/container.def` used `Bootstrap: library`
+- Switched the container base to `Bootstrap: docker` with the same `ubuntu:22.04` image so Apptainer does not depend on an unavailable library remote
+- Kept the milestone at `method_runs`; no experiment results changed, this is only an environment fix before resubmission
+
 ### [2026-04-07 00:00] - method_runs
 - Replaced the simplified local count-based baseline with a transition-graph implementation that matches the paper's released baseline logic closely
 - Verified on CaptainCook4D annotations that the corrected baseline reaches about 61.4 mean F1 locally, which is on the same scale as the paper's reported 60.2 baseline

@@ -2,7 +2,7 @@
 #
 # Build:  apptainer build container.sif container.def
 #
-Bootstrap: library
+Bootstrap: docker
 From: ubuntu:22.04
 
 %post

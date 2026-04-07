@@ -30,6 +30,7 @@
 - If the CaptainCook4D result supports the claim, update milestone and wrap-up docs; otherwise iterate on any remaining implementation issues.
 - The next submission is configured to run the corrected count-based baseline and corrected DO method in one clean job, with stale `scores.json` and old DO outputs removed before execution.
 - CaptainCook4D is still the only packaged experiment for this turn; downstream tasks and extra datasets remain out of scope for the pending submission.
+- The environment build must be retried after switching `environment/container.def` from `Bootstrap: library` to `Bootstrap: docker`, because this cluster has no default Apptainer library remote configured.
 
 ## Issues
 
