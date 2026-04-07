@@ -7,18 +7,12 @@
 Bootstrap: scratch
 
 %files
-    /usr/bin/bash /bin/bash
-    /usr/bin/bash /bin/sh
-    /usr/bin/env /usr/bin/env
-    /usr/bin/python3 /usr/bin/python3
-    /usr/bin/rm /usr/bin/rm
-    /usr/bin/mkdir /usr/bin/mkdir
-    /usr/lib/python3.12 /usr/lib/python3.12
-    /usr/lib/python3/dist-packages /usr/lib/python3/dist-packages
-    /usr/local/lib/python3.12/dist-packages /usr/local/lib/python3.12/dist-packages
-    /usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu
-    /lib/x86_64-linux-gnu /lib/x86_64-linux-gnu
-    /lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
+    /bin /bin
+    /usr/bin /usr/bin
+    /usr/lib /usr/lib
+    /usr/local/lib /usr/local/lib
+    /lib /lib
+    /lib64 /lib64
     /etc/ssl/certs /etc/ssl/certs
 
 %post

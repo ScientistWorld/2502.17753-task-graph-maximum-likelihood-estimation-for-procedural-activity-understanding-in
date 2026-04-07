@@ -40,6 +40,7 @@
 - The host-path localimage retry progressed into unpacking the cached `.sif` but then failed while changing ownership inside the extracted rootfs (`set_attributes ... Invalid argument`), which points to a fakeroot/chown incompatibility rather than a missing file.
 - The next retry replaces bootstrap unpacking entirely with a `Bootstrap: scratch` recipe that copies only the required host runtime pieces through `%files`, avoiding OCI pulls, `debootstrap`, and localimage ownership rewrites.
 - The first scratch retry reached `%files` copying but failed because the builder host does not provide `/usr/local/bin/uv`, so the environment can not assume `uv` exists outside the runtime node.
+- The second scratch retry then failed on `/usr/lib/python3.12`, confirming the builder host also does not match the login node's Python minor-version layout.
 
 ## Issues
 
@@ -53,6 +54,7 @@
 - The local login-node Python environment does not currently include all package dependencies, so full end-to-end verification must come from the submitted containerized job rather than this shell alone.
 - Repeated Apptainer builder failures have all happened before `setup.sh` runs, so the current blocker is the base container recipe rather than Python package installation.
 - The builder host and the login node do not expose the exact same tool paths, so `%files` entries must only reference binaries guaranteed to exist on the builder itself.
+- The scratch recipe therefore has to use broad, version-agnostic system directories (`/usr/bin`, `/usr/lib`, `/lib`, `/lib64`) instead of login-node-specific paths like `/usr/lib/python3.12`.
 
 ## Deviations from Paper
 

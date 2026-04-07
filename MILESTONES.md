@@ -55,6 +55,11 @@
 - Removed `uv` from the scratch image recipe and switched `environment/setup.sh` to `python3 -m pip`, which is available from the copied system Python packages
 - Kept the milestone at `method_runs`; no experiment outputs changed
 
+### [2026-04-07 10:12] - method_runs
+- The next scratch retry failed on the login-node-specific path `/usr/lib/python3.12`, so the builder host also differs in Python minor-version layout
+- Replaced the version-pinned `%files` entries with broad system directories (`/bin`, `/usr/bin`, `/usr/lib`, `/usr/local/lib`, `/lib`, `/lib64`) to make the scratch recipe builder-agnostic
+- Kept the milestone at `method_runs`; still an environment-only correction before the actual CaptainCook4D run
+
 ### [2026-04-07 00:00] - method_runs
 - Replaced the simplified local count-based baseline with a transition-graph implementation that matches the paper's released baseline logic closely
 - Verified on CaptainCook4D annotations that the corrected baseline reaches about 61.4 mean F1 locally, which is on the same scale as the paper's reported 60.2 baseline
