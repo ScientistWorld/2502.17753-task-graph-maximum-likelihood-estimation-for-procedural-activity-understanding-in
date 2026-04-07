@@ -28,7 +28,7 @@
 - Regenerate `checkpoints/do_captaincook4d/*.json` and `scoring/scores.json` from the corrected pipeline.
 - Compare the corrected DO result against the count-based baseline and determine whether the core claim is supported.
 - If the CaptainCook4D result supports the claim, update milestone and wrap-up docs; otherwise iterate on any remaining implementation issues.
-- The next submission is configured to run the corrected count-based baseline and corrected DO method in one clean job, with stale `scores.json` and old DO outputs removed before execution.
+- The planned submission would have run the corrected count-based baseline and corrected DO method in one clean job, with stale `scores.json` and old DO outputs removed before execution.
 - CaptainCook4D is still the only packaged experiment for this turn; downstream tasks and extra datasets remain out of scope for the pending submission.
 - The environment build must be retried after switching `environment/container.def` from `Bootstrap: library` to `Bootstrap: docker`, because this cluster has no default Apptainer library remote configured.
 - The Docker-backed retry then failed on Docker Hub anonymous pull limits, so the container base was moved again to a non-Docker-Hub public registry.
@@ -55,6 +55,7 @@
 - Repeated Apptainer builder failures have all happened before `setup.sh` runs, so the current blocker is the base container recipe rather than Python package installation.
 - The builder host and the login node do not expose the exact same tool paths, so `%files` entries must only reference binaries guaranteed to exist on the builder itself.
 - The scratch recipe therefore has to use broad, version-agnostic system directories (`/usr/bin`, `/usr/lib`, `/lib`, `/lib64`) instead of login-node-specific paths like `/usr/lib/python3.12`.
+- The system stopped the paper after 10 consecutive environment build failures, so no further compute-side iteration is possible in this workspace.
 
 ## Deviations from Paper
 

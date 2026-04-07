@@ -60,6 +60,11 @@
 - Replaced the version-pinned `%files` entries with broad system directories (`/bin`, `/usr/bin`, `/usr/lib`, `/usr/local/lib`, `/lib`, `/lib64`) to make the scratch recipe builder-agnostic
 - Kept the milestone at `method_runs`; still an environment-only correction before the actual CaptainCook4D run
 
+### [2026-04-07 10:15] - method_runs
+- The system stopped the paper after 10 consecutive container or setup build failures, before any corrected CaptainCook4D DO job could be submitted
+- Highest honest milestone remains `method_runs`: the paper's algorithm was audited and corrected locally, and the count-based baseline was validated locally, but the compute-side reproduction never ran
+- Marked the workspace final with `action: done` because no further submissions will be accepted
+
 ### [2026-04-07 00:00] - method_runs
 - Replaced the simplified local count-based baseline with a transition-graph implementation that matches the paper's released baseline logic closely
 - Verified on CaptainCook4D annotations that the corrected baseline reaches about 61.4 mean F1 locally, which is on the same scale as the paper's reported 60.2 baseline
