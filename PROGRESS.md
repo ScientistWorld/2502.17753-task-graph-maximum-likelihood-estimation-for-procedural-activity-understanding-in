@@ -39,6 +39,7 @@
 - The relative localimage path was then resolved against the scheduler's infrastructure checkout rather than the paper workspace, so `From:` is now set to the host-side workspace path reported by the build logs.
 - The host-path localimage retry progressed into unpacking the cached `.sif` but then failed while changing ownership inside the extracted rootfs (`set_attributes ... Invalid argument`), which points to a fakeroot/chown incompatibility rather than a missing file.
 - The next retry replaces bootstrap unpacking entirely with a `Bootstrap: scratch` recipe that copies only the required host runtime pieces through `%files`, avoiding OCI pulls, `debootstrap`, and localimage ownership rewrites.
+- The first scratch retry reached `%files` copying but failed because the builder host does not provide `/usr/local/bin/uv`, so the environment can not assume `uv` exists outside the runtime node.
 
 ## Issues
 
@@ -51,6 +52,7 @@
 - Some workspace files such as `data/loader.py` live under ignored paths, so the compute run depends on the working tree rather than only committed files.
 - The local login-node Python environment does not currently include all package dependencies, so full end-to-end verification must come from the submitted containerized job rather than this shell alone.
 - Repeated Apptainer builder failures have all happened before `setup.sh` runs, so the current blocker is the base container recipe rather than Python package installation.
+- The builder host and the login node do not expose the exact same tool paths, so `%files` entries must only reference binaries guaranteed to exist on the builder itself.
 
 ## Deviations from Paper
 

@@ -13,7 +13,6 @@ Bootstrap: scratch
     /usr/bin/python3 /usr/bin/python3
     /usr/bin/rm /usr/bin/rm
     /usr/bin/mkdir /usr/bin/mkdir
-    /usr/local/bin/uv /usr/local/bin/uv
     /usr/lib/python3.12 /usr/lib/python3.12
     /usr/lib/python3/dist-packages /usr/lib/python3/dist-packages
     /usr/local/lib/python3.12/dist-packages /usr/local/lib/python3.12/dist-packages
@@ -29,6 +28,6 @@ Bootstrap: scratch
 
 %environment
     export HOME=/home/user
-    export PATH=/usr/local/bin:/usr/bin:/bin
+    export PATH=/usr/bin:/bin
     export PYTHONUNBUFFERED=1
     export PYTHONPATH=/home/user:$PYTHONPATH
