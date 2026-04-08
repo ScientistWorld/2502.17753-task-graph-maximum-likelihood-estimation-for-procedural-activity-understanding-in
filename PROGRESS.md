@@ -40,6 +40,7 @@
 - The latest container-build failure came from recursively copying `environment/runtime/etc/ssl/certs`, whose host-side certificate tree contains dangling symlinks; the next retry removes that `%files` entry entirely.
 - The subsequent `localimage` retry failed during rootfs ownership rewriting while unpacking `base_container.sif`, so the next retry switches to a plain `python:3.12` Docker bootstrap instead of reusing any local SIF.
 - The mounted workspace already contains the needed Python packages in `/home/user/.local/lib/python3.12/site-packages`, so a stock Python 3.12 base should be enough for the scoped CPU run.
+- The first `python:3.12` retry failed before build-time execution with malformed OCI registry metadata (`invalid character 's' after top-level value`), which points to an external registry/network response rather than a local recipe problem.
 
 ## Issues
 

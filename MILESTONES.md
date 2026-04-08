@@ -33,6 +33,11 @@
 - Replaced the local SIF bootstrap with `Bootstrap: docker` from `python:3.12`, keeping the environment minimal and relying on the already-populated `/home/user/.local/lib/python3.12/site-packages` for paper dependencies
 - Kept the milestone at `method_runs`; no new experiment result exists yet
 
+### [2026-04-08 23:25] - method_runs
+- The first `python:3.12` retry failed while fetching OCI metadata, with `invalid character 's' after top-level value`, which is consistent with a transient registry/network response rather than a workspace-side recipe error
+- Keeping the `python:3.12` environment unchanged for the next retry because the failure happened before any local build step or setup execution
+- Kept the milestone at `method_runs`; the DO experiment still has not been submitted successfully
+
 ### [2026-04-08 00:00] - method_runs
 - Re-opened the workspace and revalidated locally that the packaged CaptainCook4D Count-Based baseline still reaches about 61.4 mean F1
 - Simplified the current `Bootstrap: scratch` fallback so `environment/container.def` is OS-only and all Python package installation happens in `environment/setup.sh` with `--break-system-packages`

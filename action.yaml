@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: method_runs
-notes: "CPU-only end-to-end CaptainCook4D submission for the corrected DO/TGML pipeline, now using a plain python:3.12 container plus mounted workspace packages."
+notes: "Retry the same CPU-only CaptainCook4D DO/TGML submission with the unchanged python:3.12 container after a transient OCI registry metadata failure."
