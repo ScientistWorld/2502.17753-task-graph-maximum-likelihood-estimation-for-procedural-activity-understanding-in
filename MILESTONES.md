@@ -23,6 +23,11 @@
 - Removed `%post` entirely, since it was only creating directories and the current container contract does not need build-time shell execution
 - Kept the milestone at `method_runs`; the correction is still environment-only and the DO experiment has not run yet
 
+### [2026-04-08 23:15] - method_runs
+- The next retry showed that the container build itself now succeeds, but the scheduler still fails in the separate `setup.sh` phase because the scratch image is too minimal for Apptainer's fakeroot helper
+- Replaced the scratch recipe with a `Bootstrap: localimage` definition that reuses the existing `environment/base_container.sif`, while keeping `setup.sh` as a no-op
+- Kept the milestone at `method_runs`; this is still an environment-only fix before the pending CaptainCook4D DO submission
+
 ### [2026-04-08 00:00] - method_runs
 - Re-opened the workspace and revalidated locally that the packaged CaptainCook4D Count-Based baseline still reaches about 61.4 mean F1
 - Simplified the current `Bootstrap: scratch` fallback so `environment/container.def` is OS-only and all Python package installation happens in `environment/setup.sh` with `--break-system-packages`
