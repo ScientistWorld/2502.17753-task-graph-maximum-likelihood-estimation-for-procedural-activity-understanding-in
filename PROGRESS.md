@@ -17,7 +17,7 @@
 - `environment/setup.sh` now acts as a pure sanity check rather than trying to download packages at build time.
 - `scripts/method.sh` is now device-configurable and `scripts/run.sh` defaults the planned submission to CPU execution.
 - A new local DO smoke test on the CaptainCook4D `Coffee` scenario completed successfully for 5 CPU epochs, confirming that the corrected training path still executes after the recent environment changes.
-- `environment/container.def` now references `/home/user/environment/runtime/...` for the vendored scratch runtime instead of the expired `/home/user/scratch/AgentWorkspaces/...` path that broke the previous build.
+- `environment/container.def` now references the builder-visible host workspace path `/home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/...` for the vendored scratch runtime instead of the older stale path from previous scheduler attempts.
 
 ## Results
 
@@ -37,6 +37,7 @@
 - The next planned submission runs the corrected count-based baseline and corrected DO method in one clean CPU job, with stale `scores.json` and old DO outputs removed before execution.
 - CaptainCook4D is still the only packaged experiment for this turn; downstream tasks and extra datasets remain out of scope for the pending submission.
 - The current submission therefore retries the scratch recipe with a smaller risk surface: no pip work in `container.def`, no dependency downloads in `setup.sh`, and an explicit dependency on the mounted workspace user site for Python packages.
+- The latest container-build failure came from recursively copying `environment/runtime/etc/ssl/certs`, whose host-side certificate tree contains dangling symlinks; the next retry removes that `%files` entry entirely.
 
 ## Issues
 

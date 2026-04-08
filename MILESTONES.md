@@ -10,8 +10,13 @@
 - Added runtime sanity checks to `scripts/run.sh` and made `scripts/method.sh` device-configurable instead of forcing CUDA
 - Revalidated locally that `environment/setup.sh` succeeds and that the Count-Based baseline still writes a clean `scoring/scores.json` with about 61.4 mean F1 on CaptainCook4D
 - Confirmed with a new local DO smoke test on the CaptainCook4D `Coffee` scenario that the corrected training path runs end-to-end on CPU for 5 epochs and improves sequence accuracy from 0.405 to 0.587
-- Fixed `environment/container.def` again so the scratch `%files` entries point to the live workspace runtime at `/home/user/environment/runtime/...` instead of the stale host-specific path from an earlier scheduler attempt
+- Fixed `environment/container.def` again so the scratch `%files` entries point to the live builder-visible workspace runtime under `/home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/...`
 - Kept the milestone at `method_runs`; the corrected DO run still needs to finish on the scheduler before `core_claim` can be claimed
+
+### [2026-04-08 23:05] - method_runs
+- The next scheduler retry failed before `setup.sh` because `%files` tried to copy `environment/runtime/etc/ssl/certs`, and that vendored certificate tree contains dangling symlinks on the builder host
+- Removed the `/etc/ssl/certs` copy from the scratch recipe, since the current scoped CPU submission does not download anything during build or runtime
+- Kept the milestone at `method_runs`; this is still an environment-only correction before the pending CaptainCook4D DO submission
 
 ### [2026-04-08 00:00] - method_runs
 - Re-opened the workspace and revalidated locally that the packaged CaptainCook4D Count-Based baseline still reaches about 61.4 mean F1
