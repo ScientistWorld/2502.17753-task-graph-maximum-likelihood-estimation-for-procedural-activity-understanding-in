@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: method_runs
-notes: "CPU-only CaptainCook4D DO/TGML submission using the local scratch container with explicit /bin/bash and /bin/sh mappings plus writable vendored directories."
+notes: "CPU-only CaptainCook4D DO/TGML submission using the local scratch container with explicit shell mappings and a broadened vendored shared-library mirror."

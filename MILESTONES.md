@@ -58,6 +58,11 @@
 - Updated `environment/container.def` so `/bin/bash` and `/bin/sh` are copied explicitly, while keeping the writable directory copies for `/usr/bin` and the vendored libraries
 - Kept the milestone at `method_runs`; this remains an environment-only correction
 
+### [2026-04-08 23:50] - method_runs
+- The setup phase returned to the earlier fakeroot shared-library failure even after the explicit shell mapping
+- Expanded the vendored runtime substantially by mirroring most host `.so*` files from `usr/lib/x86_64-linux-gnu` and `lib/x86_64-linux-gnu` into `environment/runtime`, so the next scratch-image retry exposes a much broader system-library surface
+- Kept the milestone at `method_runs`; still no compute job has launched
+
 ### [2026-04-08 00:00] - method_runs
 - Re-opened the workspace and revalidated locally that the packaged CaptainCook4D Count-Based baseline still reaches about 61.4 mean F1
 - Simplified the current `Bootstrap: scratch` fallback so `environment/container.def` is OS-only and all Python package installation happens in `environment/setup.sh` with `--break-system-packages`
