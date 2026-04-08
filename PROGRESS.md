@@ -38,6 +38,7 @@
 - CaptainCook4D is still the only packaged experiment for this turn; downstream tasks and extra datasets remain out of scope for the pending submission.
 - The current submission therefore retries the scratch recipe with a smaller risk surface: no pip work in `container.def`, no dependency downloads in `setup.sh`, and an explicit dependency on the mounted workspace user site for Python packages.
 - The latest container-build failure came from recursively copying `environment/runtime/etc/ssl/certs`, whose host-side certificate tree contains dangling symlinks; the next retry removes that `%files` entry entirely.
+- The subsequent container-build failure happened after `%files` succeeded: Apptainer could not run `%post` under fakeroot because the scratch image lacked whatever shared-library path its injected fakeroot helper expected, so the next retry removes `%post` entirely.
 
 ## Issues
 

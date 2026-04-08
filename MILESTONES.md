@@ -18,6 +18,11 @@
 - Removed the `/etc/ssl/certs` copy from the scratch recipe, since the current scoped CPU submission does not download anything during build or runtime
 - Kept the milestone at `method_runs`; this is still an environment-only correction before the pending CaptainCook4D DO submission
 
+### [2026-04-08 23:10] - method_runs
+- The following retry got through `%files` but failed when Apptainer tried to run `%post` under fakeroot inside the scratch image
+- Removed `%post` entirely, since it was only creating directories and the current container contract does not need build-time shell execution
+- Kept the milestone at `method_runs`; the correction is still environment-only and the DO experiment has not run yet
+
 ### [2026-04-08 00:00] - method_runs
 - Re-opened the workspace and revalidated locally that the packaged CaptainCook4D Count-Based baseline still reaches about 61.4 mean F1
 - Simplified the current `Bootstrap: scratch` fallback so `environment/container.def` is OS-only and all Python package installation happens in `environment/setup.sh` with `--break-system-packages`
