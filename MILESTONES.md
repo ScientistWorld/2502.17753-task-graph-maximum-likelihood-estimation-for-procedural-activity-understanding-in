@@ -63,6 +63,11 @@
 - Expanded the vendored runtime substantially by mirroring most host `.so*` files from `usr/lib/x86_64-linux-gnu` and `lib/x86_64-linux-gnu` into `environment/runtime`, so the next scratch-image retry exposes a much broader system-library surface
 - Kept the milestone at `method_runs`; still no compute job has launched
 
+### [2026-04-08 23:55] - method_runs
+- The system stopped the paper after 10 consecutive container/setup failures
+- No corrected CaptainCook4D DO job was ever submitted successfully to compute, so the highest honest milestone remains `method_runs`
+- Marked the workspace final with `action: done`
+
 ### [2026-04-08 00:00] - method_runs
 - Re-opened the workspace and revalidated locally that the packaged CaptainCook4D Count-Based baseline still reaches about 61.4 mean F1
 - Simplified the current `Bootstrap: scratch` fallback so `environment/container.def` is OS-only and all Python package installation happens in `environment/setup.sh` with `--break-system-packages`

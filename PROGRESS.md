@@ -46,6 +46,7 @@
 - That directory-based retry progressed past the previous shared-library complaint but then failed because the copied slim `/bin` directory lacked `/bin/sh`; the vendored runtime now restores `sh -> bash` directly inside `environment/runtime/bin`.
 - Because the setup log still reported `open /bin/sh: no such file or directory`, the next retry makes `/bin/bash` and `/bin/sh` explicit `%files` mappings in `container.def` instead of relying on directory-copy symlink preservation.
 - The shared-library failure persisted after the shell-path fix, so the vendored runtime was broadened from a hand-picked subset to a near-complete mirror of host `.so*` files under `usr/lib/x86_64-linux-gnu` and `lib/x86_64-linux-gnu`.
+- No further work remains in this session: the system has stopped the paper after 10 consecutive environment failures.
 
 ## Issues
 
