@@ -16,6 +16,7 @@
 - That retry then failed as well because the builder host also does not expose `/usr/lib/python3.12`, so the next environment revision vendors the Python runtime under `environment/runtime/` and copies it from the workspace instead of from host system paths
 - That vendored-runtime retry then failed because `%files` resolved `environment/runtime/...` relative to the scheduler infrastructure checkout instead of the paper workspace, so the next environment revision uses the host-side absolute workspace path from the build logs for every vendored runtime source
 - After the vendored runtime started copying, the next build failed because `sitecustomize.py` inside `python3.12` was still an absolute symlink to `/etc/python3.12/sitecustomize.py`, so the next environment revision replaces that symlink with a real file inside the vendored stdlib
+- The scheduler then stopped the paper after 10 consecutive environment build failures, so no corrected CaptainCook4D DO run could be submitted
 - Kept the milestone at `method_runs`; this turn prepares a fresh end-to-end baseline+DO submission, but no new DO result exists yet
 
 ### [2026-04-07 09:31] - method_runs
@@ -103,3 +104,5 @@
 - Recompiled the patched Python modules and verified the loader now emits `[beta, START, ... , END, gamma]` sequences on CaptainCook4D
 
 ## Stop Justification
+- The system stopped this paper after 10 consecutive container or setup build failures.
+- No compute job with the corrected DO implementation was ever submitted successfully, so the highest honest milestone remains `method_runs`.

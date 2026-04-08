@@ -71,6 +71,7 @@
 - More broadly, the builder host does not guarantee any of this login node's Python filesystem layout, so the remaining robust option is to vendor the needed runtime files inside the workspace and copy from there.
 - The builder also does not resolve paper-relative `%files` sources reliably, so vendored workspace assets have to be referenced by their host-side absolute workspace paths.
 - The system stopped the paper after 10 consecutive environment build failures, so no further compute-side iteration is possible in this workspace.
+- The system stopped the paper after 10 consecutive environment build failures, so no further compute-side iteration is possible in this workspace.
 - A local login-node attempt to install the missing Python packages with `pip --break-system-packages` failed with `No space left on device`, so local package augmentation is not a reliable fallback.
 
 ## Deviations from Paper
