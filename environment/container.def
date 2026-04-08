@@ -38,6 +38,7 @@ Bootstrap: scratch
     /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libacl.so.1 /lib/x86_64-linux-gnu/libacl.so.1
     /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libattr.so.1 /lib/x86_64-linux-gnu/libattr.so.1
     /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/etc/python3.12 /etc/python3.12
     /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/etc/ssl/certs /etc/ssl/certs
 
 %post

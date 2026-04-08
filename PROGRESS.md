@@ -51,6 +51,7 @@
 - The next retry then failed because the builder host does not expose `/usr/lib/python3`, only the versioned stdlib path, so the container now copies only `/usr/lib/python3.12` and `environment/setup.sh` bootstraps `pip` via `python3 -m ensurepip --upgrade` instead of depending on distro-packaged `pip` files.
 - The following retry then failed because the builder host also does not expose `/usr/lib/python3.12`, which confirms the login node and builder use different Python layouts entirely; the scratch recipe now vendors a full Python runtime bundle under `environment/runtime/` and copies it from the workspace instead of from host system paths.
 - The next retry showed that `%files` relative paths are resolved from the scheduler infrastructure checkout rather than the paper workspace, so the vendored runtime source paths now use the host-side absolute workspace path from the build logs.
+- Once the vendored runtime was copied successfully, the build failed on `python3.12/sitecustomize.py` because that stdlib entry is a symlink to `/etc/python3.12/sitecustomize.py`; the vendored runtime now includes `/etc/python3.12` as well so the symlink resolves inside the container.
 
 ## Issues
 

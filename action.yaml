@@ -5,4 +5,4 @@ action: submit
 gpus: 1
 test: false
 milestone: method_runs
-notes: "Retry CaptainCook4D baseline plus corrected DO run after switching vendored runtime %files entries to the host-side absolute workspace path from the build logs; previous retry failed because relative environment/runtime paths were resolved outside the paper workspace."
+notes: "Retry CaptainCook4D baseline plus corrected DO run after vendoring /etc/python3.12 alongside the workspace Python runtime; previous retry failed because /usr/lib/python3.12/sitecustomize.py points to /etc/python3.12/sitecustomize.py inside the container."
