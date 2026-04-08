@@ -43,6 +43,7 @@
 - The first `python:3.12` retry failed before build-time execution with malformed OCI registry metadata (`invalid character 's' after top-level value`), which points to an external registry/network response rather than a local recipe problem.
 - After the registry path failed twice with the same malformed-metadata response, the environment was moved back to the local scratch recipe and the vendored runtime was expanded with additional shared libraries (`libcap`, `libaudit`, `libseccomp`, `libpam`, `libcrypt`, `libresolv`, `libnsl`) aimed at satisfying Apptainer's fakeroot helper during `setup.sh`.
 - Inspecting the scheduler's setup wrapper showed that the immediate trigger for fakeroot is a non-writable `/usr/bin` inside the image, so the next retry changes the scratch recipe to copy writable slim directories wholesale rather than individual files.
+- That directory-based retry progressed past the previous shared-library complaint but then failed because the copied slim `/bin` directory lacked `/bin/sh`; the vendored runtime now restores `sh -> bash` directly inside `environment/runtime/bin`.
 
 ## Issues
 

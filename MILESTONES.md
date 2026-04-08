@@ -48,6 +48,11 @@
 - Reworked the scratch recipe to copy writable slim directories (`/bin`, `/usr/bin`, vendored library directories) wholesale instead of copying individual files into root-owned target directories
 - Kept the milestone at `method_runs`; this is still an environment-only retry before any new experiment run
 
+### [2026-04-08 23:40] - method_runs
+- The rewritten scratch image got past the previous shared-library failure but then failed because `/bin/sh` was missing from the copied slim `/bin` directory
+- Restored `sh -> bash` inside `environment/runtime/bin` so the next copied image contains a valid `/bin/sh`
+- Kept the milestone at `method_runs`; still no experiment has launched
+
 ### [2026-04-08 00:00] - method_runs
 - Re-opened the workspace and revalidated locally that the packaged CaptainCook4D Count-Based baseline still reaches about 61.4 mean F1
 - Simplified the current `Bootstrap: scratch` fallback so `environment/container.def` is OS-only and all Python package installation happens in `environment/setup.sh` with `--break-system-packages`
