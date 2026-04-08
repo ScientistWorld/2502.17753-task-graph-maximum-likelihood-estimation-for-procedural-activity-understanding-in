@@ -4,6 +4,15 @@
 
 ## Progress Log
 
+### [2026-04-08 22:55] - method_runs
+- Reworked the environment back to the platform contract: `environment/container.def` is OS-only again and `environment/setup.sh` no longer tries to download Python packages
+- Switched the planned reproduction job to CPU-only, which is sufficient for the scoped CaptainCook4D DO optimization and avoids wasting GPU budget on adjacency-matrix training
+- Added runtime sanity checks to `scripts/run.sh` and made `scripts/method.sh` device-configurable instead of forcing CUDA
+- Revalidated locally that `environment/setup.sh` succeeds and that the Count-Based baseline still writes a clean `scoring/scores.json` with about 61.4 mean F1 on CaptainCook4D
+- Confirmed with a new local DO smoke test on the CaptainCook4D `Coffee` scenario that the corrected training path runs end-to-end on CPU for 5 epochs and improves sequence accuracy from 0.405 to 0.587
+- Fixed `environment/container.def` again so the scratch `%files` entries point to the live workspace runtime at `/home/user/environment/runtime/...` instead of the stale host-specific path from an earlier scheduler attempt
+- Kept the milestone at `method_runs`; the corrected DO run still needs to finish on the scheduler before `core_claim` can be claimed
+
 ### [2026-04-08 00:00] - method_runs
 - Re-opened the workspace and revalidated locally that the packaged CaptainCook4D Count-Based baseline still reaches about 61.4 mean F1
 - Simplified the current `Bootstrap: scratch` fallback so `environment/container.def` is OS-only and all Python package installation happens in `environment/setup.sh` with `--break-system-packages`

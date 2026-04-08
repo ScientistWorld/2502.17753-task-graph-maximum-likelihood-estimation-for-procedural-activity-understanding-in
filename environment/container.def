@@ -1,74 +1,57 @@
-# Apptainer definition file for the TGML paper environment.
+# Minimal Apptainer definition for the TGML paper environment.
 #
-# The cluster builder previously failed on library, OCI, debootstrap, and
-# localimage bootstraps. This fallback keeps the container recipe OS-only and
-# copies a minimal host runtime into a scratch rootfs. Python package installs
-# are intentionally left to environment/setup.sh.
+# This recipe stays OS-only. It copies a minimal Python/bash runtime into a
+# scratch rootfs and relies on the mounted workspace at /home/user for user-site
+# Python packages such as torch, numpy, and networkx.
 #
 Bootstrap: scratch
 
 %files
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/bin/bash /bin/bash
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/bin/bash /bin/sh
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/bin/env /usr/bin/env
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/bin/python3 /usr/bin/python3
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/bin/rm /usr/bin/rm
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/bin/mkdir /usr/bin/mkdir
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/bin/cp /usr/bin/cp
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/bin/ln /usr/bin/ln
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/bin/mv /usr/bin/mv
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/bin/chmod /usr/bin/chmod
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/bin/touch /usr/bin/touch
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/lib/python3.12 /usr/lib/python3.12
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libbz2.so.1.0 /lib/x86_64-linux-gnu/libbz2.so.1.0
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/libc.so.6
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libcrypto.so.3 /lib/x86_64-linux-gnu/libcrypto.so.3
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libexpat.so.1 /lib/x86_64-linux-gnu/libexpat.so.1
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libffi.so.8 /lib/x86_64-linux-gnu/libffi.so.8
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/liblzma.so.5 /lib/x86_64-linux-gnu/liblzma.so.5
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libm.so.6 /lib/x86_64-linux-gnu/libm.so.6
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libncursesw.so.6 /lib/x86_64-linux-gnu/libncursesw.so.6
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libreadline.so.8 /lib/x86_64-linux-gnu/libreadline.so.8
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libsqlite3.so.0 /lib/x86_64-linux-gnu/libsqlite3.so.0
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libssl.so.3 /lib/x86_64-linux-gnu/libssl.so.3
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libtinfo.so.6 /lib/x86_64-linux-gnu/libtinfo.so.6
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libz.so.1 /lib/x86_64-linux-gnu/libz.so.1
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libselinux.so.1 /lib/x86_64-linux-gnu/libselinux.so.1
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libpcre2-8.so.0 /lib/x86_64-linux-gnu/libpcre2-8.so.0
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libacl.so.1 /lib/x86_64-linux-gnu/libacl.so.1
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu/libattr.so.1 /lib/x86_64-linux-gnu/libattr.so.1
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/etc/ssl/certs /etc/ssl/certs
+    /home/user/environment/runtime/bin/bash /bin/bash
+    /home/user/environment/runtime/bin/bash /bin/sh
+    /home/user/environment/runtime/usr/bin/env /usr/bin/env
+    /home/user/environment/runtime/usr/bin/python3 /usr/bin/python3
+    /home/user/environment/runtime/usr/bin/rm /usr/bin/rm
+    /home/user/environment/runtime/usr/bin/mkdir /usr/bin/mkdir
+    /home/user/environment/runtime/usr/bin/cp /usr/bin/cp
+    /home/user/environment/runtime/usr/bin/ln /usr/bin/ln
+    /home/user/environment/runtime/usr/bin/mv /usr/bin/mv
+    /home/user/environment/runtime/usr/bin/chmod /usr/bin/chmod
+    /home/user/environment/runtime/usr/bin/touch /usr/bin/touch
+    /home/user/environment/runtime/usr/lib/python3.12 /usr/lib/python3.12
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libbz2.so.1.0 /lib/x86_64-linux-gnu/libbz2.so.1.0
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/libc.so.6
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libdl.so.2 /lib/x86_64-linux-gnu/libdl.so.2
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libcrypto.so.3 /lib/x86_64-linux-gnu/libcrypto.so.3
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libexpat.so.1 /lib/x86_64-linux-gnu/libexpat.so.1
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libffi.so.8 /lib/x86_64-linux-gnu/libffi.so.8
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so.1
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/liblzma.so.5 /lib/x86_64-linux-gnu/liblzma.so.5
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libm.so.6 /lib/x86_64-linux-gnu/libm.so.6
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libncursesw.so.6 /lib/x86_64-linux-gnu/libncursesw.so.6
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libpthread.so.0 /lib/x86_64-linux-gnu/libpthread.so.0
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libreadline.so.8 /lib/x86_64-linux-gnu/libreadline.so.8
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/librt.so.1 /lib/x86_64-linux-gnu/librt.so.1
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libsqlite3.so.0 /lib/x86_64-linux-gnu/libsqlite3.so.0
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libssl.so.3 /lib/x86_64-linux-gnu/libssl.so.3
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libstdc++.so.6 /lib/x86_64-linux-gnu/libstdc++.so.6
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libtinfo.so.6 /lib/x86_64-linux-gnu/libtinfo.so.6
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libutil.so.1 /lib/x86_64-linux-gnu/libutil.so.1
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libz.so.1 /lib/x86_64-linux-gnu/libz.so.1
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libselinux.so.1 /lib/x86_64-linux-gnu/libselinux.so.1
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libpcre2-8.so.0 /lib/x86_64-linux-gnu/libpcre2-8.so.0
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libacl.so.1 /lib/x86_64-linux-gnu/libacl.so.1
+    /home/user/environment/runtime/lib/x86_64-linux-gnu/libattr.so.1 /lib/x86_64-linux-gnu/libattr.so.1
+    /home/user/environment/runtime/lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
+    /home/user/environment/runtime/etc/ssl/certs /etc/ssl/certs
 
 %post
     mkdir -p /home/user
     mkdir -p /tmp
-    mkdir -p /usr/local/lib/python3.12/dist-packages
     chmod 755 /home/user
-
-
-    # --- Merged from setup.sh ---
-    pip install --break-system-packages uv 2>/dev/null || pip install uv 2>/dev/null || true
-    export UV_SYSTEM_PYTHON=1 UV_BREAK_SYSTEM_PACKAGES=1
-    # Install Python packages into the container overlay.
-    #
-    set -e
-    
-    # The scratch fallback copies a working Python runtime from the host, including
-    # torch. Bootstrap pip from the copied stdlib because builder hosts do not
-    # expose a portable distro `pip` package layout.
-    python3 -m ensurepip --upgrade
-    
-    # Install only the missing Python dependencies needed by this workspace.
-    uv pip install --break-system-packages \
-        scipy scikit-learn networkx matplotlib pandas pyyaml click
-    
-    # Install the paper's library from the cloned repo
-    cd /home/user/method/repo/lib
-    uv pip install --break-system-packages -e .
 
 %environment
     export HOME=/home/user
     export PATH=/usr/bin:/bin
     export PYTHONUNBUFFERED=1
-    export PYTHONPATH=/home/user:$PYTHONPATH
+    export PYTHONPATH=/home/user/.local/lib/python3.12/site-packages:/home/user

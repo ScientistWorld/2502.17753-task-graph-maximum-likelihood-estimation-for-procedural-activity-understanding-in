@@ -9,6 +9,10 @@ cd /home/user
 
 echo "Running Direct Optimization (DO) model on CaptainCook4D..."
 
+METHOD_DEVICE="${METHOD_DEVICE:-cpu}"
+METHOD_MAX_EPOCHS="${METHOD_MAX_EPOCHS:-1000}"
+METHOD_SEEDS="${METHOD_SEEDS:-42}"
+
 # Remove previous outputs so evaluation only sees results from this run.
 rm -rf checkpoints/do_captaincook4d
 
@@ -19,9 +23,9 @@ python3 method/train.py \
     --output checkpoints/do_captaincook4d \
     --beta 0.005 \
     --lr 0.1 \
-    --max_epochs 1000 \
-    --seeds 42 \
-    --device cuda \
+    --max_epochs "${METHOD_MAX_EPOCHS}" \
+    --seeds ${METHOD_SEEDS} \
+    --device "${METHOD_DEVICE}" \
     --verbose
 
 echo "Training complete. Evaluating..."

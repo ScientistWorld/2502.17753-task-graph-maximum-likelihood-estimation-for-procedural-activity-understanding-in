@@ -1,8 +1,8 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: done
+action: submit
 gpus: 0
 test: false
 milestone: method_runs
-notes: "Stopped after 10 consecutive container/setup build failures. Highest honest milestone remains method_runs because the corrected CaptainCook4D DO run could not be submitted."
+notes: "CPU-only end-to-end CaptainCook4D submission for the corrected DO/TGML pipeline after fixing container.def to use /home/user/environment/runtime instead of the stale host-specific scratch path."
