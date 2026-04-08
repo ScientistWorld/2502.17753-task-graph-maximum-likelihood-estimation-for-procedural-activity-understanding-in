@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: method_runs
-notes: "Retry the same CPU-only CaptainCook4D DO/TGML submission with the unchanged python:3.12 container after a transient OCI registry metadata failure."
+notes: "CPU-only CaptainCook4D DO/TGML submission using the restored local scratch container with extra vendored fakeroot-related libraries."

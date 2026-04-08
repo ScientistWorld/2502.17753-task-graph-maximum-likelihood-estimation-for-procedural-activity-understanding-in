@@ -38,6 +38,11 @@
 - Keeping the `python:3.12` environment unchanged for the next retry because the failure happened before any local build step or setup execution
 - Kept the milestone at `method_runs`; the DO experiment still has not been submitted successfully
 
+### [2026-04-08 23:30] - method_runs
+- The same OCI metadata failure repeated, so the next retry drops the registry bootstrap path entirely
+- Restored the local scratch recipe and expanded the vendored runtime with additional shared libraries intended to satisfy Apptainer's fakeroot helper during the separate `setup.sh` phase
+- Kept the milestone at `method_runs`; this is still an environment-only iteration
+
 ### [2026-04-08 00:00] - method_runs
 - Re-opened the workspace and revalidated locally that the packaged CaptainCook4D Count-Based baseline still reaches about 61.4 mean F1
 - Simplified the current `Bootstrap: scratch` fallback so `environment/container.def` is OS-only and all Python package installation happens in `environment/setup.sh` with `--break-system-packages`
