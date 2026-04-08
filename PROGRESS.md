@@ -45,6 +45,7 @@
 - The next retry keeps the broad scratch `%files` layout but removes all Python installation from `container.def`, leaving only directory copies plus environment setup.
 - The subsequent retry narrows `%files` further to explicit binaries plus Python/library directories after the broad `/bin` copy failed on unreadable `sudo*` binaries during build.
 - The next build error showed that the builder host does not expose `dash` reliably at `/bin/dash`, so the scratch recipe now sources `dash` from `/usr/bin/dash` and places it at both `/bin/dash` and `/bin/sh` inside the container.
+- The following retry showed the builder host also could not stat `/usr/bin/dash`, so the shell fallback is now simplified further: `/bin/bash` is copied as both `/bin/bash` and `/bin/sh`, avoiding `dash` entirely.
 
 ## Issues
 
