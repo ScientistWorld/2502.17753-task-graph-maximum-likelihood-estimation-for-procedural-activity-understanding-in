@@ -44,6 +44,7 @@
 - The second scratch retry then failed on `/usr/lib/python3.12`, confirming the builder host also does not match the login node's Python minor-version layout.
 - The next retry keeps the broad scratch `%files` layout but removes all Python installation from `container.def`, leaving only directory copies plus environment setup.
 - The subsequent retry narrows `%files` further to explicit binaries plus Python/library directories after the broad `/bin` copy failed on unreadable `sudo*` binaries during build.
+- The next build error showed that the builder host does not expose `dash` reliably at `/bin/dash`, so the scratch recipe now sources `dash` from `/usr/bin/dash` and places it at both `/bin/dash` and `/bin/sh` inside the container.
 
 ## Issues
 

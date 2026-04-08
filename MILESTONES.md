@@ -8,6 +8,7 @@
 - Re-opened the workspace and revalidated locally that the packaged CaptainCook4D Count-Based baseline still reaches about 61.4 mean F1
 - Simplified the current `Bootstrap: scratch` fallback so `environment/container.def` is OS-only and all Python package installation happens in `environment/setup.sh` with `--break-system-packages`
 - The first scratch retry in this turn failed because copying the entire `/bin` directory hit unreadable `sudo` binaries on the host, so the next retry narrows `%files` to explicit shell/coreutils binaries plus Python/library directories
+- The narrowed retry then failed because the builder host could not stat `/bin/dash`, so the next environment revision sources `dash` from `/usr/bin/dash` and uses it for both `/bin/dash` and `/bin/sh` in the scratch image
 - Kept the milestone at `method_runs`; this turn prepares a fresh end-to-end baseline+DO submission, but no new DO result exists yet
 
 ### [2026-04-07 09:31] - method_runs

@@ -9,8 +9,8 @@ Bootstrap: scratch
 
 %files
     /bin/bash /bin/bash
-    /bin/dash /bin/dash
-    /bin/sh /bin/sh
+    /usr/bin/dash /bin/dash
+    /usr/bin/dash /bin/sh
     /usr/bin/env /usr/bin/env
     /usr/bin/python3 /usr/bin/python3
     /usr/bin/python3.12 /usr/bin/python3.12
