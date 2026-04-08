@@ -14,6 +14,7 @@
 - That broader-library retry then failed because recursive copying of `/usr/lib` hit unreadable or dangling `.build-id` and GCC entries on the builder host, so the next environment revision copies only the Python stdlib trees and the exact shared libraries needed by the interpreter and core modules
 - The newest retry then failed because the builder host does not expose `/usr/lib/python3`, so the next environment revision drops that unversioned path and bootstraps `pip` from `ensurepip` inside `/usr/lib/python3.12`
 - That retry then failed as well because the builder host also does not expose `/usr/lib/python3.12`, so the next environment revision vendors the Python runtime under `environment/runtime/` and copies it from the workspace instead of from host system paths
+- That vendored-runtime retry then failed because `%files` resolved `environment/runtime/...` relative to the scheduler infrastructure checkout instead of the paper workspace, so the next environment revision uses the host-side absolute workspace path from the build logs for every vendored runtime source
 - Kept the milestone at `method_runs`; this turn prepares a fresh end-to-end baseline+DO submission, but no new DO result exists yet
 
 ### [2026-04-07 09:31] - method_runs

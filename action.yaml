@@ -5,4 +5,4 @@ action: submit
 gpus: 1
 test: false
 milestone: method_runs
-notes: "Retry CaptainCook4D baseline plus corrected DO run after vendoring the Python runtime into environment/runtime and copying it from the workspace; previous retry failed because the builder host could not stat either /usr/lib/python3 or /usr/lib/python3.12."
+notes: "Retry CaptainCook4D baseline plus corrected DO run after switching vendored runtime %files entries to the host-side absolute workspace path from the build logs; previous retry failed because relative environment/runtime paths were resolved outside the paper workspace."
