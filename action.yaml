@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: method_runs
-notes: "CPU-only end-to-end CaptainCook4D submission for the corrected DO/TGML pipeline after fixing container.def to use /home/user/environment/runtime instead of the stale host-specific scratch path."
+notes: "CPU-only end-to-end CaptainCook4D submission for the corrected DO/TGML pipeline, using the simplified scratch container and builder-visible host runtime paths."
