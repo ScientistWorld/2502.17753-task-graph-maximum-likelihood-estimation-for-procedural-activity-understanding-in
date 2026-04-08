@@ -5,4 +5,4 @@ action: submit
 gpus: 1
 test: false
 milestone: method_runs
-notes: "Retry CaptainCook4D baseline plus corrected DO run after replacing recursive /usr/lib copies with a minimal Python runtime: /usr/bin/python3, /usr/lib/python3*, and the explicit shared libraries needed for pip, ssl, sqlite, readline, and ctypes; previous retry failed because /usr/lib recursion hit unreadable or dangling builder-host entries."
+notes: "Retry CaptainCook4D baseline plus corrected DO run after dropping the non-portable /usr/lib/python3 copy and bootstrapping pip with ensurepip from /usr/lib/python3.12; previous retry failed because the builder host could not stat /usr/lib/python3."
