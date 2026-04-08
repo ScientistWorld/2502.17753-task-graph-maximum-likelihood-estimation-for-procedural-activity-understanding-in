@@ -8,33 +8,37 @@
 Bootstrap: scratch
 
 %files
-    /bin/bash /bin/bash
-    /bin/bash /bin/sh
-    /usr/bin/env /usr/bin/env
-    /usr/bin/python3 /usr/bin/python3
-    /usr/bin/rm /usr/bin/rm
-    /usr/bin/mkdir /usr/bin/mkdir
-    /usr/bin/cp /usr/bin/cp
-    /usr/bin/ln /usr/bin/ln
-    /usr/bin/mv /usr/bin/mv
-    /usr/bin/chmod /usr/bin/chmod
-    /usr/bin/touch /usr/bin/touch
-    /usr/lib/python3.12 /usr/lib/python3.12
-    /lib/x86_64-linux-gnu/libbz2.so.1.0 /lib/x86_64-linux-gnu/libbz2.so.1.0
-    /lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/libc.so.6
-    /lib/x86_64-linux-gnu/libcrypto.so.3 /lib/x86_64-linux-gnu/libcrypto.so.3
-    /lib/x86_64-linux-gnu/libexpat.so.1 /lib/x86_64-linux-gnu/libexpat.so.1
-    /lib/x86_64-linux-gnu/libffi.so.8 /lib/x86_64-linux-gnu/libffi.so.8
-    /lib/x86_64-linux-gnu/liblzma.so.5 /lib/x86_64-linux-gnu/liblzma.so.5
-    /lib/x86_64-linux-gnu/libm.so.6 /lib/x86_64-linux-gnu/libm.so.6
-    /lib/x86_64-linux-gnu/libncursesw.so.6 /lib/x86_64-linux-gnu/libncursesw.so.6
-    /lib/x86_64-linux-gnu/libreadline.so.8 /lib/x86_64-linux-gnu/libreadline.so.8
-    /lib/x86_64-linux-gnu/libsqlite3.so.0 /lib/x86_64-linux-gnu/libsqlite3.so.0
-    /lib/x86_64-linux-gnu/libssl.so.3 /lib/x86_64-linux-gnu/libssl.so.3
-    /lib/x86_64-linux-gnu/libtinfo.so.6 /lib/x86_64-linux-gnu/libtinfo.so.6
-    /lib/x86_64-linux-gnu/libz.so.1 /lib/x86_64-linux-gnu/libz.so.1
-    /lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
-    /etc/ssl/certs /etc/ssl/certs
+    environment/runtime/bin/bash /bin/bash
+    environment/runtime/bin/bash /bin/sh
+    environment/runtime/usr/bin/env /usr/bin/env
+    environment/runtime/usr/bin/python3 /usr/bin/python3
+    environment/runtime/usr/bin/rm /usr/bin/rm
+    environment/runtime/usr/bin/mkdir /usr/bin/mkdir
+    environment/runtime/usr/bin/cp /usr/bin/cp
+    environment/runtime/usr/bin/ln /usr/bin/ln
+    environment/runtime/usr/bin/mv /usr/bin/mv
+    environment/runtime/usr/bin/chmod /usr/bin/chmod
+    environment/runtime/usr/bin/touch /usr/bin/touch
+    environment/runtime/usr/lib/python3.12 /usr/lib/python3.12
+    environment/runtime/lib/x86_64-linux-gnu/libbz2.so.1.0 /lib/x86_64-linux-gnu/libbz2.so.1.0
+    environment/runtime/lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/libc.so.6
+    environment/runtime/lib/x86_64-linux-gnu/libcrypto.so.3 /lib/x86_64-linux-gnu/libcrypto.so.3
+    environment/runtime/lib/x86_64-linux-gnu/libexpat.so.1 /lib/x86_64-linux-gnu/libexpat.so.1
+    environment/runtime/lib/x86_64-linux-gnu/libffi.so.8 /lib/x86_64-linux-gnu/libffi.so.8
+    environment/runtime/lib/x86_64-linux-gnu/liblzma.so.5 /lib/x86_64-linux-gnu/liblzma.so.5
+    environment/runtime/lib/x86_64-linux-gnu/libm.so.6 /lib/x86_64-linux-gnu/libm.so.6
+    environment/runtime/lib/x86_64-linux-gnu/libncursesw.so.6 /lib/x86_64-linux-gnu/libncursesw.so.6
+    environment/runtime/lib/x86_64-linux-gnu/libreadline.so.8 /lib/x86_64-linux-gnu/libreadline.so.8
+    environment/runtime/lib/x86_64-linux-gnu/libsqlite3.so.0 /lib/x86_64-linux-gnu/libsqlite3.so.0
+    environment/runtime/lib/x86_64-linux-gnu/libssl.so.3 /lib/x86_64-linux-gnu/libssl.so.3
+    environment/runtime/lib/x86_64-linux-gnu/libtinfo.so.6 /lib/x86_64-linux-gnu/libtinfo.so.6
+    environment/runtime/lib/x86_64-linux-gnu/libz.so.1 /lib/x86_64-linux-gnu/libz.so.1
+    environment/runtime/lib/x86_64-linux-gnu/libselinux.so.1 /lib/x86_64-linux-gnu/libselinux.so.1
+    environment/runtime/lib/x86_64-linux-gnu/libpcre2-8.so.0 /lib/x86_64-linux-gnu/libpcre2-8.so.0
+    environment/runtime/lib/x86_64-linux-gnu/libacl.so.1 /lib/x86_64-linux-gnu/libacl.so.1
+    environment/runtime/lib/x86_64-linux-gnu/libattr.so.1 /lib/x86_64-linux-gnu/libattr.so.1
+    environment/runtime/lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
+    environment/runtime/etc/ssl/certs /etc/ssl/certs
 
 %post
     mkdir -p /home/user

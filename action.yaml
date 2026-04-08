@@ -5,4 +5,4 @@ action: submit
 gpus: 1
 test: false
 milestone: method_runs
-notes: "Retry CaptainCook4D baseline plus corrected DO run after dropping the non-portable /usr/lib/python3 copy and bootstrapping pip with ensurepip from /usr/lib/python3.12; previous retry failed because the builder host could not stat /usr/lib/python3."
+notes: "Retry CaptainCook4D baseline plus corrected DO run after vendoring the Python runtime into environment/runtime and copying it from the workspace; previous retry failed because the builder host could not stat either /usr/lib/python3 or /usr/lib/python3.12."

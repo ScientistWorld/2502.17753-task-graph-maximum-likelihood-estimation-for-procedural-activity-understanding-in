@@ -49,6 +49,7 @@
 - The newest retry then failed because the builder host could not stat `/usr/bin/python3.12`, so the scratch image now avoids version-pinned Python binaries and instead copies only `/usr/bin/python3` plus broad library directories (`/usr/lib`, `/usr/lib64`, `/usr/local/lib`) with `/lib` and `/lib64` symlinked in `%post`.
 - That broader-library retry still failed because recursive copying of `/usr/lib` hit unreadable or dangling `.build-id` and GCC entries on the builder host, so the scratch image is now reduced again to the Python stdlib trees plus the exact shared libraries required by `/usr/bin/python3` and core modules like `_ssl`, `_bz2`, `_lzma`, `_sqlite3`, `readline`, and `_ctypes`.
 - The next retry then failed because the builder host does not expose `/usr/lib/python3`, only the versioned stdlib path, so the container now copies only `/usr/lib/python3.12` and `environment/setup.sh` bootstraps `pip` via `python3 -m ensurepip --upgrade` instead of depending on distro-packaged `pip` files.
+- The following retry then failed because the builder host also does not expose `/usr/lib/python3.12`, which confirms the login node and builder use different Python layouts entirely; the scratch recipe now vendors a full Python runtime bundle under `environment/runtime/` and copies it from the workspace instead of from host system paths.
 
 ## Issues
 
@@ -65,6 +66,7 @@
 - The scratch recipe therefore has to avoid login-node-specific paths like `/usr/bin/python3.12` and `/usr/lib/python3.12`, relying instead on `/usr/bin/python3` and broad, version-agnostic library directories.
 - The scratch recipe also cannot recursively copy host-maintained library trees like `/usr/lib`, because the builder hits unreadable or stale entries there; `%files` has to stay on explicit file paths and narrow Python directories.
 - The builder host also does not guarantee an unversioned `/usr/lib/python3` tree, so the scratch recipe has to rely on the versioned stdlib path plus `ensurepip` rather than distro-specific `pip` package locations.
+- More broadly, the builder host does not guarantee any of this login node's Python filesystem layout, so the remaining robust option is to vendor the needed runtime files inside the workspace and copy from there.
 - The system stopped the paper after 10 consecutive environment build failures, so no further compute-side iteration is possible in this workspace.
 - A local login-node attempt to install the missing Python packages with `pip --break-system-packages` failed with `No space left on device`, so local package augmentation is not a reliable fallback.
 
