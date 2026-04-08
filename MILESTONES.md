@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-08 00:00] - method_runs
+- Re-opened the workspace and revalidated locally that the packaged CaptainCook4D Count-Based baseline still reaches about 61.4 mean F1
+- Simplified the current `Bootstrap: scratch` fallback so `environment/container.def` is OS-only and all Python package installation happens in `environment/setup.sh` with `--break-system-packages`
+- Kept the milestone at `method_runs`; this turn prepares a fresh end-to-end baseline+DO submission, but no new DO result exists yet
+
 ### [2026-04-07 09:31] - method_runs
 - Fixed a baseline-evaluation bug where `eval/evaluator.py` was post-processing the Count-Based adjacency a second time, collapsing the orientation and producing 0.0 F1
 - Re-verified locally that the corrected Count-Based path scores about 67.1 precision, 56.8 recall, and 61.4 F1 on CaptainCook4D

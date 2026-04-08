@@ -13,6 +13,7 @@
 - The local count-based baseline now follows the released transition-graph logic instead of a simplified co-occurrence heuristic.
 - A local CPU check on CaptainCook4D shows the corrected count-based baseline reaches about 67.1 precision, 56.8 recall, and 61.4 F1, which is close to the paper's 66.0 / 55.4 / 60.2.
 - The evaluator now scores the Count-Based baseline correctly instead of post-processing its already-final adjacency a second time.
+- The current broad `Bootstrap: scratch` fallback has now been simplified so `container.def` is OS-only and `environment/setup.sh` handles Python package installation, matching the platform contract more closely.
 
 ## Results
 
@@ -41,6 +42,7 @@
 - The next retry replaces bootstrap unpacking entirely with a `Bootstrap: scratch` recipe that copies only the required host runtime pieces through `%files`, avoiding OCI pulls, `debootstrap`, and localimage ownership rewrites.
 - The first scratch retry reached `%files` copying but failed because the builder host does not provide `/usr/local/bin/uv`, so the environment can not assume `uv` exists outside the runtime node.
 - The second scratch retry then failed on `/usr/lib/python3.12`, confirming the builder host also does not match the login node's Python minor-version layout.
+- The next retry keeps the broad scratch `%files` layout but removes all Python installation from `container.def`, leaving only directory copies plus environment setup.
 
 ## Issues
 
@@ -56,9 +58,11 @@
 - The builder host and the login node do not expose the exact same tool paths, so `%files` entries must only reference binaries guaranteed to exist on the builder itself.
 - The scratch recipe therefore has to use broad, version-agnostic system directories (`/usr/bin`, `/usr/lib`, `/lib`, `/lib64`) instead of login-node-specific paths like `/usr/lib/python3.12`.
 - The system stopped the paper after 10 consecutive environment build failures, so no further compute-side iteration is possible in this workspace.
+- A local login-node attempt to install the missing Python packages with `pip --break-system-packages` failed with `No space left on device`, so local package augmentation is not a reliable fallback.
 
 ## Deviations from Paper
 
 - No algorithm substitution has been made.
 - The current run plan focuses on CaptainCook4D first, which is the paper's primary task-graph-generation benchmark and the minimum setting needed for the core claim.
 - `scoring/reference.json` is intentionally scoped to CaptainCook4D for this submission because EgoPER and EgoProceL loaders are not yet packaged in the current workspace. This narrows the benchmark to the implemented experiment rather than claiming unsupported coverage.
+- This submission still targets the local DO implementation rather than the official training script because the official path needs additional packages and plotting dependencies; the immediate priority is one clean end-to-end CaptainCook4D run through the scheduler.
