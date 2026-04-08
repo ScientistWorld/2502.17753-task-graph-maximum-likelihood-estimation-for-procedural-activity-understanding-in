@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: method_runs
-notes: "CPU-only end-to-end CaptainCook4D submission for the corrected DO/TGML pipeline, using the simplified scratch container and builder-visible host runtime paths."
+notes: "CPU-only end-to-end CaptainCook4D submission for the corrected DO/TGML pipeline, now using a plain python:3.12 container plus mounted workspace packages."

@@ -38,7 +38,8 @@
 - CaptainCook4D is still the only packaged experiment for this turn; downstream tasks and extra datasets remain out of scope for the pending submission.
 - The current submission therefore retries the scratch recipe with a smaller risk surface: no pip work in `container.def`, no dependency downloads in `setup.sh`, and an explicit dependency on the mounted workspace user site for Python packages.
 - The latest container-build failure came from recursively copying `environment/runtime/etc/ssl/certs`, whose host-side certificate tree contains dangling symlinks; the next retry removes that `%files` entry entirely.
-- The subsequent setup-stage failure showed that even a buildable scratch image is too minimal for the scheduler's separate fakeroot-wrapped `setup.sh` execution, so the next retry drops the scratch recipe and reuses the full local `base_container.sif` instead.
+- The subsequent `localimage` retry failed during rootfs ownership rewriting while unpacking `base_container.sif`, so the next retry switches to a plain `python:3.12` Docker bootstrap instead of reusing any local SIF.
+- The mounted workspace already contains the needed Python packages in `/home/user/.local/lib/python3.12/site-packages`, so a stock Python 3.12 base should be enough for the scoped CPU run.
 
 ## Issues
 

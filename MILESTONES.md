@@ -28,6 +28,11 @@
 - Replaced the scratch recipe with a `Bootstrap: localimage` definition that reuses the existing `environment/base_container.sif`, while keeping `setup.sh` as a no-op
 - Kept the milestone at `method_runs`; this is still an environment-only fix before the pending CaptainCook4D DO submission
 
+### [2026-04-08 23:20] - method_runs
+- The `localimage` retry failed while unpacking `base_container.sif`, with `set_attributes` ownership-change errors on the extracted rootfs
+- Replaced the local SIF bootstrap with `Bootstrap: docker` from `python:3.12`, keeping the environment minimal and relying on the already-populated `/home/user/.local/lib/python3.12/site-packages` for paper dependencies
+- Kept the milestone at `method_runs`; no new experiment result exists yet
+
 ### [2026-04-08 00:00] - method_runs
 - Re-opened the workspace and revalidated locally that the packaged CaptainCook4D Count-Based baseline still reaches about 61.4 mean F1
 - Simplified the current `Bootstrap: scratch` fallback so `environment/container.def` is OS-only and all Python package installation happens in `environment/setup.sh` with `--break-system-packages`

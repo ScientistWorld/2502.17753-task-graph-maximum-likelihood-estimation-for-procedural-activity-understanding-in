@@ -1,11 +1,11 @@
-# Reuse the already-prepared base image instead of a scratch rootfs.
+# Use a standard Python base image that can survive both the build step and the
+# scheduler's separate fakeroot-wrapped setup phase.
 #
-# The scratch container can build, but the scheduler's separate setup phase runs
-# under fakeroot and needs a fuller runtime than the minimal vendored image
-# provides. `base_container.sif` already exists in the workspace and is large
-# enough to support the no-op setup stage reliably.
-Bootstrap: localimage
-From: /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/base_container.sif
+# The paper run itself relies on packages already installed in the mounted
+# workspace user site at /home/user/.local/lib/python3.12/site-packages, so the
+# container only needs a normal Python 3.12 runtime plus bash/coreutils.
+Bootstrap: docker
+From: python:3.12
 
 %environment
     export HOME=/home/user
