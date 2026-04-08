@@ -15,7 +15,7 @@
 - The newest retry then failed because the builder host does not expose `/usr/lib/python3`, so the next environment revision drops that unversioned path and bootstraps `pip` from `ensurepip` inside `/usr/lib/python3.12`
 - That retry then failed as well because the builder host also does not expose `/usr/lib/python3.12`, so the next environment revision vendors the Python runtime under `environment/runtime/` and copies it from the workspace instead of from host system paths
 - That vendored-runtime retry then failed because `%files` resolved `environment/runtime/...` relative to the scheduler infrastructure checkout instead of the paper workspace, so the next environment revision uses the host-side absolute workspace path from the build logs for every vendored runtime source
-- After the vendored runtime started copying, the next build failed because `sitecustomize.py` inside `python3.12` points to `/etc/python3.12/sitecustomize.py`, so the next environment revision vendors `/etc/python3.12` too
+- After the vendored runtime started copying, the next build failed because `sitecustomize.py` inside `python3.12` was still an absolute symlink to `/etc/python3.12/sitecustomize.py`, so the next environment revision replaces that symlink with a real file inside the vendored stdlib
 - Kept the milestone at `method_runs`; this turn prepares a fresh end-to-end baseline+DO submission, but no new DO result exists yet
 
 ### [2026-04-07 09:31] - method_runs

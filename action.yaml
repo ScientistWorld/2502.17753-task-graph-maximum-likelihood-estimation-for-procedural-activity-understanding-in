@@ -5,4 +5,4 @@ action: submit
 gpus: 1
 test: false
 milestone: method_runs
-notes: "Retry CaptainCook4D baseline plus corrected DO run after vendoring /etc/python3.12 alongside the workspace Python runtime; previous retry failed because /usr/lib/python3.12/sitecustomize.py points to /etc/python3.12/sitecustomize.py inside the container."
+notes: "Retry CaptainCook4D baseline plus corrected DO run after replacing the vendored python3.12 sitecustomize symlink with a real file; previous retry failed because Apptainer dereferenced that absolute symlink against the builder host while copying the stdlib tree."
