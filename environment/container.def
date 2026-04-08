@@ -6,7 +6,8 @@
 Bootstrap: scratch
 
 %files
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/bin /bin
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/bin/bash /bin/bash
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/bin/bash /bin/sh
     /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/bin /usr/bin
     /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/lib/python3.12 /usr/lib/python3.12
     /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu

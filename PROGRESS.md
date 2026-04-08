@@ -44,6 +44,7 @@
 - After the registry path failed twice with the same malformed-metadata response, the environment was moved back to the local scratch recipe and the vendored runtime was expanded with additional shared libraries (`libcap`, `libaudit`, `libseccomp`, `libpam`, `libcrypt`, `libresolv`, `libnsl`) aimed at satisfying Apptainer's fakeroot helper during `setup.sh`.
 - Inspecting the scheduler's setup wrapper showed that the immediate trigger for fakeroot is a non-writable `/usr/bin` inside the image, so the next retry changes the scratch recipe to copy writable slim directories wholesale rather than individual files.
 - That directory-based retry progressed past the previous shared-library complaint but then failed because the copied slim `/bin` directory lacked `/bin/sh`; the vendored runtime now restores `sh -> bash` directly inside `environment/runtime/bin`.
+- Because the setup log still reported `open /bin/sh: no such file or directory`, the next retry makes `/bin/bash` and `/bin/sh` explicit `%files` mappings in `container.def` instead of relying on directory-copy symlink preservation.
 
 ## Issues
 
