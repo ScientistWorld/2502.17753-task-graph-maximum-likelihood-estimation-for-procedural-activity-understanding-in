@@ -19,17 +19,29 @@ Bootstrap: scratch
     /usr/bin/mv /usr/bin/mv
     /usr/bin/chmod /usr/bin/chmod
     /usr/bin/touch /usr/bin/touch
-    /usr/lib /usr/lib
-    /usr/lib64 /usr/lib64
-    /usr/local/lib /usr/local/lib
+    /usr/lib/python3 /usr/lib/python3
+    /usr/lib/python3.12 /usr/lib/python3.12
+    /lib/x86_64-linux-gnu/libbz2.so.1.0 /lib/x86_64-linux-gnu/libbz2.so.1.0
+    /lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/libc.so.6
+    /lib/x86_64-linux-gnu/libcrypto.so.3 /lib/x86_64-linux-gnu/libcrypto.so.3
+    /lib/x86_64-linux-gnu/libexpat.so.1 /lib/x86_64-linux-gnu/libexpat.so.1
+    /lib/x86_64-linux-gnu/libffi.so.8 /lib/x86_64-linux-gnu/libffi.so.8
+    /lib/x86_64-linux-gnu/liblzma.so.5 /lib/x86_64-linux-gnu/liblzma.so.5
+    /lib/x86_64-linux-gnu/libm.so.6 /lib/x86_64-linux-gnu/libm.so.6
+    /lib/x86_64-linux-gnu/libncursesw.so.6 /lib/x86_64-linux-gnu/libncursesw.so.6
+    /lib/x86_64-linux-gnu/libreadline.so.8 /lib/x86_64-linux-gnu/libreadline.so.8
+    /lib/x86_64-linux-gnu/libsqlite3.so.0 /lib/x86_64-linux-gnu/libsqlite3.so.0
+    /lib/x86_64-linux-gnu/libssl.so.3 /lib/x86_64-linux-gnu/libssl.so.3
+    /lib/x86_64-linux-gnu/libtinfo.so.6 /lib/x86_64-linux-gnu/libtinfo.so.6
+    /lib/x86_64-linux-gnu/libz.so.1 /lib/x86_64-linux-gnu/libz.so.1
+    /lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
     /etc/ssl/certs /etc/ssl/certs
 
 %post
     mkdir -p /home/user
     mkdir -p /tmp
+    mkdir -p /usr/local/lib/python3.12/dist-packages
     chmod 755 /home/user
-    ln -s /usr/lib /lib
-    ln -s /usr/lib64 /lib64
 
 %environment
     export HOME=/home/user

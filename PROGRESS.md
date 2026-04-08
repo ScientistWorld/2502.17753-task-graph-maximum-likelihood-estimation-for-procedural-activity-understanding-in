@@ -47,6 +47,7 @@
 - The next build error showed that the builder host does not expose `dash` reliably at `/bin/dash`, so the scratch recipe now sources `dash` from `/usr/bin/dash` and places it at both `/bin/dash` and `/bin/sh` inside the container.
 - The following retry showed the builder host also could not stat `/usr/bin/dash`, so the shell fallback is now simplified further: `/bin/bash` is copied as both `/bin/bash` and `/bin/sh`, avoiding `dash` entirely.
 - The newest retry then failed because the builder host could not stat `/usr/bin/python3.12`, so the scratch image now avoids version-pinned Python binaries and instead copies only `/usr/bin/python3` plus broad library directories (`/usr/lib`, `/usr/lib64`, `/usr/local/lib`) with `/lib` and `/lib64` symlinked in `%post`.
+- That broader-library retry still failed because recursive copying of `/usr/lib` hit unreadable or dangling `.build-id` and GCC entries on the builder host, so the scratch image is now reduced again to the Python stdlib trees plus the exact shared libraries required by `/usr/bin/python3` and core modules like `_ssl`, `_bz2`, `_lzma`, `_sqlite3`, `readline`, and `_ctypes`.
 
 ## Issues
 
@@ -61,6 +62,7 @@
 - Repeated Apptainer builder failures have all happened before `setup.sh` runs, so the current blocker is the base container recipe rather than Python package installation.
 - The builder host and the login node do not expose the exact same tool paths, so `%files` entries must only reference binaries guaranteed to exist on the builder itself.
 - The scratch recipe therefore has to avoid login-node-specific paths like `/usr/bin/python3.12` and `/usr/lib/python3.12`, relying instead on `/usr/bin/python3` and broad, version-agnostic library directories.
+- The scratch recipe also cannot recursively copy host-maintained library trees like `/usr/lib`, because the builder hits unreadable or stale entries there; `%files` has to stay on explicit file paths and narrow Python directories.
 - The system stopped the paper after 10 consecutive environment build failures, so no further compute-side iteration is possible in this workspace.
 - A local login-node attempt to install the missing Python packages with `pip --break-system-packages` failed with `No space left on device`, so local package augmentation is not a reliable fallback.
 

@@ -11,6 +11,7 @@
 - The narrowed retry then failed because the builder host could not stat `/bin/dash`, so the next environment revision sources `dash` from `/usr/bin/dash` and uses it for both `/bin/dash` and `/bin/sh` in the scratch image
 - That retry failed as well because the builder host could not stat `/usr/bin/dash` either, so the next environment revision avoids `dash` entirely and copies `/bin/bash` as both `/bin/bash` and `/bin/sh`
 - The latest retry then failed because the builder host could not stat `/usr/bin/python3.12`, so the next environment revision removes version-pinned Python paths and copies only `/usr/bin/python3` plus broad library directories with `/lib` and `/lib64` symlinked in `%post`
+- That broader-library retry then failed because recursive copying of `/usr/lib` hit unreadable or dangling `.build-id` and GCC entries on the builder host, so the next environment revision copies only the Python stdlib trees and the exact shared libraries needed by the interpreter and core modules
 - Kept the milestone at `method_runs`; this turn prepares a fresh end-to-end baseline+DO submission, but no new DO result exists yet
 
 ### [2026-04-07 09:31] - method_runs
