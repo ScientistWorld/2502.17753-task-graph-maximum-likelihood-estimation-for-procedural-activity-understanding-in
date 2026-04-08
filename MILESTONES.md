@@ -43,6 +43,11 @@
 - Restored the local scratch recipe and expanded the vendored runtime with additional shared libraries intended to satisfy Apptainer's fakeroot helper during the separate `setup.sh` phase
 - Kept the milestone at `method_runs`; this is still an environment-only iteration
 
+### [2026-04-08 23:35] - method_runs
+- Reading the scheduler's `.setup_wrapper.sh` showed that the wrapper falls back to fakeroot because `/usr/bin` is not writable inside the scratch image
+- Reworked the scratch recipe to copy writable slim directories (`/bin`, `/usr/bin`, vendored library directories) wholesale instead of copying individual files into root-owned target directories
+- Kept the milestone at `method_runs`; this is still an environment-only retry before any new experiment run
+
 ### [2026-04-08 00:00] - method_runs
 - Re-opened the workspace and revalidated locally that the packaged CaptainCook4D Count-Based baseline still reaches about 61.4 mean F1
 - Simplified the current `Bootstrap: scratch` fallback so `environment/container.def` is OS-only and all Python package installation happens in `environment/setup.sh` with `--break-system-packages`
