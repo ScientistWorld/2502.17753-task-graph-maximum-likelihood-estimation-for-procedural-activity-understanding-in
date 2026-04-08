@@ -1,8 +1,8 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: done
-gpus: 0
+action: submit
+gpus: 1
 test: false
 milestone: method_runs
-notes: "Stopped after 10 consecutive container/setup build failures. Highest honest milestone remains method_runs; the corrected CaptainCook4D DO rerun could not be submitted."
+notes: "Retry CaptainCook4D baseline plus corrected DO run after removing version-pinned Python paths from the scratch image and copying /usr/lib, /usr/lib64, and /usr/local/lib with /lib and /lib64 symlinked in %post; previous retry failed because the builder host could not stat /usr/bin/python3.12."

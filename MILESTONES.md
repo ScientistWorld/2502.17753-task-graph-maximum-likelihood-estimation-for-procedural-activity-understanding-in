@@ -10,6 +10,7 @@
 - The first scratch retry in this turn failed because copying the entire `/bin` directory hit unreadable `sudo` binaries on the host, so the next retry narrows `%files` to explicit shell/coreutils binaries plus Python/library directories
 - The narrowed retry then failed because the builder host could not stat `/bin/dash`, so the next environment revision sources `dash` from `/usr/bin/dash` and uses it for both `/bin/dash` and `/bin/sh` in the scratch image
 - That retry failed as well because the builder host could not stat `/usr/bin/dash` either, so the next environment revision avoids `dash` entirely and copies `/bin/bash` as both `/bin/bash` and `/bin/sh`
+- The latest retry then failed because the builder host could not stat `/usr/bin/python3.12`, so the next environment revision removes version-pinned Python paths and copies only `/usr/bin/python3` plus broad library directories with `/lib` and `/lib64` symlinked in `%post`
 - Kept the milestone at `method_runs`; this turn prepares a fresh end-to-end baseline+DO submission, but no new DO result exists yet
 
 ### [2026-04-07 09:31] - method_runs
