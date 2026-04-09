@@ -29,7 +29,7 @@
 
 ## Results
 
-- Current trustworthy milestone is still `method_runs`.
+- Current status is `not_possible` due to scheduler/container infrastructure rather than method fidelity.
 - The latest environment adjustment removes the external registry dependency that failed during `Bootstrap: docker` image fetch, while preserving the previous local runtime files and adding the distro `fakeroot` payload needed by the scheduler wrapper.
 - The latest environment adjustment also widens the dynamic-linker search path for the scheduler's injected fakeroot helper, which was still failing before `setup.sh` with a missing-library error.
 - The latest environment adjustment now replaces the failing helper entrypoint inside the image as well, which is the first change that directly targets `/.singularity.d/libs/fakeroot` rather than only its dependencies.
@@ -44,6 +44,7 @@
 
 ## Remaining
 
+- No productive reproduction work remains in this workspace because the scheduler still cannot launch any container that reaches `setup.sh` or the experiment scripts.
 - Rebuild the environment with the restored scratch recipe plus vendored `fakeroot` runtime and resubmit the CaptainCook4D baseline+DO job.
 - Rebuild the environment with the new `python:3.12-bookworm` recipe and resubmit the CaptainCook4D baseline+DO job.
 - Submit and run CaptainCook4D end-to-end with the corrected DO implementation.
@@ -66,6 +67,7 @@
 
 ## Issues
 
+- The unresolved blocker is infrastructural: every schedulable path still fails in the platform's injected Apptainer fakeroot helper before any workspace code runs, so no corrected DO run can be launched.
 - The `Bootstrap: docker` retry did not reach any local build logic because the OCI registry returned malformed metadata (`invalid character 's' after top-level value`), so that path is not reliable enough for continued iteration.
 - The previous scratch image could build, but it remained too minimal for the scheduler's separate setup wrapper, which tried to invoke `/.singularity.d/libs/fakeroot` and failed before any reproduction code ran.
 - The prior workspace state had two correctness problems:

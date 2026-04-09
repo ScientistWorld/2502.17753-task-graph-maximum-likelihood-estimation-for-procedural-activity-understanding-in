@@ -1,8 +1,6 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: submit
-milestone: method_runs
-gpus: 0
-test: false
-notes: "Retry the CPU-only CaptainCook4D baseline+DO reproduction after adding an explicit /.singularity.d/libs/fakeroot wrapper that delegates to the vendored fakeroot-sysv runtime inside the local scratch image."
+action: done
+milestone: not_possible
+notes: "Reproduction is blocked by scheduler-side Apptainer environment failures before setup.sh: the scratch image cannot satisfy the injected fakeroot helper, the OCI bootstrap path returns malformed registry metadata, and no local sandbox-conversion tools are available on this node."

@@ -1,8 +1,13 @@
 # Reproduction Milestones
 
-**Current: method_runs**
+**Current: not_possible**
 
 ## Progress Log
+
+### [2026-04-09 05:25] - not_possible
+- Repeated environment retries still fail before `setup.sh` or `scripts/run.sh` in the platform's own Apptainer fakeroot path (`/.singularity.d/libs/fakeroot`), even after vendoring Ubuntu Noble `fakeroot` binaries, widening library paths, and overriding that path inside the scratch image
+- The only non-scratch fallback available here, `Bootstrap: docker`, is blocked by malformed OCI registry metadata on the builder, and this node does not provide Apptainer or SquashFS extraction tools that would allow converting the existing `base_container.sif` into a local sandbox workaround
+- Because no container recipe can be made schedulable from this workspace with the available builder behavior and local tools, no compute job with the corrected DO implementation can be launched
 
 ### [2026-04-09 05:20] - method_runs
 - The standard-library and `LD_LIBRARY_PATH` fix still did not move the failure signature, which means the platform kept trying to exec `/.singularity.d/libs/fakeroot` before any reproduction code ran
@@ -201,5 +206,6 @@
 - Recompiled the patched Python modules and verified the loader now emits `[beta, START, ... , END, gamma]` sequences on CaptainCook4D
 
 ## Stop Justification
-- The system stopped this paper after 10 consecutive container or setup build failures.
-- No compute job with the corrected DO implementation was ever submitted successfully, so the highest honest milestone remains `method_runs`.
+- The scheduler still fails inside its own Apptainer fakeroot helper before any workspace setup or experiment code runs.
+- The attempted workaround space is exhausted within this environment: the local scratch runtime still cannot satisfy the injected helper, the OCI builder path is externally broken, and the login node does not expose Apptainer or SquashFS extraction tools for a local sandbox workaround.
+- No compute job with the corrected DO implementation can be submitted successfully from this workspace, so the reproduction is not possible to complete here.
