@@ -3,6 +3,7 @@
 ## What Works
 
 - The released Direct Optimization (DO) / TGML method is present locally in `method/` and now matches the official preprocessing and masking more closely.
+- The local DO trainer now follows the released training behavior more closely by using the final epoch state rather than restoring a custom best checkpoint.
 - CaptainCook4D loading works from the cloned repository assets, with 24 scenarios discovered.
 - `eval/` remains method-agnostic and can score the count-based baseline or saved DO outputs.
 - The patched code compiles with `python3 -m py_compile`.
@@ -16,6 +17,7 @@
 - The current `Bootstrap: scratch` fallback is now OS-only again, and the mounted workspace user site under `/home/user/.local/lib/python3.12/site-packages` provides the Python packages needed by the scoped CaptainCook4D run.
 - `environment/setup.sh` now acts as a pure sanity check rather than trying to download packages at build time.
 - `scripts/method.sh` is now device-configurable and `scripts/run.sh` defaults the planned submission to CPU execution.
+- The planned submission now defaults to 5 seeds (`42 43 44 45 46`) so the run can produce a comparable `std_f1` stability metric for DO.
 - A new local DO smoke test on the CaptainCook4D `Coffee` scenario completed successfully for 5 CPU epochs, confirming that the corrected training path still executes after the recent environment changes.
 - `environment/container.def` now references the builder-visible host workspace path `/home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/...` for the vendored scratch runtime instead of the older stale path from previous scheduler attempts.
 
@@ -26,11 +28,12 @@
 - Paper reference target for the core claim: CaptainCook4D DO F1 = 87.8, compared against Count-Based F1 = 60.2.
 - Local pre-submission sanity check for the corrected baseline: CaptainCook4D Count-Based F1 ≈ 61.4 from direct execution on the bundled annotations and graphs.
 - Local pre-submission sanity check for the corrected DO path: CaptainCook4D `Coffee` scenario completed for 5 CPU epochs with sequence accuracy improving from 0.405 to 0.587.
+- `bash -n` passes on all shell scripts, and `python validate.py` passes on the packaged workspace structure before submission.
 - `python validate.py --compare` now passes locally with fresh baseline scores written to `scoring/scores.json`.
 
 ## Remaining
 
-- Re-run CaptainCook4D end-to-end with the corrected DO implementation.
+- Submit and run CaptainCook4D end-to-end with the corrected DO implementation.
 - Regenerate `checkpoints/do_captaincook4d/*.json` and `scoring/scores.json` from the corrected pipeline.
 - Compare the corrected DO result against the count-based baseline and determine whether the core claim is supported.
 - If the CaptainCook4D result supports the claim, update milestone and wrap-up docs; otherwise iterate on any remaining implementation issues.
@@ -75,3 +78,4 @@
 - The current run plan focuses on CaptainCook4D first, which is the paper's primary task-graph-generation benchmark and the minimum setting needed for the core claim.
 - `scoring/reference.json` is intentionally scoped to CaptainCook4D for this submission because EgoPER and EgoProceL loaders are not yet packaged in the current workspace. This narrows the benchmark to the implemented experiment rather than claiming unsupported coverage.
 - This submission still targets the local DO implementation rather than the official training script because the official path needs additional packages and plotting dependencies; the immediate priority is one clean end-to-end CaptainCook4D run through the scheduler.
+- The training loop now intentionally avoids any custom checkpoint-selection heuristic not present in the released DO code; the main remaining uncertainty is compute-side execution, not method fidelity.

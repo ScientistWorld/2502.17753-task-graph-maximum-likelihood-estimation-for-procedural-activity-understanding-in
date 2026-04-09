@@ -11,7 +11,7 @@ echo "Running Direct Optimization (DO) model on CaptainCook4D..."
 
 METHOD_DEVICE="${METHOD_DEVICE:-cpu}"
 METHOD_MAX_EPOCHS="${METHOD_MAX_EPOCHS:-1000}"
-METHOD_SEEDS="${METHOD_SEEDS:-42}"
+METHOD_SEEDS="${METHOD_SEEDS:-42 43 44 45 46}"
 
 # Remove previous outputs so evaluation only sees results from this run.
 rm -rf checkpoints/do_captaincook4d

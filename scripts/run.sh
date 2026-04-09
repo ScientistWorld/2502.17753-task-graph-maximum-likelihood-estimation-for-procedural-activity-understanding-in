@@ -7,7 +7,7 @@ cd /home/user
 
 export METHOD_DEVICE="${METHOD_DEVICE:-cpu}"
 export METHOD_MAX_EPOCHS="${METHOD_MAX_EPOCHS:-1000}"
-export METHOD_SEEDS="${METHOD_SEEDS:-42}"
+export METHOD_SEEDS="${METHOD_SEEDS:-42 43 44 45 46}"
 
 python3 - <<'PY'
 import torch

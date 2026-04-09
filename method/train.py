@@ -88,7 +88,6 @@ def train_do(
     beta: float = 0.005,
     lr: float = 0.1,
     max_epochs: int = 1000,
-    early_stopping_patience: int = 25,
     seed: int = 42,
     device: str = "cpu",
     verbose: bool = True
@@ -129,10 +128,10 @@ def train_do(
     # Threshold: 1 / n_gt (matching the paper's approach)
     threshold = 1.0 / n_gt
 
-    # Training loop
-    best_sequence_accuracy = -1.0
-    best_state = None
-    early_stop_counter = 0
+    # Training loop. We intentionally keep the released DO behavior:
+    # the final epoch state is the output, rather than restoring a custom
+    # checkpoint selected with local heuristics.
+    last_logged_epoch = 0
 
     for epoch in range(max_epochs):
         model.train()
@@ -141,50 +140,29 @@ def train_do(
         loss.backward()
         optimizer.step()
 
-        # Evaluate every 10 epochs
-        if epoch % 10 == 0 or epoch == max_epochs - 1:
-            model.eval()
-            with torch.no_grad():
-                Z = model.get_adjacency_matrix().cpu().numpy()
+        model.eval()
+        with torch.no_grad():
+            Z = model.get_adjacency_matrix().cpu().numpy()
 
-            # Extract core nodes: remove beta (row/col 0) and gamma (row/col -1)
-            pred_core = Z[1:-1, 1:-1]  # (n_gt) x (n_gt)
+        # Extract core nodes: remove beta (row/col 0) and gamma (row/col -1)
+        pred_core = Z[1:-1, 1:-1]  # (n_gt) x (n_gt)
 
-            # Binarize
-            pred_adj = post_process_prediction(pred_core, n_gt, threshold)
-            pred_graph = nx.DiGraph(pred_adj.T)
+        pred_adj = post_process_prediction(pred_core, n_gt, threshold)
+        pred_graph = nx.DiGraph(pred_adj.T)
 
-            sequence_accuracy = 0.0
-            if nx.is_directed_acyclic_graph(pred_graph):
-                sequence_accuracy = sequences_accuracy(
-                    train_seq_no_beta_gamma,
-                    extract_predecessors(pred_graph),
-                )
+        sequence_accuracy = 0.0
+        if nx.is_directed_acyclic_graph(pred_graph):
+            sequence_accuracy = sequences_accuracy(
+                train_seq_no_beta_gamma,
+                extract_predecessors(pred_graph),
+            )
 
-            if verbose and (epoch % 50 == 0 or epoch == max_epochs - 1):
-                print(
-                    f"  Epoch {epoch}: loss={loss.item():.4f}, "
-                    f"seq_acc={sequence_accuracy:.3f}"
-                )
-
-            if sequence_accuracy > 0.95:
-                if sequence_accuracy == 1.0 and sequence_accuracy == best_sequence_accuracy:
-                    early_stop_counter += 1
-                elif sequence_accuracy >= best_sequence_accuracy:
-                    best_sequence_accuracy = sequence_accuracy
-                    best_state = {k: v.cpu().clone() for k, v in model.state_dict().items()}
-                    early_stop_counter = 0
-                else:
-                    early_stop_counter += 1
-
-            if early_stop_counter >= early_stopping_patience:
-                if verbose:
-                    print(f"  Early stopping at epoch {epoch}")
-                break
-
-    # Load best model
-    if best_state is not None:
-        model.load_state_dict(best_state)
+        last_logged_epoch = epoch
+        if verbose and (epoch % 50 == 0 or epoch == max_epochs - 1):
+            print(
+                f"  Epoch {epoch}: loss={loss.item():.4f}, "
+                f"seq_acc={sequence_accuracy:.3f}"
+            )
 
     # Final evaluation
     model.eval()
@@ -209,7 +187,7 @@ def train_do(
 
     return {
         "pred_core": pred_core.astype(np.float32),
-        "best_epoch": epoch - early_stop_counter,
+        "best_epoch": last_logged_epoch,
         "sequence_accuracy": float(final_sequence_accuracy),
     }
 

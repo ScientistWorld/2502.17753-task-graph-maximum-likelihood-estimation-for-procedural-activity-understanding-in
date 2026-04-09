@@ -4,6 +4,13 @@
 
 ## Progress Log
 
+### [2026-04-09 04:51] - method_runs
+- Re-audited the local DO/TGML implementation against the cloned official repository and confirmed there is no remaining surrogate-method issue blocking an honest CaptainCook4D reproduction
+- Removed the local custom best-checkpoint restore from `method/train.py` so the trainer now keeps the final epoch state instead of using an extra heuristic absent from the released DO path
+- Updated the planned submission to run the full CaptainCook4D baseline plus DO pipeline on CPU with 5 seeds (`42 43 44 45 46`) so the run can report both mean F1 and `std_f1`
+- Revalidated locally that the Count-Based baseline still reaches about 61.4 mean F1 on CaptainCook4D and that a 5-epoch `Coffee` smoke test still executes cleanly after the trainer change
+- Kept the milestone at `method_runs`; `core_claim` still depends on the fresh submitted end-to-end run
+
 ### [2026-04-08 22:55] - method_runs
 - Reworked the environment back to the platform contract: `environment/container.def` is OS-only again and `environment/setup.sh` no longer tries to download Python packages
 - Switched the planned reproduction job to CPU-only, which is sufficient for the scoped CaptainCook4D DO optimization and avoids wasting GPU budget on adjacency-matrix training
