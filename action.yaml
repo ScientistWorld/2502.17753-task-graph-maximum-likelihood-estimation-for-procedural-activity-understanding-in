@@ -5,4 +5,4 @@ action: submit
 milestone: method_runs
 gpus: 0
 test: false
-notes: "Retry the CPU-only CaptainCook4D baseline+DO reproduction with the local scratch runtime after vendoring Ubuntu Noble fakeroot binaries and libfakeroot libraries to avoid both the OCI fetch failure and the prior setup-wrapper crash."
+notes: "Retry the CPU-only CaptainCook4D baseline+DO reproduction after moving the vendored libfakeroot shared objects into standard library paths and exporting LD_LIBRARY_PATH for the scheduler's injected fakeroot helper."

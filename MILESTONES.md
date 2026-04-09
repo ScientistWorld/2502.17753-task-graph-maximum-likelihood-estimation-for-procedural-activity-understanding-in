@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-09 05:15] - method_runs
+- The restored scratch retry still failed in the scheduler's injected `/.singularity.d/libs/fakeroot` helper before `setup.sh`, so the previous vendored `fakeroot` payload was not yet on the dynamic-loader search path that helper uses
+- Copied the `libfakeroot` shared objects into the standard runtime library directories and exported `LD_LIBRARY_PATH` explicitly in `environment/container.def`
+- Kept the milestone at `method_runs`; the CaptainCook4D baseline+DO run still has not launched
+
 ### [2026-04-09 05:10] - method_runs
 - The `python:3.12-bookworm` environment retry failed before any local build step because the OCI registry returned malformed metadata while fetching the base image
 - Removed that external dependency by restoring the local scratch recipe and vendoring Ubuntu Noble `fakeroot` binaries plus `libfakeroot` libraries into `environment/runtime`

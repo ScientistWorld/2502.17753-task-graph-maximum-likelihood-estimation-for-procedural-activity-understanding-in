@@ -14,5 +14,6 @@ Bootstrap: scratch
 %environment
     export HOME=/home/user
     export PATH=/usr/bin:/bin
+    export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/libfakeroot:/lib/x86_64-linux-gnu:/lib64
     export PYTHONUNBUFFERED=1
     export PYTHONPATH=/home/user/.local/lib/python3.12/site-packages:/home/user
