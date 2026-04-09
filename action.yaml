@@ -5,4 +5,4 @@ action: submit
 milestone: method_runs
 gpus: 0
 test: false
-notes: "Retry the CPU-only CaptainCook4D baseline+DO reproduction after replacing the failing scratch image with a standard python:3.12-bookworm container for the scheduler setup wrapper."
+notes: "Retry the CPU-only CaptainCook4D baseline+DO reproduction with the local scratch runtime after vendoring Ubuntu Noble fakeroot binaries and libfakeroot libraries to avoid both the OCI fetch failure and the prior setup-wrapper crash."

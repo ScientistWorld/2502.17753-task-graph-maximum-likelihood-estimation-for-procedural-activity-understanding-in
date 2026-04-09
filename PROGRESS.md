@@ -2,6 +2,7 @@
 
 ## What Works
 
+- The environment no longer depends on OCI registry pulls after the malformed-metadata failure; it is back on a fully local scratch recipe with Ubuntu Noble `fakeroot` binaries and `libfakeroot` libraries vendored into `environment/runtime`.
 - The environment recipe no longer relies on a scratch rootfs that is too minimal for the scheduler's `setup.sh` wrapper; it now uses a standard `python:3.12-bookworm` base with only OS-level packages installed in `%post`.
 - The released Direct Optimization (DO) / TGML method is present locally in `method/` and now matches the official preprocessing and masking more closely.
 - The local DO trainer now follows the released training behavior more closely by using the final epoch state rather than restoring a custom best checkpoint.
@@ -27,6 +28,7 @@
 ## Results
 
 - Current trustworthy milestone is still `method_runs`.
+- The latest environment adjustment removes the external registry dependency that failed during `Bootstrap: docker` image fetch, while preserving the previous local runtime files and adding the distro `fakeroot` payload needed by the scheduler wrapper.
 - The latest environment fix is structural rather than algorithmic: the container now uses a standard Python base image so Apptainer can run the scheduler wrapper without depending on scratch-image fakeroot helper injection.
 - Previously saved CaptainCook4D numbers in `scoring/scores.json` are not treated as valid for the corrected reproduction because the old training loop used ground-truth graph F1 for model selection.
 - Paper reference target for the core claim: CaptainCook4D DO F1 = 87.8, compared against Count-Based F1 = 60.2.
@@ -38,6 +40,7 @@
 
 ## Remaining
 
+- Rebuild the environment with the restored scratch recipe plus vendored `fakeroot` runtime and resubmit the CaptainCook4D baseline+DO job.
 - Rebuild the environment with the new `python:3.12-bookworm` recipe and resubmit the CaptainCook4D baseline+DO job.
 - Submit and run CaptainCook4D end-to-end with the corrected DO implementation.
 - Regenerate `checkpoints/do_captaincook4d/*.json` and `scoring/scores.json` from the corrected pipeline.
@@ -59,6 +62,7 @@
 
 ## Issues
 
+- The `Bootstrap: docker` retry did not reach any local build logic because the OCI registry returned malformed metadata (`invalid character 's' after top-level value`), so that path is not reliable enough for continued iteration.
 - The previous scratch image could build, but it remained too minimal for the scheduler's separate setup wrapper, which tried to invoke `/.singularity.d/libs/fakeroot` and failed before any reproduction code ran.
 - The prior workspace state had two correctness problems:
 - CaptainCook4D sequences were missing the explicit `START` token required by the official DO code.
@@ -82,6 +86,7 @@
 ## Deviations from Paper
 
 - No algorithm substitution has been made.
+- The current environment deviation remains operational rather than algorithmic: the scratch runtime now includes vendored Ubuntu Noble `fakeroot` files solely to satisfy the platform's setup wrapper.
 - The current run plan focuses on CaptainCook4D first, which is the paper's primary task-graph-generation benchmark and the minimum setting needed for the core claim.
 - `scoring/reference.json` is intentionally scoped to CaptainCook4D for this submission because EgoPER and EgoProceL loaders are not yet packaged in the current workspace. This narrows the benchmark to the implemented experiment rather than claiming unsupported coverage.
 - This submission still targets the local DO implementation rather than the official training script because the official path needs additional packages and plotting dependencies; the immediate priority is one clean end-to-end CaptainCook4D run through the scheduler.
