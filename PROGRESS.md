@@ -20,6 +20,8 @@
 - The planned submission now defaults to 5 seeds (`42 43 44 45 46`) so the run can produce a comparable `std_f1` stability metric for DO.
 - A new local DO smoke test on the CaptainCook4D `Coffee` scenario completed successfully for 5 CPU epochs, confirming that the corrected training path still executes after the recent environment changes.
 - `environment/container.def` now references the builder-visible host workspace path `/home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/...` for the vendored scratch runtime instead of the older stale path from previous scheduler attempts.
+- The latest scheduler retry built the scratch container successfully; the remaining environment failure moved downstream to the separate setup wrapper, which attempted a fakeroot `uv` injection because the image did not already include `uv`.
+- `environment/runtime/usr/bin` now includes vendored `uv` and `uvx` binaries copied from the login node so the next setup phase can use the already-present tools instead of taking the failing fakeroot path.
 
 ## Results
 
@@ -30,6 +32,7 @@
 - Local pre-submission sanity check for the corrected DO path: CaptainCook4D `Coffee` scenario completed for 5 CPU epochs with sequence accuracy improving from 0.405 to 0.587.
 - `bash -n` passes on all shell scripts, and `python validate.py` passes on the packaged workspace structure before submission.
 - `python validate.py --compare` now passes locally with fresh baseline scores written to `scoring/scores.json`.
+- The most recent scheduler run did not reach the DO stage: it rebuilt the container successfully, then failed in `setup.sh` before launching `scripts/run.sh`, so `scoring/scores.json` still contains only the Count-Based baseline.
 
 ## Remaining
 
@@ -79,3 +82,4 @@
 - `scoring/reference.json` is intentionally scoped to CaptainCook4D for this submission because EgoPER and EgoProceL loaders are not yet packaged in the current workspace. This narrows the benchmark to the implemented experiment rather than claiming unsupported coverage.
 - This submission still targets the local DO implementation rather than the official training script because the official path needs additional packages and plotting dependencies; the immediate priority is one clean end-to-end CaptainCook4D run through the scheduler.
 - The training loop now intentionally avoids any custom checkpoint-selection heuristic not present in the released DO code; the main remaining uncertainty is compute-side execution, not method fidelity.
+- The current environment deviation is operational rather than algorithmic: `uv` and `uvx` are now vendored into the runtime image solely to satisfy the platform setup wrapper and do not affect the paper method.

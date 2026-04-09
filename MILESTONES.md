@@ -4,6 +4,12 @@
 
 ## Progress Log
 
+### [2026-04-09 04:55] - method_runs
+- The submitted CaptainCook4D retry rebuilt `environment/container.sif` successfully, confirming that the scratch container definition now passes the build stage
+- The job still failed before `scripts/run.sh` because the platform setup wrapper attempted to use fakeroot to inject `uv` into a non-writable `/usr/bin`, then crashed with `exec /.singularity.d/libs/fakeroot failed`
+- Fixed that environment issue by vendoring the already-installed `uv` and `uvx` binaries into `environment/runtime/usr/bin`, so the next setup phase can find them directly inside the image
+- Kept the milestone at `method_runs`; the corrected end-to-end DO run still needs a fresh submission
+
 ### [2026-04-09 04:51] - method_runs
 - Re-audited the local DO/TGML implementation against the cloned official repository and confirmed there is no remaining surrogate-method issue blocking an honest CaptainCook4D reproduction
 - Removed the local custom best-checkpoint restore from `method/train.py` so the trainer now keeps the final epoch state instead of using an extra heuristic absent from the released DO path

@@ -5,4 +5,4 @@ action: submit
 milestone: method_runs
 gpus: 0
 test: false
-notes: "CPU-only CaptainCook4D end-to-end reproduction: rerun count-based baseline and corrected DO/TGML with 5 seeds (42-46), regenerate scores.json, and compare fresh results against the paper reference."
+notes: "Retry the CPU-only CaptainCook4D baseline+DO reproduction after vendoring uv/uvx into the scratch runtime to avoid the setup wrapper's failing fakeroot injection path."
