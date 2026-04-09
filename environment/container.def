@@ -1,21 +1,15 @@
-# Minimal local-only Apptainer definition for the TGML paper environment.
-#
-# This stays fully local and copies slim writable directories from the vendored
-# runtime so the scheduler's setup wrapper can run without needing fakeroot to
-# inject helpers into a read-only `/usr/bin`.
-Bootstrap: scratch
+Bootstrap: docker
+From: python:3.12-bookworm
 
-%files
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/bin/bash /bin/bash
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/bin/bash /bin/sh
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/bin /usr/bin
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/lib/python3.12 /usr/lib/python3.12
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu /lib/x86_64-linux-gnu
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib64 /lib64
+%post
+    set -e
+    apt-get update
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends bash git ca-certificates
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
 
 %environment
     export HOME=/home/user
-    export PATH=/usr/bin:/bin
+    export PATH=/usr/local/bin:/usr/bin:/bin
     export PYTHONUNBUFFERED=1
     export PYTHONPATH=/home/user/.local/lib/python3.12/site-packages:/home/user

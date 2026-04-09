@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-09 05:05] - method_runs
+- Inspected the latest scheduler failure and confirmed the build itself was succeeding; the crash happened later in the platform `setup.sh` wrapper when the scratch image could not execute `/.singularity.d/libs/fakeroot`
+- Replaced `environment/container.def` with a standard `python:3.12-bookworm` Docker bootstrap and kept `setup.sh` as a no-op, so the next retry runs inside a normal Apptainer image instead of a hand-built scratch rootfs
+- Kept the milestone at `method_runs`; the corrected CaptainCook4D baseline+DO run still needs to execute successfully on the scheduler
+
 ### [2026-04-09 04:55] - method_runs
 - The submitted CaptainCook4D retry rebuilt `environment/container.sif` successfully, confirming that the scratch container definition now passes the build stage
 - The job still failed before `scripts/run.sh` because the platform setup wrapper attempted to use fakeroot to inject `uv` into a non-writable `/usr/bin`, then crashed with `exec /.singularity.d/libs/fakeroot failed`

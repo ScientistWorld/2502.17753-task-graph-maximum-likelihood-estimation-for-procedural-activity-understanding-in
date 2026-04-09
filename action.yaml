@@ -5,4 +5,4 @@ action: submit
 milestone: method_runs
 gpus: 0
 test: false
-notes: "Retry the CPU-only CaptainCook4D baseline+DO reproduction after vendoring uv/uvx into the scratch runtime to avoid the setup wrapper's failing fakeroot injection path."
+notes: "Retry the CPU-only CaptainCook4D baseline+DO reproduction after replacing the failing scratch image with a standard python:3.12-bookworm container for the scheduler setup wrapper."

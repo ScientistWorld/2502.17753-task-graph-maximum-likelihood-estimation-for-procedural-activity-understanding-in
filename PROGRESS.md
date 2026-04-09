@@ -2,6 +2,7 @@
 
 ## What Works
 
+- The environment recipe no longer relies on a scratch rootfs that is too minimal for the scheduler's `setup.sh` wrapper; it now uses a standard `python:3.12-bookworm` base with only OS-level packages installed in `%post`.
 - The released Direct Optimization (DO) / TGML method is present locally in `method/` and now matches the official preprocessing and masking more closely.
 - The local DO trainer now follows the released training behavior more closely by using the final epoch state rather than restoring a custom best checkpoint.
 - CaptainCook4D loading works from the cloned repository assets, with 24 scenarios discovered.
@@ -26,6 +27,7 @@
 ## Results
 
 - Current trustworthy milestone is still `method_runs`.
+- The latest environment fix is structural rather than algorithmic: the container now uses a standard Python base image so Apptainer can run the scheduler wrapper without depending on scratch-image fakeroot helper injection.
 - Previously saved CaptainCook4D numbers in `scoring/scores.json` are not treated as valid for the corrected reproduction because the old training loop used ground-truth graph F1 for model selection.
 - Paper reference target for the core claim: CaptainCook4D DO F1 = 87.8, compared against Count-Based F1 = 60.2.
 - Local pre-submission sanity check for the corrected baseline: CaptainCook4D Count-Based F1 ≈ 61.4 from direct execution on the bundled annotations and graphs.
@@ -36,6 +38,7 @@
 
 ## Remaining
 
+- Rebuild the environment with the new `python:3.12-bookworm` recipe and resubmit the CaptainCook4D baseline+DO job.
 - Submit and run CaptainCook4D end-to-end with the corrected DO implementation.
 - Regenerate `checkpoints/do_captaincook4d/*.json` and `scoring/scores.json` from the corrected pipeline.
 - Compare the corrected DO result against the count-based baseline and determine whether the core claim is supported.
@@ -56,6 +59,7 @@
 
 ## Issues
 
+- The previous scratch image could build, but it remained too minimal for the scheduler's separate setup wrapper, which tried to invoke `/.singularity.d/libs/fakeroot` and failed before any reproduction code ran.
 - The prior workspace state had two correctness problems:
 - CaptainCook4D sequences were missing the explicit `START` token required by the official DO code.
 - `scripts/evaluate.sh` and `eval/evaluator.py` could fall back to the count-based baseline while labeling the result as `do`.
