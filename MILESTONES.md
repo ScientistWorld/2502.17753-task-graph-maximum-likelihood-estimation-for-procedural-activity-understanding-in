@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-09 05:20] - method_runs
+- The standard-library and `LD_LIBRARY_PATH` fix still did not move the failure signature, which means the platform kept trying to exec `/.singularity.d/libs/fakeroot` before any reproduction code ran
+- Added an explicit `/.singularity.d/libs/fakeroot` wrapper script to the vendored runtime so that exact path now dispatches to `/usr/bin/fakeroot-sysv` inside the image
+- Kept the milestone at `method_runs`; the CaptainCook4D baseline+DO run still has not launched
+
 ### [2026-04-09 05:15] - method_runs
 - The restored scratch retry still failed in the scheduler's injected `/.singularity.d/libs/fakeroot` helper before `setup.sh`, so the previous vendored `fakeroot` payload was not yet on the dynamic-loader search path that helper uses
 - Copied the `libfakeroot` shared objects into the standard runtime library directories and exported `LD_LIBRARY_PATH` explicitly in `environment/container.def`

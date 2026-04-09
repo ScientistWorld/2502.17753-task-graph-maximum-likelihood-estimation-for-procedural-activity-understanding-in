@@ -4,6 +4,7 @@
 
 - The environment no longer depends on OCI registry pulls after the malformed-metadata failure; it is back on a fully local scratch recipe with Ubuntu Noble `fakeroot` binaries and `libfakeroot` libraries vendored into `environment/runtime`.
 - The vendored `libfakeroot` shared objects are now copied into the standard `/usr/lib/x86_64-linux-gnu` and `/lib/x86_64-linux-gnu` runtime trees, and the container environment now exports `LD_LIBRARY_PATH` explicitly for those locations.
+- The runtime now also provides its own `/.singularity.d/libs/fakeroot` wrapper script that delegates to the vendored `fakeroot-sysv`, so the scheduler hits a script at the exact failing path instead of a compiled helper binary.
 - The environment recipe no longer relies on a scratch rootfs that is too minimal for the scheduler's `setup.sh` wrapper; it now uses a standard `python:3.12-bookworm` base with only OS-level packages installed in `%post`.
 - The released Direct Optimization (DO) / TGML method is present locally in `method/` and now matches the official preprocessing and masking more closely.
 - The local DO trainer now follows the released training behavior more closely by using the final epoch state rather than restoring a custom best checkpoint.
@@ -31,6 +32,7 @@
 - Current trustworthy milestone is still `method_runs`.
 - The latest environment adjustment removes the external registry dependency that failed during `Bootstrap: docker` image fetch, while preserving the previous local runtime files and adding the distro `fakeroot` payload needed by the scheduler wrapper.
 - The latest environment adjustment also widens the dynamic-linker search path for the scheduler's injected fakeroot helper, which was still failing before `setup.sh` with a missing-library error.
+- The latest environment adjustment now replaces the failing helper entrypoint inside the image as well, which is the first change that directly targets `/.singularity.d/libs/fakeroot` rather than only its dependencies.
 - The latest environment fix is structural rather than algorithmic: the container now uses a standard Python base image so Apptainer can run the scheduler wrapper without depending on scratch-image fakeroot helper injection.
 - Previously saved CaptainCook4D numbers in `scoring/scores.json` are not treated as valid for the corrected reproduction because the old training loop used ground-truth graph F1 for model selection.
 - Paper reference target for the core claim: CaptainCook4D DO F1 = 87.8, compared against Count-Based F1 = 60.2.
