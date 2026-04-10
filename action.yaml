@@ -5,4 +5,4 @@ action: submit
 gpus: 1
 test: false
 milestone: method_runs
-notes: "Switching to Docker bootstrap (python:3.12-bookworm) to avoid scratch fakeroot issue. Container uses workspace user site-packages for Python deps. Full CaptainCook4D DO run (5 seeds, 1000 epochs)."
+notes: "Reverting to scratch bootstrap (proven build). setup.sh is no-op since torch comes from workspace mount at job runtime. Full CaptainCook4D DO run (24 scenarios, 5 seeds, 1000 epochs). Previous Docker+pip approach failed (OOM during torch download)."
