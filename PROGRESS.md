@@ -44,7 +44,7 @@
 
 ## Remaining
 
-- New approach: Switch from scratch-based container to Docker-based `python:3.12-bookworm` with all packages pre-installed in `%post`. This avoids the fakeroot helper missing-library error because the Docker base image has all standard shared libraries.
+- New approach: scratch bootstrap with vendored runtime that INCLUDES the libfakeroot subdirectory. The previous scratch attempt failed because fakeroot wrapper couldn't find `libfakeroot-sysv.so`. The vendored runtime at `runtime/usr/lib/x86_64-linux-gnu/libfakeroot/` now contains the library. The fakeroot wrapper script sets LD_LIBRARY_PATH to include this directory, so fakeroot-sysv can find the preload library. localimage was also tried but failed because GPFS doesn't support the chown operations that Apptainer uses during SIF extraction. Docker bootstrap failed because the builder's registry returns malformed metadata.
 - Local smoke tests confirm all code paths work: count-based (F1=61.4, matching paper's 60.2) and DO training (3 epochs, seq_acc=0.510, improving). Both baseline and DO are confirmed functional.
 - Rebuild the environment with the restored scratch recipe plus vendored `fakeroot` runtime and resubmit the CaptainCook4D baseline+DO job.
 - Rebuild the environment with the new `python:3.12-bookworm` recipe and resubmit the CaptainCook4D baseline+DO job.
@@ -68,7 +68,7 @@
 
 ## Issues
 
-- The unresolved blocker is infrastructural: every schedulable path still fails in the platform's injected Apptainer fakeroot helper before any workspace code runs, so no corrected DO run can be launched.
+- Root cause of fakeroot failure identified: fakeroot-sysv script couldn't find `libfakeroot-sysv.so` at runtime because the libfakeroot subdirectory wasn't in LD_LIBRARY_PATH. The scratch container now has LD_LIBRARY_PATH set to include `/usr/lib/x86_64-linux-gnu/libfakeroot/` where the library lives. The scheduler's fakeroot wrapper (at /.singularity.d/libs/fakeroot) sets LD_LIBRARY_PATH to include this directory.
 - The `Bootstrap: docker` retry did not reach any local build logic because the OCI registry returned malformed metadata (`invalid character 's' after top-level value`), so that path is not reliable enough for continued iteration.
 - The previous scratch image could build, but it remained too minimal for the scheduler's separate setup wrapper, which tried to invoke `/.singularity.d/libs/fakeroot` and failed before any reproduction code ran.
 - The prior workspace state had two correctness problems:
