@@ -1,8 +1,8 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: pending
+action: submit
 gpus: 1
 test: false
 milestone: none
-notes: ""
+notes: "Full CaptainCook4D reproduction: Count-Based baseline + DO method (5 seeds, 1000 epochs each). Container.sif already exists (77MB valid SIF). Pipeline validated locally (baseline F1=61.4, DO training works)."
