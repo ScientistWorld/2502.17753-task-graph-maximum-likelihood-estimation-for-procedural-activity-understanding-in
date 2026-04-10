@@ -14,7 +14,7 @@ From: python:3.12-bookworm
         liblapack-dev \
         libgomp1 \
         libgfortran5 \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    # Note: skip apt cache cleanup to avoid permission errors in shared tmp dirs
 
 %environment
     export HOME=/home/user
