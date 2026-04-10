@@ -64,3 +64,4 @@ wandb/
 # Auto-added by swarm
 environment/container.squashfs
 *.squashfs
+environment/rootfs/
