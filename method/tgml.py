@@ -462,7 +462,7 @@ def compute_precision_recall_f1(
     Compute precision, recall, and F1 between ground truth and predicted graphs.
 
     Both adjacency matrices should be binary, (n) x (n), indexed by GT node ID.
-    Uses sklearn metrics for direct comparison (matching the paper's evaluation).
+    Uses standard binary classification definitions directly.
 
     Parameters
     ----------
@@ -475,13 +475,15 @@ def compute_precision_recall_f1(
     -------
     tuple : (precision, recall, f1) in percentages
     """
-    from sklearn.metrics import precision_score, recall_score, f1_score
+    gt_flat = gt_adj.astype(np.int32).flatten()
+    pred_flat = pred_adj.astype(np.int32).flatten()
 
-    gt_flat = gt_adj.flatten()
-    pred_flat = pred_adj.flatten()
+    tp = int(np.sum((gt_flat == 1) & (pred_flat == 1)))
+    fp = int(np.sum((gt_flat == 0) & (pred_flat == 1)))
+    fn = int(np.sum((gt_flat == 1) & (pred_flat == 0)))
 
-    precision = precision_score(gt_flat, pred_flat, zero_division=0) * 100
-    recall = recall_score(gt_flat, pred_flat, zero_division=0) * 100
-    f1 = f1_score(gt_flat, pred_flat, zero_division=0) * 100
+    precision = (tp / (tp + fp) * 100.0) if (tp + fp) > 0 else 0.0
+    recall = (tp / (tp + fn) * 100.0) if (tp + fn) > 0 else 0.0
+    f1 = (2.0 * precision * recall / (precision + recall)) if (precision + recall) > 0 else 0.0
 
     return precision, recall, f1

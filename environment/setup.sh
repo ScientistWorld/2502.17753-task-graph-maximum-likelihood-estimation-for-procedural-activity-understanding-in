@@ -1,5 +1,4 @@
 #!/bin/bash
-# Setup script for TGML paper reproduction.
-# No-op: all dependencies come from the mounted workspace at /home/user.
+# No-op: all Python packages come from the mounted workspace site-packages.
 set -e
-echo "setup.sh: done"
+echo "setup.sh: done (workspace packages)"

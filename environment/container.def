@@ -1,31 +1,13 @@
-# Minimal scratch container with busybox and vendored runtime.
-# This avoids GPFS chown issues during build and provides working
-# fakeroot support for the scheduler's setup wrapper.
-#
-# The vendored runtime at /home/user/environment/runtime/ contains:
-# - busybox static binary (shell replacement)
-# - bash -> busybox symlink
-# - Python 3.12 interpreter with numpy, networkx, torch
-# - All required shared libraries (libc, libfakeroot, etc.)
-# - LD_LIBRARY_PATH points to vendored libs including libfakeroot/
+Bootstrap: docker
+From: python:3.12-slim-bookworm
 
-Bootstrap: scratch
-
-%files
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/.singularity.d/libs /.singularity.d/libs
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/bin/bash /bin/bash
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/bin/bash /bin/sh
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/bin /usr/bin
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/lib/python3.12 /usr/lib/python3.12
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu /lib/x86_64-linux-gnu
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib64 /lib64
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/etc/python3.12 /etc/python3.12
-    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/etc/ld.so.conf.d /etc/ld.so.conf.d
+%post
+    apt-get update && apt-get install -y --no-install-recommends \
+        libgomp1 \
+        && rm -rf /var/lib/apt/lists/*
 
 %environment
     export HOME=/home/user
-    export PATH=/usr/bin:/bin
-    export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/libfakeroot:/lib/x86_64-linux-gnu:/lib64
+    export PATH=/usr/local/bin:/usr/bin:/bin
     export PYTHONUNBUFFERED=1
     export PYTHONPATH=/home/user/.local/lib/python3.12/site-packages:/home/user
