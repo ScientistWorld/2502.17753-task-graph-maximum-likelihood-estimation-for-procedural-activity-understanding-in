@@ -5,4 +5,4 @@ action: submit
 gpus: 1
 test: false
 milestone: method_runs
-notes: "Reverting to scratch bootstrap (proven build). setup.sh is no-op since torch comes from workspace mount at job runtime. Full CaptainCook4D DO run (24 scenarios, 5 seeds, 1000 epochs). Previous Docker+pip approach failed (OOM during torch download)."
+notes: "Switched from scratch to Docker bootstrap (python:3.12-slim-bookworm). Full OS eliminates fakeroot shared-lib failures. Packages from workspace site-packages. Full DO run: 24 scenarios x 5 seeds x 1000 epochs."
