@@ -1,31 +1,23 @@
-Bootstrap: docker
-From: python:3.12-bookworm
-
-%post
-    set -e
-
-    # Install uv for fast package management
-    pip install --no-cache-dir uv
-
-    # Install all required Python packages
-    # Use CPU-only PyTorch for smaller image; the task is CPU-bound (small matrices)
-    uv pip install --system --no-cache \
-        "torch>=2.0.0" \
-        "numpy>=1.24" \
-        "networkx>=3.0" \
-        "scikit-learn>=1.3"
+# Use the pre-existing base SIF image as the foundation.
+# This avoids any registry pulls and provides a full OS with working
+# shared libraries, solving the fakeroot helper missing-library issue.
+#
+# The base image is a full OS so it has all standard shared libraries
+# that the Apptainer fakeroot helper needs.
+Bootstrap: localimage
+From: /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/base_container.sif
 
 %files
-    /home/user/environment/runtime/.singularity.d/libs /.singularity.d/libs
-    /home/user/environment/runtime/bin/bash /bin/bash
-    /home/user/environment/runtime/bin/bash /bin/sh
-    /home/user/environment/runtime/usr/bin /usr/bin
-    /home/user/environment/runtime/usr/lib/python3.12 /usr/lib/python3.12
-    /home/user/environment/runtime/usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu
-    /home/user/environment/runtime/lib/x86_64-linux-gnu /lib/x86_64-linux-gnu
-    /home/user/environment/runtime/lib64 /lib64
-    /home/user/environment/runtime/etc/python3.12 /etc/python3.12
-    /home/user/environment/runtime/etc/ld.so.conf.d /etc/ld.so.conf.d
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/.singularity.d/libs /.singularity.d/libs
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/bin/bash /bin/bash
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/bin/bash /bin/sh
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/bin /usr/bin
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/lib/python3.12 /usr/lib/python3.12
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu /lib/x86_64-linux-gnu
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib64 /lib64
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/etc/python3.12 /etc/python3.12
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/etc/ld.so.conf.d /etc/ld.so.conf.d
 
 %environment
     export HOME=/home/user
