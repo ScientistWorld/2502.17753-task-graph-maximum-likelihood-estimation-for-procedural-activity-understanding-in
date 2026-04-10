@@ -1,11 +1,15 @@
-# Use the pre-existing base SIF image as the foundation.
-# This avoids any registry pulls and provides a full OS with working
-# shared libraries, solving the fakeroot helper missing-library issue.
+# Minimal scratch container with busybox and vendored runtime.
+# This avoids GPFS chown issues during build and provides working
+# fakeroot support for the scheduler's setup wrapper.
 #
-# The base image is a full OS so it has all standard shared libraries
-# that the Apptainer fakeroot helper needs.
-Bootstrap: localimage
-From: /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/base_container.sif
+# The vendored runtime at /home/user/environment/runtime/ contains:
+# - busybox static binary (shell replacement)
+# - bash -> busybox symlink
+# - Python 3.12 interpreter
+# - All required shared libraries (libc, libfakeroot, etc.)
+# - LD_LIBRARY_PATH points to vendored libs including libfakeroot/
+
+Bootstrap: scratch
 
 %files
     /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/.singularity.d/libs /.singularity.d/libs
