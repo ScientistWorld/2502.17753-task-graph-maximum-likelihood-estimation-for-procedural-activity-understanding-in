@@ -86,7 +86,10 @@ def post_process_pred_adj(
     threshold = 1.0 / n_gt
     pred_binary = (pred_core > threshold).astype(float)
 
-    GP = nx.DiGraph(pred_binary)
+    # Official DO builds graph from transposed matrix: GP = nx.DiGraph(pred_adjacency_matrix.T)
+    # pred_core[i,j] = score for edge j->i in the graph
+    # Building from pred_core.T makes edge (i,j) in graph correspond to pred_core[i,j]
+    GP = nx.DiGraph(pred_core.T)
 
     id_start = 0
     id_end = n_gt - 1
@@ -96,9 +99,11 @@ def post_process_pred_adj(
     delete_redundant_edges(GP)
     delete_cycles(GP)
 
+    # pred_adj has GT orientation: adj[i,j]=1 means i is followed by j (i->j)
+    # graph edge u->v corresponds to pred_core[v,u], store as adj[u,v]=1
     pred_adj = np.zeros((n_gt, n_gt), dtype=np.float32)
     for u, v in GP.edges():
-        pred_adj[v, u] = 1.0
+        pred_adj[u, v] = 1.0
 
     return pred_adj
 
