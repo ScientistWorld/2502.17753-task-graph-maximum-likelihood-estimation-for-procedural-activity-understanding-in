@@ -1,39 +1,31 @@
-# Docker-based container for TGML paper reproduction.
-# Uses official Python 3.12 image with full OS support.
-# Installs torch (CPU) + deps in %post to avoid workspace dependency in setup.sh.
+# Minimal scratch container with busybox and vendored runtime.
+# This avoids GPFS chown issues during build and provides working
+# fakeroot support for the scheduler's setup wrapper.
+#
+# The vendored runtime at /home/user/environment/runtime/ contains:
+# - busybox static binary (shell replacement)
+# - bash -> busybox symlink
+# - Python 3.12 interpreter with numpy, networkx, torch
+# - All required shared libraries (libc, libfakeroot, etc.)
+# - LD_LIBRARY_PATH points to vendored libs including libfakeroot/
 
-Bootstrap: docker
-From: python:3.12-bookworm
+Bootstrap: scratch
 
-%post
-    # Bootstrap pip if not present
-    python3 -m ensurepip --upgrade 2>/dev/null || true
-
-    # Install torch CPU + dependencies
-    # --extra-index-url gives CPU wheels; --index-url falls back to PyPI for other packages
-    python3 -m pip install --no-cache-dir \
-        torch \
-        numpy \
-        networkx \
-        scikit-learn \
-        scipy \
-        --extra-index-url https://download.pytorch.org/whl/cpu \
-        || echo "pip install failed, will rely on workspace user site"
-
-    # Install build essentials
-    apt-get update -qq && apt-get install -y -qq \
-        python3-dev \
-        build-essential \
-        libopenblas-dev \
-        liblapack-dev \
-        libgomp1 \
-        libgfortran5 \
-        || true
+%files
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/.singularity.d/libs /.singularity.d/libs
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/bin/bash /bin/bash
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/bin/bash /bin/sh
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/bin /usr/bin
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/lib/python3.12 /usr/lib/python3.12
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib/x86_64-linux-gnu /lib/x86_64-linux-gnu
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/lib64 /lib64
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/etc/python3.12 /etc/python3.12
+    /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/runtime/etc/ld.so.conf.d /etc/ld.so.conf.d
 
 %environment
     export HOME=/home/user
-    export PATH=/usr/local/bin:/usr/bin:/bin
+    export PATH=/usr/bin:/bin
+    export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/libfakeroot:/lib/x86_64-linux-gnu:/lib64
     export PYTHONUNBUFFERED=1
-    export PYTHONDONTWRITEBYTECODE=1
-    # Prefer container-installed packages, fall back to workspace user site
-    export PYTHONPATH=/usr/local/lib/python3.12/dist-packages:/usr/local/lib/python3.12/site-packages:/home/user/.local/lib/python3.12/site-packages:/home/user
+    export PYTHONPATH=/home/user/.local/lib/python3.12/site-packages:/home/user
