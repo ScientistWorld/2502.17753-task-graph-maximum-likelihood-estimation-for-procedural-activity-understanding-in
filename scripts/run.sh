@@ -5,27 +5,31 @@
 set -e
 cd /home/user
 
-# Let PyTorch auto-detect GPU if available (no manual CUDA_VISIBLE_DEVICES)
-export METHOD_MAX_EPOCHS="${METHOD_MAX_EPOCHS:-1000}"
-export METHOD_SEEDS="${METHOD_SEEDS:-42 43 44 45 46}"
-
-python3 - <<'PY'
-import torch
-import numpy
-import networkx
-print("runtime sanity:", torch.__version__, numpy.__version__, networkx.__version__)
+# Sanity check: verify core dependencies are available.
+python3 -c "
+import torch, numpy, networkx, json
+print('runtime sanity:', torch.__version__, numpy.__version__, networkx.__version__)
 if torch.cuda.is_available():
-    print("GPU:", torch.cuda.get_device_name(0))
-    print("GPU count:", torch.cuda.device_count())
+    print('GPU:', torch.cuda.get_device_name(0))
 else:
-    print("No GPU detected, using CPU")
-PY
+    print('No GPU detected, using CPU')
+"
 
 # Remove stale outputs so this submission only reports fresh results.
 rm -f scoring/scores.json
 
-# Run the minimum end-to-end reproduction for the CaptainCook4D core claim.
-bash scripts/reproduce.sh
+# Remove previous DO checkpoints so this is a clean run.
+rm -rf checkpoints/do_captaincook4d
 
-# Validate the fresh scores against the scoped reference experiment.
+# Run the DO method with paper-specified settings:
+# 5 seeds (matching paper's std_f1 computation), 1000 epochs max, lr=0.1, beta=0.005.
+# The training loop outputs sequence accuracy (weak supervision) but evaluation uses the
+# full adjacency post-processing pipeline from eval/ to compute edge-level F1.
+METHOD_MAX_EPOCHS=1000 METHOD_SEEDS="42 43 44 45 46" METHOD_DEVICE=cpu bash scripts/method.sh
+
+# Evaluate all scenarios (baseline + DO) and write scores.json.
+bash scripts/evaluate.sh captaincook4d_do checkpoints/do_captaincook4d/
+bash scripts/evaluate.sh captaincook4d_count
+
+# Validate the fresh scores against the reference.
 python3 validate.py --compare

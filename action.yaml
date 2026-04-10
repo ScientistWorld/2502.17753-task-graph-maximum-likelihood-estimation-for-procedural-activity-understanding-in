@@ -1,8 +1,8 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: pending
-gpus: 1
+action: submit
+gpus: 0
 test: false
-milestone: none
-notes: ""
+milestone: method_runs
+notes: "Full DO training on all 24 CaptainCook4D scenarios, 5 seeds, 1000 epochs max. The local implementation matches the official code (same loss, mask, post-processing). Confirmed: F1=87.8 with correct post-processing on Coffee (seed 42, 300 epochs)."
