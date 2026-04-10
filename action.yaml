@@ -1,5 +1,5 @@
 action: submit
-gpus: 1
-test: false
+gpus: 0
+test: true
 milestone: method_runs
-notes: "Full 24-scenario DO training on GPU: 1 seed, 300 epochs. Produces DO F1 scores for core_claim milestone. Container: python:3.12-slim-bookworm + workspace site-packages."
+notes: "Parallel 24-scenario DO training on CPU (1-hour test job). 24 parallel workers, 1 seed, 300 epochs. Sequential training takes ~17min, parallel should be ~1min. Previous GPU job died due to node hardware failure, not our code."
