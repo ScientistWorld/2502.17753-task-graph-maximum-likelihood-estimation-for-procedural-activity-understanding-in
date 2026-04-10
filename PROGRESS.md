@@ -4,8 +4,8 @@
 
 - The environment no longer depends on OCI registry pulls after the malformed-metadata failure; it is back on a fully local scratch recipe with Ubuntu Noble `fakeroot` binaries and `libfakeroot` libraries vendored into `environment/runtime`.
 - The vendored `libfakeroot` shared objects are now copied into the standard `/usr/lib/x86_64-linux-gnu` and `/lib/x86_64-linux-gnu` runtime trees, and the container environment now exports `LD_LIBRARY_PATH` explicitly for those locations.
-- The runtime now also provides its own `/.singularity.d/libs/fakeroot` wrapper script that delegates to the vendored `fakeroot-sysv`, so the scheduler hits a script at the exact failing path instead of a compiled helper binary.
-- The environment recipe no longer relies on a scratch rootfs that is too minimal for the scheduler's `setup.sh` wrapper; it now uses a standard `python:3.12-bookworm` base with only OS-level packages installed in `%post`.
+- The fakeroot helper is now a simple passthrough script that just runs the actual command. Since setup.sh is a no-op, no fakeroot interception is needed. The scratch container uses busybox (static ELF) as `/bin/sh` and `/bin/bash` to avoid any shared library issues.
+- The environment now uses a simple fakeroot passthrough (no-op for the setup phase) with busybox as `/bin/sh` and `/bin/bash` (both static ELF). The setup.sh is a no-op, so no fakeroot privileges needed. The scratch container with vendored runtime avoids GPFS chown issues during build.
 - The released Direct Optimization (DO) / TGML method is present locally in `method/` and now matches the official preprocessing and masking more closely.
 - The local DO trainer now follows the released training behavior more closely by using the final epoch state rather than restoring a custom best checkpoint.
 - CaptainCook4D loading works from the cloned repository assets, with 24 scenarios discovered.

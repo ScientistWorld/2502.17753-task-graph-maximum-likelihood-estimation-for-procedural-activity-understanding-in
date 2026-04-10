@@ -5,9 +5,9 @@
 ## Progress Log
 
 ### [2026-04-10] - none
-- Scratch bootstrap retry with vendored libfakeroot subdirectory. Previous scratch attempt failed because fakeroot wrapper couldn't find libfakeroot-sysv.so. localimage approach failed due to GPFS chown limitations. Docker bootstrap failed due to registry metadata errors.
-- Verified code works locally: count-based baseline (F1=61.4) and DO training both run successfully
-- Workspace packages (torch, numpy, networkx) are at /home/user/.local/lib/python3.12/site-packages/
+- Fixed fakeroot helper: changed from complex fakeroot-sysv chain to simple passthrough. Setup.sh is no-op so no fakeroot privileges needed.
+- Changed /bin/sh and /bin/bash in vendored runtime to busybox (static ELF) to avoid any shared library exec issues.
+- Previous approach failures: Docker registry malformed metadata, localimage GPFS chown limitations, scratch fakeroot exec failing.
 
 ### [2026-04-09 23:45] - none
 - Just started reproduction work
