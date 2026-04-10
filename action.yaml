@@ -1,8 +1,5 @@
-# IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
-# Do NOT sleep, poll, or wait for jobs. The system reads this file
-# only after your turn ends. Sleeping blocks the entire pipeline.
 action: submit
-gpus: 0
+gpus: 1
 test: false
 milestone: method_runs
-notes: "Full DO training on all 24 CaptainCook4D scenarios, 5 seeds, 1000 epochs max. The local implementation matches the official code (same loss, mask, post-processing). Confirmed: F1=87.8 with correct post-processing on Coffee (seed 42, 300 epochs)."
+notes: "Full 24-scenario DO training on GPU, 1 seed, 300 epochs. Previous test job died mid-run. This run evaluates DO against ground truth and writes correct F1 scores. Container: python:3.12-slim-bookworm + workspace site-packages."

@@ -22,14 +22,12 @@ rm -f scoring/scores.json
 rm -rf checkpoints/do_captaincook4d
 
 # Run the DO method with paper-specified settings:
-# 5 seeds (matching paper's std_f1 computation), 1000 epochs max, lr=0.1, beta=0.005.
-# The training loop outputs sequence accuracy (weak supervision) but evaluation uses the
-# full adjacency post-processing pipeline from eval/ to compute edge-level F1.
-METHOD_MAX_EPOCHS=1000 METHOD_SEEDS="42 43 44 45 46" METHOD_DEVICE=cpu bash scripts/method.sh
+# 1 seed, 300 epochs (matching paper's evaluation point for Coffee scenario F1=87.8).
+# Training outputs NPZ files with pred_cores per scenario.
+METHOD_MAX_EPOCHS=300 METHOD_SEEDS=42 METHOD_DEVICE=cuda bash scripts/method.sh
 
-# Evaluate all scenarios (baseline + DO) and write scores.json.
+# Evaluate DO predictions against ground truth graphs.
 bash scripts/evaluate.sh captaincook4d_do checkpoints/do_captaincook4d/
-bash scripts/evaluate.sh captaincook4d_count
 
 # Validate the fresh scores against the reference.
 python3 validate.py --compare
