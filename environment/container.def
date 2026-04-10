@@ -1,12 +1,26 @@
 # Docker-based container for TGML paper reproduction.
 # Uses official Python 3.12 image with full OS support.
-# Python packages come from the mounted workspace user site.
+# Installs torch (CPU) + deps in %post to avoid workspace dependency in setup.sh.
 
 Bootstrap: docker
 From: python:3.12-bookworm
 
 %post
-    # Install build essentials for any potential compilation
+    # Bootstrap pip if not present
+    python3 -m ensurepip --upgrade 2>/dev/null || true
+
+    # Install torch CPU + dependencies
+    # --extra-index-url gives CPU wheels; --index-url falls back to PyPI for other packages
+    python3 -m pip install --no-cache-dir \
+        torch \
+        numpy \
+        networkx \
+        scikit-learn \
+        scipy \
+        --extra-index-url https://download.pytorch.org/whl/cpu \
+        || echo "pip install failed, will rely on workspace user site"
+
+    # Install build essentials
     apt-get update -qq && apt-get install -y -qq \
         python3-dev \
         build-essential \
@@ -19,7 +33,7 @@ From: python:3.12-bookworm
 %environment
     export HOME=/home/user
     export PATH=/usr/local/bin:/usr/bin:/bin
-    export LD_LIBRARY_PATH=/usr/local/lib/python3.12/site-packages/nvidia/cu13/lib:/usr/local/lib/python3.12/site-packages/nvidia/cublas/lib:/usr/local/lib/python3.12/site-packages/nvidia/cudnn/lib:/usr/local/lib/python3.12/site-packages/nvidia/cusparselt/lib:/usr/local/lib/python3.12/site-packages/nvidia/nccl/lib:/usr/local/lib/python3.12/site-packages/nvidia/nvshmem/lib
     export PYTHONUNBUFFERED=1
-    export PYTHONPATH=/home/user/.local/lib/python3.12/site-packages:/home/user
     export PYTHONDONTWRITEBYTECODE=1
+    # Prefer container-installed packages, fall back to workspace user site
+    export PYTHONPATH=/usr/local/lib/python3.12/dist-packages:/usr/local/lib/python3.12/site-packages:/home/user/.local/lib/python3.12/site-packages:/home/user
