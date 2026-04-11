@@ -2,4 +2,4 @@ action: submit
 gpus: 0
 test: false
 milestone: method_runs
-notes: "CPU multi-seed training resumes: 5/24 done with 3 seeds, 19 remaining need seeds 123,456. Resubmit until all 24 complete. Target F1 ~87.8."
+notes: "CPU multi-seed training: 10/24 done with 3 seeds, 14 remaining need seeds 123,456. Keep resubmitting until all 24 complete. Target F1 ~87.8."
