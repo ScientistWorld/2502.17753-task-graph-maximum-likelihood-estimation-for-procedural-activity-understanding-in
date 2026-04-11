@@ -2,4 +2,4 @@ action: submit
 gpus: 1
 test: false
 milestone: core_claim
-notes: "Last 2 scenarios (Tomatomozzarellasalad, Zoodles) then full evaluation of all 24."
+notes: "Multi-seed training (3 seeds) with skip-existing. Should improve DO F1 from 79.5 toward paper's 87.8."
