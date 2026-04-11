@@ -1,5 +1,5 @@
 action: submit
-gpus: 0
-test: false
+gpus: 1
+test: true
 milestone: core_claim
-notes: "Full 24-scenario DO parallel training (300 epochs, 1 seed) + evaluation on CaptainCook4D. Expect F1~87.8 matching paper. CPU job with parallelization."
+notes: "DO training on 24 scenarios (300 epochs) + evaluation. Expect F1~87.8 matching paper."
