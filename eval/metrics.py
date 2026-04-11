@@ -124,14 +124,11 @@ def post_process_adjacency(
     # Threshold matches official code: 1/(num_nodes - 2) where num_nodes = n_gt + 2
     threshold = 1.0 / (n_gt + 2)
 
-    # Binarize
-    pred_binary = (pred_core > threshold).astype(float)
+    # Binarize matching official: np.where(pred_core < threshold, 0, 1)
+    pred_binary = np.where(pred_core < threshold, 0, 1).astype(float)
 
-    # Official DO builds graph from BINARY matrix: np.where(pred_core < threshold, 0, 1)
-    # pred_core[i,j] = score for edge j->i in the graph
-    # Building from (pred_core > threshold).T makes edge (i,j) in graph iff score > threshold
-    pred_binary = (pred_core > threshold).astype(float)
-    GP = nx.DiGraph(pred_binary.T)
+    # Build graph matching official: pred_binary[row, col] = 1 means edge col -> row
+    GP = nx.DiGraph(pred_binary)
 
     # Add boundary edges
     id_start = 0  # GT node ID
@@ -139,14 +136,10 @@ def post_process_adjacency(
 
     add_boundary_edges(GP, id_start=id_start, id_end=id_end)
 
-    # Transitive reduction
+    # Transitive reduction (no cycle removal -- official train_with_gt.py doesn't use it)
     delete_redundant_edges(GP)
 
-    # Cycle removal
-    delete_cycles(GP)
-
-    # pred_adj has GT orientation: adj[i,j]=1 means i is followed by j (i->j)
-    # graph edge u->v corresponds to pred_core[v,u], store as adj[u,v]=1
+    # pred_adj has graph orientation: adj[u,v]=1 means edge u->v (u is precondition of v)
     pred_adj = np.zeros((n_gt, n_gt), dtype=np.float32)
     for u, v in GP.edges():
         pred_adj[u, v] = 1.0

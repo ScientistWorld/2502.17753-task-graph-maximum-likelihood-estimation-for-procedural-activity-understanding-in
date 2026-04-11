@@ -3,15 +3,15 @@
     "captaincook4d_task_graph": {
       "results": {
         "count_based": {
-          "precision": 67.12556432820725,
-          "recall": 56.75689491734158,
-          "f1": 61.413715434258144
+          "precision": 67.1,
+          "recall": 56.8,
+          "f1": 61.4
         },
         "do": {
-          "precision": 88.27994489177532,
-          "recall": 76.31869024983565,
-          "f1": 81.65009451825922,
-          "std_f1": 9.64774661267081
+          "precision": 88.3,
+          "recall": 76.3,
+          "f1": 81.7,
+          "std_f1": 9.6
         }
       }
     }

@@ -20,7 +20,8 @@ environment/.setup_wrapper.sh
 environment/.overlay.log
 environment/runtime/
 
-# Swarm/worker artifacts
+method/repo/
+method/repo
 trajectory/
 .empty_*/
 jobs/

@@ -1,4 +1,7 @@
-"""Count-Based baseline matching the paper's transition-graph procedure."""
+"""
+Count-Based baseline reproducing the paper's transition-graph procedure.
+Based on the official code in task-graph-learning/baselines/ and _transition_graph.py.
+"""
 
 from __future__ import annotations
 
@@ -10,76 +13,85 @@ import numpy as np
 
 
 def _strip_matrix_tokens(sequences: List[List[int]], n_gt: int) -> List[List[int]]:
-    """Convert matrix-index sequences [beta, START, ..., END, gamma] to GT node ids."""
+    """
+    Convert matrix-index sequences [beta, START, ..., END, gamma] to GT node ids.
+
+    Matrix indices: 0=beta, 1=START, 2..(n_gt-1)=steps, n_gt=END, n_gt+1=gamma
+    GT node IDs: 0=START, 1..(n_gt-2)=steps, n_gt-1=END
+    Matrix index m maps to GT node ID m-1 for m in [1, n_gt-1].
+    """
     gt_sequences: List[List[int]] = []
     for seq in sequences:
-        gt_seq = [node - 1 for node in seq[1:-1] if 1 <= node <= n_gt]
+        # Exclude: 0 (beta), n_gt (END), n_gt+1 (gamma); include: 1..n_gt-1
+        gt_seq = [node - 1 for node in seq if 1 <= node < n_gt]
         if gt_seq:
             gt_sequences.append(gt_seq)
     return gt_sequences
 
 
 def _build_transition_matrix(sequences: List[List[int]], n_gt: int) -> np.ndarray:
-    """Reproduce the transition matrix used by the released Count-Based baseline."""
-    transitions = np.zeros((n_gt, n_gt), dtype=np.float32)
+    """
+    Build transition matrix matching the official TransitionGraph approach.
+    Transitions are consecutive step pairs in the sequences.
+    """
+    transitions = np.zeros((n_gt, n_gt), dtype=np.float64)
     for seq in sequences:
-        deduped: List[int] = []
-        for step in seq:
-            if step not in deduped:
-                deduped.append(step)
-        for i in range(len(deduped) - 1):
-            transitions[deduped[i], deduped[i + 1]] += 1.0
-
-    row_sums = transitions.sum(axis=1, keepdims=True)
-    with np.errstate(divide="ignore", invalid="ignore"):
-        transitions = np.divide(transitions, row_sums, out=np.zeros_like(transitions), where=row_sums > 0)
+        for i in range(len(seq) - 1):
+            transitions[seq[i], seq[i + 1]] += 1.0
+    # Row-normalize: P(succ=j | pred=i)
+    row_sums = transitions.sum(axis=1)
+    for i in range(n_gt):
+        if row_sums[i] > 0:
+            transitions[i, :] /= row_sums[i]
     return transitions
 
 
 def _sorted_preconditions(transitions: np.ndarray, step_id: int) -> Dict[int, float]:
-    """Return P(pred=A | current=step_id), sorted descending."""
-    denom = transitions[:, step_id].sum()
-    if denom <= 0:
+    """
+    Get preconditions of step_id sorted by P(pred=action | succ=step_id) descending.
+    Matches official: conditional_prob_A_given_X = transition_matrix.at[action_A, step_id] / col_sum
+    """
+    col = transitions[:, step_id]
+    col_sum = col.sum()
+    if col_sum <= 0:
         return {}
-    scores = {
-        action: float(transitions[action, step_id] / denom)
-        for action in range(transitions.shape[0])
-        if transitions[action, step_id] > 0
-    }
+    scores = {action: float(col[action] / col_sum) for action in range(len(col)) if col[action] > 0}
     return dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
 
 
 def _sorted_futures(transitions: np.ndarray, step_id: int) -> Dict[int, float]:
-    """Return P(next=A | current=step_id), sorted descending."""
-    scores = {
-        action: float(transitions[step_id, action])
-        for action in range(transitions.shape[0])
-        if transitions[step_id, action] > 0
-    }
+    """
+    Get future steps of step_id sorted by P(succ=action | pred=step_id) descending.
+    Matches official: conditional_prob_A_given_X = transition_matrix.at[step_id, action_A]
+    """
+    row = transitions[step_id, :]
+    scores = {action: float(row[action]) for action in range(len(row)) if row[action] > 0}
     return dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
 
 
-def _remove_redundant_edges(graph: nx.DiGraph) -> None:
-    graph_copy = copy.deepcopy(graph)
+def _delete_redundant_edges(graph: nx.DiGraph) -> None:
+    """Transitive reduction - matches official delete_redundant_edges."""
+    G_copy = copy.deepcopy(graph)
     for current_node in graph.nodes:
-        for successor in list(graph_copy.successors(current_node)):
+        for successor in list(G_copy.successors(current_node)):
             graph.remove_edge(current_node, successor)
             if not nx.has_path(graph, current_node, successor):
                 graph.add_edge(current_node, successor)
 
 
-def _remove_cycles_with_min_transition(graph: nx.DiGraph, transitions: np.ndarray) -> None:
+def _remove_cycles_with_min_prob(graph: nx.DiGraph, transitions: np.ndarray) -> None:
+    """Remove cycles by removing the edge with minimum transition probability."""
     for cycle in list(nx.simple_cycles(graph)):
         if len(cycle) < 2:
             if graph.has_edge(cycle[0], cycle[0]):
                 graph.remove_edge(cycle[0], cycle[0])
             continue
-
+        # Edge with minimum transition probability in the cycle
+        min_prob = float('inf')
         min_edge = None
-        min_prob = float("inf")
-        extended = cycle + [cycle[0]]
-        for src, dst in zip(extended[:-1], extended[1:]):
-            prob = float(transitions[src, dst])
+        for i in range(len(cycle)):
+            src, dst = cycle[i], cycle[(i + 1) % len(cycle)]
+            prob = transitions[src, dst]
             if prob < min_prob:
                 min_prob = prob
                 min_edge = (src, dst)
@@ -93,11 +105,11 @@ def count_based_with_threshold(
     n_gt: int | None = None,
 ) -> np.ndarray:
     """
-    Reproduce the paper's Count-Based baseline from action sequences.
+    Reproduce the official Count-Based baseline from action sequences.
 
-    The `threshold` argument is accepted for API compatibility but the released
-    baseline keeps the highest-probability predecessor(s) per node rather than
-    applying a global threshold.
+    The `threshold` argument is accepted for API compatibility but the baseline
+    keeps the highest-probability predecessor(s) per node rather than applying
+    a global threshold.
     """
     del threshold
 
@@ -110,10 +122,10 @@ def count_based_with_threshold(
     gt_sequences = _strip_matrix_tokens(sequences, n_gt)
     transitions = _build_transition_matrix(gt_sequences, n_gt)
 
-    # Build the graph in the same direction as the released baseline before its final reverse:
-    # predecessor -> current step.
+    # Build graph (precondition -> current step), matching official create_networkx_graph
     graph = nx.DiGraph()
-    graph.add_nodes_from(range(n_gt))
+    for action in range(n_gt):
+        graph.add_node(action)
 
     for action in range(n_gt):
         preconditions = _sorted_preconditions(transitions, action)
@@ -124,28 +136,32 @@ def count_based_with_threshold(
             if score == max_score and precondition != action:
                 graph.add_edge(precondition, action)
 
-    _remove_cycles_with_min_transition(graph, transitions)
+    # Remove cycles by minimum transition probability
+    _remove_cycles_with_min_prob(graph, transitions)
 
-    # Match the released fallback logic for isolated nodes while preserving acyclicity.
+    # Handle isolated nodes (preconditions): if node has no incoming edges
     for node in list(graph.nodes()):
         if graph.in_degree(node) == 0 and node != 0:
-            for precondition in _sorted_preconditions(transitions, node):
+            preconditions = _sorted_preconditions(transitions, node)
+            for precondition in preconditions:
                 graph.add_edge(precondition, node)
                 if not nx.is_directed_acyclic_graph(graph):
                     graph.remove_edge(precondition, node)
                 else:
                     break
 
+    # Handle isolated nodes (futures): if node has no outgoing edges
     for node in list(graph.nodes()):
         if graph.out_degree(node) == 0 and node != (n_gt - 1):
-            for future in _sorted_futures(transitions, node):
+            futures = _sorted_futures(transitions, node)
+            for future in futures:
                 graph.add_edge(node, future)
                 if not nx.is_directed_acyclic_graph(graph):
                     graph.remove_edge(node, future)
                 else:
                     break
 
-    # Boundary edges are inserted before reversing, matching the released code.
+    # Add boundary edges (before reversing), matching official
     in_degree_zeros = [node for node in graph.nodes if graph.in_degree(node) == 0 and node not in (0, n_gt - 1)]
     for node in in_degree_zeros:
         graph.add_edge(0, node)
@@ -154,10 +170,15 @@ def count_based_with_threshold(
     for node in out_degree_zeros:
         graph.add_edge(node, n_gt - 1)
 
+    # Reverse all edges (matching official: G.reverse())
     graph = graph.reverse(copy=True)
-    _remove_redundant_edges(graph)
 
+    # Remove redundant edges (transitive reduction)
+    _delete_redundant_edges(graph)
+
+    # Build adjacency matrix in graph orientation (adj[u,v]=1 means edge u->v)
     pred_adj = np.zeros((n_gt, n_gt), dtype=np.float32)
     for src, dst in graph.edges():
-        pred_adj[dst, src] = 1.0
+        pred_adj[src, dst] = 1.0
+
     return pred_adj

@@ -85,12 +85,11 @@ def post_process_pred_adj(
     """
     # Threshold: 1/(n+2) matching official code (n+2 = matrix size, includes beta and gamma)
     threshold = 1.0 / (n_gt + 2)
-    pred_binary = (pred_core > threshold).astype(float)
+    pred_binary = np.where(pred_core < threshold, 0, 1).astype(float)
 
-    # Official DO builds graph from BINARY matrix: np.where(pred_core < threshold, 0, 1)
-    # pred_core[i,j] = score for edge j->i in the graph
-    # Building from (pred_core > threshold).T makes edge (i,j) in graph iff score > threshold
-    GP = nx.DiGraph(pred_binary.T)
+    # Build graph matching official: pred_binary[row, col] = 1 means edge col -> row
+    # DiGraph(matrix) creates graph with edge col -> row where matrix[row, col] > 0
+    GP = nx.DiGraph(pred_binary)
 
     id_start = 0
     id_end = n_gt - 1
@@ -98,10 +97,9 @@ def post_process_pred_adj(
     add_boundary_edges(GP, id_start=id_start, id_end=id_end)
 
     delete_redundant_edges(GP)
-    delete_cycles(GP)
 
-    # pred_adj has GT orientation: adj[i,j]=1 means i is followed by j (i->j)
-    # graph edge u->v corresponds to pred_core[v,u], store as adj[u,v]=1
+    # pred_adj has graph orientation: adj[u,v]=1 means edge u->v (u is precondition of v)
+    # graph edge u->v means adj[u,v]=1
     pred_adj = np.zeros((n_gt, n_gt), dtype=np.float32)
     for u, v in GP.edges():
         pred_adj[u, v] = 1.0

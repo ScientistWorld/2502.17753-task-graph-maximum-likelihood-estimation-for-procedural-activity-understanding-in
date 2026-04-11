@@ -132,12 +132,16 @@ def load_captaincook4d(repo_data_path: str) -> List[TaskGraphData]:
             converted_seqs.append(new_seq)
 
         # Build GT adjacency matrix
-        # GT has nodes 0..(n-1), indexed by GT node ID
+        # GT has nodes 0..(n-1), indexed by GT node ID.
+        # Graph orientation: gt_adj[u, v] = 1 means edge u -> v (u is precondition of v).
+        # This matches the orientation used by the predicted adjacency matrix
+        # and by NetworkX's adjacency_matrix with nodelist=sorted(GT.nodes).
+        # Official code: GT.add_edge(edge[1], edge[0]) where edge = [dst, src] -> edge src -> dst
         gt_adj = np.zeros((n_gt_nodes, n_gt_nodes), dtype=np.float32)
         for edge in task_graph_json["edges"]:
             dst, src = edge[0], edge[1]
             if dst < n_gt_nodes and src < n_gt_nodes:
-                gt_adj[dst, src] = 1.0
+                gt_adj[src, dst] = 1.0  # Graph orientation: src -> dst
 
         scenario_name = activity_name.replace("_", " ").title()
 
