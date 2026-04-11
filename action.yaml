@@ -1,5 +1,5 @@
 action: submit
 gpus: 0
-test: true
+test: false
 milestone: method_runs
-notes: "Parallel 24-scenario DO training on CPU (1-hour test job). 24 parallel workers, 1 seed, 300 epochs. Sequential training takes ~17min, parallel should be ~1min. Previous GPU job died due to node hardware failure, not our code."
+notes: "Resubmitting: previous test job timed out. Fix in place (run.sh no longer deletes checkpoints). Full 24-scenario DO parallel training (300 epochs, seed 42) + evaluation. Expect ~87.8 F1 matching paper."

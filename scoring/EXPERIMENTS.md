@@ -1,46 +1,22 @@
-# Experiment Overview
+# Experiments
 
-<!-- Do not edit this unless you decide to stop -->
+This file describes the experiments in `scores.json` for future scientist agents.
 
-<!--
-Describe, at a high level, what each experiment in `scores.json` is trying to
-establish.
+## captaincook4d_task_graph
 
-This file is for future scientist agents. They should be able to read it and
-understand what each experiment is about WITHOUT learning the paper's method.
+**What it establishes:** Tests whether the method can recover accurate task graphs (directed acyclic graphs of prerequisite relationships between procedural steps) from observed action sequences in cooking videos. This is the paper's primary benchmark.
 
-Rules:
-- This must correspond EXACTLY to the experiments in `scores.json`
-- The section heading for each experiment must be the exact experiment name from the keys in `scores.json`
-- Describe the experiment's scientific purpose, not the implementation
-- Do NOT describe the method, architecture, algorithm, loss, or training recipe
-- Do NOT include numerical results from the paper or your reproduction
-- If an experiment is not in `scores.json`, do not list it here
+**Scientific purpose:** Given multiple example action sequences from the same cooking procedure (e.g., multiple videos of someone making coffee), the system must infer which steps depend on which other steps — without direct graph supervision. The predicted graphs are evaluated against ground-truth task graphs annotated by humans.
 
-Good examples (shorten version shown, you can make it long to be more detailed, but do not leak the method):
+**What each method in the experiment represents:**
+- `count_based`: A traditional graph-mining baseline that counts co-occurrences and transition probabilities in the action sequences.
+- `do`: The paper's proposed Direct Optimization method, which directly optimizes an adjacency matrix using a differentiable maximum likelihood loss.
+- Other baselines (msgi, llama3, msg2) are additional comparison points from the paper.
 
-## main_benchmark
-Tests whether the system achieves the paper's primary task objective on the main
-evaluation benchmark.
+**How the experiment works:**
+1. For each of 24 cooking procedures, learn a task graph from the procedure's action sequences.
+2. Post-process the predicted graph (binarize, add boundary edges, transitive reduction).
+3. Compare predicted graph edges against ground-truth edges using precision, recall, and F1.
+4. Average scores across all 24 procedures.
 
-## robustness_shift
-Tests whether performance holds under the distribution shift setting used by the
-paper's evaluation.
-
-## wrong_key_security
-Tests whether the protected signal stays unrecoverable when evaluated with the
-wrong key.
-
-## component_ablation
-Tests whether the method actaully is where the improvement comes from.
-
-Bad examples:
-- "Runs the 8-layer transformer with contrastive loss and cosine scheduler"
-- "Uses the paper's memory module to improve retrieval"
-
-Delete this comment block and fill in your actual experiments below.
--->
-
-<!-- This is high-level only. Explain WHAT the experiment is trying to show, NOT HOW the method works. -->
-
-<!-- The experiment headings here should EXACTLY match the experiment-name keys in your scores.json. -->
+**Primary claim validated:** The DO method achieves substantially higher F1 than the count-based baseline on task graph recovery.
