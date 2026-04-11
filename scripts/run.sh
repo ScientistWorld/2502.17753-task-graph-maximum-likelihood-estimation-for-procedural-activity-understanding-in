@@ -1,8 +1,8 @@
 #!/bin/bash
-# Train remaining 8 scenarios (indices 17-23: Ramen through Zoodles)
+# Train remaining 4 scenarios (Spicytunaavocadowraps, Tomatochutney, Tomatomozzarellasalad, Zoodles)
 set -e
 cd /home/user
-echo "=== $(date) === DO training scenarios 17-23 ==="
+echo "=== $(date) === DO training final 4 ==="
 
 python3 -c "import torch; print('CUDA:', torch.cuda.is_available()); torch.set_num_threads(1)"
 mkdir -p checkpoints/do_captaincook4d
@@ -20,15 +20,24 @@ from method.tgml import DirectOptimization
 data = load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')
 output_dir = 'checkpoints/do_captaincook4d'
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-print(f"Device: {device}, training indices 16-23 (8 scenarios)")
+print(f"Device: {device}")
+
+# Remaining 4: indices 20, 21, 22, 23
+remaining = [d for d in data if d.scenario_name.lower().replace(" ", "_") not in [
+    'blenderbananapancakes', 'breakfastburritos', 'broccolistirfry', 'buttercorncup',
+    'capresebruschetta', 'cheesepimiento', 'coffee', 'cucumberraita', 'dressedupmeatballs',
+    'herbomeletwithfriedtomatoes', 'microwaveeggsandwich', 'microwavefrenchtoast',
+    'microwavemugpizza', 'mugcake', 'panfriedtofu', 'pinwheels', 'ramen',
+    'sautedmushrooms', 'scrambledeggs', 'spicedhotchocolate',
+]]
+print(f"Remaining {len(remaining)}: {[sd.scenario_name for sd in remaining]}")
 
 t0 = time.time()
-for idx in range(16, 24):  # Ramen through Zoodles (8 scenarios: indices 16-23)
-    sd = data[idx]
+for sd in remaining:
     safe = sd.scenario_name.lower().replace(" ", "_")
     npz_path = os.path.join(output_dir, f"{safe}_predictions.npz")
     if os.path.exists(npz_path):
-        print(f"  [{idx+1}/24] {sd.scenario_name}: SKIP")
+        print(f"  {sd.scenario_name}: SKIP")
         continue
 
     t1 = time.time()
@@ -59,7 +68,7 @@ for idx in range(16, 24):  # Ramen through Zoodles (8 scenarios: indices 16-23)
         pred_cores=np.array([pred_core], dtype=np.float32),
         seeds=np.array([42], dtype=np.int64),
     )
-    print(f"  [{idx+1}/24] {sd.scenario_name}: {time.time()-t1:.1f}s")
+    print(f"  {sd.scenario_name}: {time.time()-t1:.1f}s")
     del model, optimizer, y_tensor, Z, pred_core, y
     if device == 'cuda':
         torch.cuda.empty_cache()
