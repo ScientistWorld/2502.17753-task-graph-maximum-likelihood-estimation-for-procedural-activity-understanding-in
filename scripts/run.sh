@@ -1,9 +1,9 @@
 #!/bin/bash
-# Resumable multi-seed DO training: trains seeds 123, 456 for each scenario
-# and saves after each scenario to survive node failures.
+# CPU-based multi-seed DO training to avoid GPU node failures.
+# All 24 scenarios get seeds 42, 123, 456 with per-scenario checkpointing.
 set -e
 cd /home/user
-echo "=== $(date) === Resumable DO multi-seed training ==="
+echo "=== $(date) === CPU multi-seed DO training ==="
 python3 -c "import torch; print('CUDA:', torch.cuda.is_available())"
 
 python3 << 'PYEOF'
@@ -11,38 +11,37 @@ import sys, os, time, gc
 sys.path.insert(0, '/home/user')
 import numpy as np
 import torch
-torch.set_num_threads(2)
+torch.set_num_threads(4)
 from data.loader import load_data
 from method.tgml import DirectOptimization
 
 data = load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')
 output_dir = 'checkpoints/do_captaincook4d'
 os.makedirs(output_dir, exist_ok=True)
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-extra_seeds = [123, 456]
+device = 'cpu'
+all_seeds = [42, 123, 456]
 
 print(f"Device: {device}")
-print(f"Loaded {len(data)} scenarios")
+print(f"Loaded {len(data)} scenarios, seeds {all_seeds}")
 
 for sd in data:
     safe = sd.scenario_name.lower().replace(" ", "_")
     npz_path = os.path.join(output_dir, f"{safe}_predictions.npz")
 
-    # Load existing seeds
     if os.path.exists(npz_path):
         saved = np.load(npz_path)
         existing_seeds = set(saved['seeds'].tolist())
     else:
         existing_seeds = set()
 
-    seeds_to_run = [s for s in extra_seeds if s not in existing_seeds]
+    seeds_to_run = [s for s in all_seeds if s not in existing_seeds]
     if not seeds_to_run:
-        print(f"  {sd.scenario_name}: SKIP (seeds {sorted(existing_seeds)} done)")
+        print(f"  {sd.scenario_name}: SKIP ({sorted(existing_seeds)} done)")
         continue
 
     print(f"  {sd.scenario_name}: seeds {seeds_to_run}...")
     pred_cores = []
-    all_seeds = list(existing_seeds)
+    all_seeds_list = list(existing_seeds)
 
     if os.path.exists(npz_path):
         saved = np.load(npz_path)
@@ -70,20 +69,17 @@ for sd in data:
             Z = model.get_adjacency_matrix().cpu().numpy()
         pred_core = Z[1:-1, 1:-1]
         pred_cores.append(pred_core)
-        all_seeds.append(seed)
+        all_seeds_list.append(seed)
         del model, optimizer, y_tensor, Z, y
-        if device == 'cuda':
-            torch.cuda.empty_cache()
         gc.collect()
         print(f"    seed {seed}: {time.time()-t1:.1f}s")
 
-    # Save checkpoint after each scenario (survives node failures)
     all_cores = np.stack(pred_cores, axis=0).astype(np.float32)
     np.savez_compressed(npz_path,
         pred_cores=all_cores,
-        seeds=np.array(sorted(all_seeds), dtype=np.int64),
+        seeds=np.array(sorted(all_seeds_list), dtype=np.int64),
     )
-    print(f"  {sd.scenario_name}: saved {len(all_seeds)} seeds -> {npz_path}")
+    print(f"  {sd.scenario_name}: saved {sorted(all_seeds_list)} -> {npz_path}")
 
 print("=== Training done ===")
 PYEOF

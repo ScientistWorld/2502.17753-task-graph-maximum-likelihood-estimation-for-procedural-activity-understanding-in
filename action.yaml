@@ -1,5 +1,5 @@
 action: submit
-gpus: 1
+gpus: 0
 test: false
 milestone: method_runs
-notes: "Resumable multi-seed training: adds seeds 123 and 456 per scenario with checkpoint after each scenario. Saves .npz after each scenario so job is resumable after node failures. Targets F1 ~87.8 matching paper DO result."
+notes: "CPU-only multi-seed DO training (avoids GPU node failures). Seeds 42, 123, 456 per scenario with per-scenario checkpointing. Target: F1 ~87.8 matching paper DO result."
