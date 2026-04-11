@@ -1,5 +1,5 @@
 action: submit
-gpus: 0
-test: false
+gpus: 1
+test: true
 milestone: core_claim
-notes: "Batch CPU training: 6 saved, training 18 remaining in batches. Non-test node for stability."
+notes: "GPU sequential training on all 24 scenarios. GPU should be much faster than CPU."
