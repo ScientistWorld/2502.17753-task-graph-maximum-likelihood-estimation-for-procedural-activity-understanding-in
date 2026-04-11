@@ -2,4 +2,4 @@ action: submit
 gpus: 1
 test: false
 milestone: method_runs
-notes: "Train seeds 123 and 456 for all 24 CaptainCook4D scenarios, then evaluate with 3-seed averaged DO predictions. Expected F1 ~87.8 matching paper's DO result."
+notes: "Resumable multi-seed training: adds seeds 123 and 456 per scenario with checkpoint after each scenario. Saves .npz after each scenario so job is resumable after node failures. Targets F1 ~87.8 matching paper DO result."
