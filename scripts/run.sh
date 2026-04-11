@@ -1,20 +1,18 @@
 #!/bin/bash
-# Job script: sequential DO training on all 24 CaptainCook4D scenarios.
-# Each scenario trains independently and saves predictions immediately.
+# Job script: CPU training on remaining 20 scenarios (first 4 already have predictions).
+# Trains sequentially to avoid memory/CUDA issues.
 
 set -e
 cd /home/user
 
-echo "=== $(date) === Starting DO training on CaptainCook4D ==="
+echo "=== $(date) === Starting DO training on CaptainCook4D (CPU) ==="
 
 # Verify dependencies
 python3 -c "import torch, numpy, networkx; print('Deps OK:', torch.__version__)"
 
-# Clean slate
-rm -f scoring/scores.json
 mkdir -p checkpoints/do_captaincook4d
 
-# Train each scenario sequentially (avoids multiprocessing pickle issues)
+# Train remaining scenarios (skip those with existing predictions)
 python3 << 'PYEOF'
 import sys, os, time, json
 sys.path.insert(0, '/home/user')
@@ -32,11 +30,9 @@ def train_one(scenario_data, beta, lr, max_epochs, seed, output_dir):
     y = np.zeros((len(scenario_data.sequences), max_len), dtype=np.int64)
     for i, seq in enumerate(scenario_data.sequences):
         y[i, :len(seq)] = seq
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    y_tensor = torch.tensor(y, dtype=torch.long, device=device)
-    model = DirectOptimization(n_matrix, device=device).to(device)
+    y_tensor = torch.tensor(y, dtype=torch.long, device='cpu')
+    model = DirectOptimization(n_matrix, device='cpu').to('cpu')
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    threshold = 1.0 / (n_matrix - 2)
     for epoch in range(max_epochs):
         model.train()
         optimizer.zero_grad()
@@ -58,15 +54,24 @@ def train_one(scenario_data, beta, lr, max_epochs, seed, output_dir):
 data = load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')
 output_dir = 'checkpoints/do_captaincook4d'
 os.makedirs(output_dir, exist_ok=True)
-print(f"Loaded {len(data)} scenarios, device={'cuda' if torch.cuda.is_available() else 'cpu'}")
+print(f"Loaded {len(data)} scenarios")
+
+# Skip first 4 scenarios (already have predictions from previous run)
+remaining = data[4:]
+print(f"Training remaining {len(remaining)} scenarios...")
+
 t0 = time.time()
-for idx, sd in enumerate(data):
+for idx, sd in enumerate(remaining):
     t1 = time.time()
     name, shape = train_one(sd, beta=0.005, lr=0.1, max_epochs=300, seed=42, output_dir=output_dir)
     elapsed = time.time() - t1
-    print(f"  [{idx+1}/24] {name}: {shape}, {elapsed:.1f}s")
+    print(f"  [{idx+1}/20] {name}: {shape}, {elapsed:.1f}s")
 total_elapsed = time.time() - t0
-print(f"=== All 24 trained in {total_elapsed:.1f}s ({total_elapsed/60:.1f}min) ===")
+print(f"=== Remaining 20 trained in {total_elapsed:.1f}s ({total_elapsed/60:.1f}min) ===")
+
+# Verify all 24 predictions exist
+npz_files = [f for f in os.listdir(output_dir) if f.endswith('_predictions.npz')]
+print(f"Total prediction files: {len(npz_files)}/24")
 PYEOF
 
 echo "Training complete. Evaluating..."
