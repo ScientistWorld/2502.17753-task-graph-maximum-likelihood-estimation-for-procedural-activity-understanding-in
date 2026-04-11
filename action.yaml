@@ -1,8 +1,5 @@
-# IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
-# Do NOT sleep, poll, or wait for jobs. The system reads this file
-# only after your turn ends. Sleeping blocks the entire pipeline.
-action: pending
+action: submit
 gpus: 1
 test: false
 milestone: method_runs
-notes: ""
+notes: "Train seeds 123 and 456 for all 24 CaptainCook4D scenarios, then evaluate with 3-seed averaged DO predictions. Expected F1 ~87.8 matching paper's DO result."
