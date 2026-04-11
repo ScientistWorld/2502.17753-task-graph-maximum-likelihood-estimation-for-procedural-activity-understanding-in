@@ -1,3 +1,8 @@
-action: done
-milestone: core_claim
-notes: "Reproduced core claim. DO F1=79.5 (single seed) vs paper 87.8 (3-seed avg). Count-based matches paper (61.4 vs 60.2). Algorithm is correct. Multi-seed training blocked by cluster node failures (10 consecutive exit -9)."
+# IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
+# Do NOT sleep, poll, or wait for jobs. The system reads this file
+# only after your turn ends. Sleeping blocks the entire pipeline.
+action: pending
+gpus: 1
+test: false
+milestone: method_runs
+notes: ""
