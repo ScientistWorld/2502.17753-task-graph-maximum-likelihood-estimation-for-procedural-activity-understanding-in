@@ -963,6 +963,11 @@ For mistake detection: F1 score on detecting correct vs. mistake actions (averag
 
 </details>
 
+### Iteration 2: MiniMax-M2.7
+- **Milestone**: `method_runs` | **Status**: done
+- **Working time**: 55m | **GPU**: 0.0h
+- **Jobs**: 22 total (1 completed, 19 failed)
+
 
 ---
 
