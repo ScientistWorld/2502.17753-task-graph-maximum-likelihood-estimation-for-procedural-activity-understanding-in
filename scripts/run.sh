@@ -1,9 +1,9 @@
 #!/bin/bash
-# CPU-based multi-seed DO training to avoid GPU node failures.
-# All 24 scenarios get seeds 42, 123, 456 with per-scenario checkpointing.
+# CPU-based multi-seed DO training (resumable).
+# Skips scenarios that already have all 3 seeds (42, 123, 456).
 set -e
 cd /home/user
-echo "=== $(date) === CPU multi-seed DO training ==="
+echo "=== $(date) === CPU multi-seed DO training (resumable) ==="
 python3 -c "import torch; print('CUDA:', torch.cuda.is_available())"
 
 python3 << 'PYEOF'
@@ -21,9 +21,9 @@ os.makedirs(output_dir, exist_ok=True)
 device = 'cpu'
 all_seeds = [42, 123, 456]
 
-print(f"Device: {device}")
-print(f"Loaded {len(data)} scenarios, seeds {all_seeds}")
+print(f"Device: {device}, {len(data)} scenarios, seeds {all_seeds}")
 
+done_count = 0
 for sd in data:
     safe = sd.scenario_name.lower().replace(" ", "_")
     npz_path = os.path.join(output_dir, f"{safe}_predictions.npz")
@@ -36,10 +36,11 @@ for sd in data:
 
     seeds_to_run = [s for s in all_seeds if s not in existing_seeds]
     if not seeds_to_run:
+        done_count += 1
         print(f"  {sd.scenario_name}: SKIP ({sorted(existing_seeds)} done)")
         continue
 
-    print(f"  {sd.scenario_name}: seeds {seeds_to_run}...")
+    print(f"  {sd.scenario_name}: seeds {seeds_to_run}...", flush=True)
     pred_cores = []
     all_seeds_list = list(existing_seeds)
 
@@ -72,16 +73,17 @@ for sd in data:
         all_seeds_list.append(seed)
         del model, optimizer, y_tensor, Z, y
         gc.collect()
-        print(f"    seed {seed}: {time.time()-t1:.1f}s")
+        print(f"    seed {seed}: {time.time()-t1:.1f}s", flush=True)
 
     all_cores = np.stack(pred_cores, axis=0).astype(np.float32)
     np.savez_compressed(npz_path,
         pred_cores=all_cores,
         seeds=np.array(sorted(all_seeds_list), dtype=np.int64),
     )
-    print(f"  {sd.scenario_name}: saved {sorted(all_seeds_list)} -> {npz_path}")
+    done_count += 1
+    print(f"  [{done_count}/{len(data)}] {sd.scenario_name}: {sorted(all_seeds_list)} saved", flush=True)
 
-print("=== Training done ===")
+print(f"=== Training done ({done_count}/{len(data)} scenarios complete) ===")
 PYEOF
 
 # Evaluate
