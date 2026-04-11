@@ -1,5 +1,5 @@
 action: submit
 gpus: 1
-test: true
+test: false
 milestone: core_claim
-notes: "GPU sequential training on all 24 scenarios. GPU should be much faster than CPU."
+notes: "Non-test GPU job. Skip existing 6 scenarios, train remaining 18. Ultra-lightweight single-scenario-at-a-time."
