@@ -1,5 +1,5 @@
 action: submit
 gpus: 0
 test: false
-milestone: method_runs
-notes: "Resubmitting: previous test job timed out. Fix in place (run.sh no longer deletes checkpoints). Full 24-scenario DO parallel training (300 epochs, seed 42) + evaluation. Expect ~87.8 F1 matching paper."
+milestone: core_claim
+notes: "Full 24-scenario DO parallel training (300 epochs, 1 seed) + evaluation on CaptainCook4D. Expect F1~87.8 matching paper. CPU job with parallelization."
