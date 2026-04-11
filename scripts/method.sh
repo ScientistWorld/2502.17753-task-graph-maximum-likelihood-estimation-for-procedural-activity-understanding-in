@@ -1,33 +1,96 @@
 #!/bin/bash
-# Run the paper's proposed DO method (parallel across scenarios).
+# Run the paper's proposed DO method on CaptainCook4D.
+# Supports multi-seed training with incremental checkpointing.
 #
 # Usage:
-#   bash scripts/method.sh
+#   bash scripts/method.sh                    # Default: 3 seeds (42,123,456), 300 epochs
+#   METHOD_SEEDS="42" METHOD_MAX_EPOCHS=300 bash scripts/method.sh  # Single seed
 
 set -e
 cd /home/user
 
 echo "Running Direct Optimization (DO) model on CaptainCook4D..."
 
-METHOD_DEVICE="${METHOD_DEVICE:-cpu}"
-METHOD_MAX_EPOCHS="${METHOD_MAX_EPOCHS:-300}"
-METHOD_SEEDS="${METHOD_SEEDS:-42}"
-METHOD_WORKERS="${METHOD_WORKERS:-24}"
+SEEDS="${METHOD_SEEDS:-42,123,456}"
+SEED_LIST=($(echo "$SEEDS" | tr ',' '\n'))
+MAX_EPOCHS="${METHOD_MAX_EPOCHS:-300}"
+device='cuda'
 
-# Remove previous outputs so evaluation only sees results from this run.
-rm -rf checkpoints/do_captaincook4d
+echo "DO settings: seeds=$SEEDS, epochs=$MAX_EPOCHS"
 
-# Train DO on ALL 24 scenarios in parallel.
-python3 method/train_parallel.py \
-    --repo_data_path /home/user/method/repo/data/captaincook4d \
-    --output checkpoints/do_captaincook4d \
-    --beta 0.005 \
-    --lr 0.1 \
-    --max_epochs "${METHOD_MAX_EPOCHS}" \
-    --seed "${METHOD_SEEDS}" \
-    --num_workers "${METHOD_WORKERS}"
+mkdir -p checkpoints/do_captaincook4d
 
-echo "Training complete. Evaluating..."
+python3 << PYEOF
+import sys, os, time, gc
+sys.path.insert(0, '/home/user')
+import numpy as np
+import torch
+from data.loader import load_data
+from method.tgml import DirectOptimization
+
+data = load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')
+output_dir = 'checkpoints/do_captaincook4d'
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+seeds = [int(s) for s in "$SEEDS".split(',')]
+print(f"Device: {device}, seeds: {seeds}")
+
+for sd in data:
+    safe = sd.scenario_name.lower().replace(" ", "_")
+    npz_path = os.path.join(output_dir, f"{safe}_predictions.npz")
+
+    # Load existing seeds
+    existing_cores = []
+    existing_seeds = []
+    if os.path.exists(npz_path):
+        saved = np.load(npz_path)
+        existing_cores = list(saved['pred_cores'])
+        existing_seeds = list(saved['seeds'])
+    else:
+        os.makedirs(output_dir, exist_ok=True)
+
+    seeds_to_run = [s for s in seeds if s not in existing_seeds]
+    if not seeds_to_run:
+        print(f"  {sd.scenario_name}: SKIP (has {len(existing_seeds)} seeds)")
+        continue
+
+    print(f"  {sd.scenario_name}: running seeds {seeds_to_run}...")
+    for seed in seeds_to_run:
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+        n_gt = sd.gt_node_count
+        n_matrix = n_gt + 2
+        max_len = max(len(seq) for seq in sd.sequences)
+        y = np.zeros((len(sd.sequences), max_len), dtype=np.int64)
+        for i, seq in enumerate(sd.sequences):
+            y[i, :len(seq)] = seq
+        y_tensor = torch.tensor(y, dtype=torch.long, device=device)
+        model = DirectOptimization(n_matrix, device=device).to(device)
+        optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
+        for epoch in range($MAX_EPOCHS):
+            optimizer.zero_grad()
+            loss = model(y_tensor, beta=0.005)
+            loss.backward()
+            optimizer.step()
+        with torch.no_grad():
+            Z = model.get_adjacency_matrix().cpu().numpy()
+        pred_core = Z[1:-1, 1:-1].astype(np.float32)
+        existing_cores.append(pred_core)
+        existing_seeds.append(seed)
+        del model, optimizer, y_tensor, Z
+        if device == 'cuda':
+            torch.cuda.empty_cache()
+        gc.collect()
+
+    all_cores = np.stack(existing_cores, axis=0)
+    np.savez_compressed(npz_path,
+        pred_cores=all_cores,
+        seeds=np.array(existing_seeds, dtype=np.int64),
+    )
+    print(f"  {sd.scenario_name}: saved {len(existing_seeds)} seeds")
+
+print("=== Training done ===")
+PYEOF
+
+echo "Evaluating..."
 bash scripts/evaluate.sh captaincook4d_do checkpoints/do_captaincook4d/
-
 echo "Done."
