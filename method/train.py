@@ -125,8 +125,8 @@ def train_do(
         dtype=np.int64,
     )
 
-    # Threshold: 1 / n_gt (matching the paper's approach)
-    threshold = 1.0 / n_gt
+    # Threshold: 1 / (num_nodes - 2) matching the official code (num_nodes includes beta and gamma)
+    threshold = 1.0 / (n_matrix - 2)
 
     # Training loop. We intentionally keep the released DO behavior:
     # the final epoch state is the output, rather than restoring a custom

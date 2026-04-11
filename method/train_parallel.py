@@ -101,7 +101,7 @@ def train_single_scenario(args):
         [[0] + [step - 1 for step in seq[2:-2]] + [n_gt - 1] for seq in sequences],
         dtype=np.int64,
     )
-    threshold = 1.0 / n_gt
+    threshold = 1.0 / (n_matrix - 2)
 
     for epoch in range(max_epochs):
         model.train()

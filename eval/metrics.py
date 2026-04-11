@@ -121,15 +121,17 @@ def post_process_adjacency(
     np.ndarray
         Processed adjacency matrix (n_gt x n_gt).
     """
-    threshold = 1.0 / n_gt
+    # Threshold matches official code: 1/(num_nodes - 2) where num_nodes = n_gt + 2
+    threshold = 1.0 / (n_gt + 2)
 
     # Binarize
     pred_binary = (pred_core > threshold).astype(float)
 
-    # Official DO builds graph from transposed matrix: GP = nx.DiGraph(pred_adjacency_matrix.T)
+    # Official DO builds graph from BINARY matrix: np.where(pred_core < threshold, 0, 1)
     # pred_core[i,j] = score for edge j->i in the graph
-    # Building from pred_core.T makes edge (i,j) in graph correspond to pred_core[i,j]
-    GP = nx.DiGraph(pred_core.T)
+    # Building from (pred_core > threshold).T makes edge (i,j) in graph iff score > threshold
+    pred_binary = (pred_core > threshold).astype(float)
+    GP = nx.DiGraph(pred_binary.T)
 
     # Add boundary edges
     id_start = 0  # GT node ID

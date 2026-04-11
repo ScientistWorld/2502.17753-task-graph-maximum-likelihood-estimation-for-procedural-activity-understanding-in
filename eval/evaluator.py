@@ -66,7 +66,7 @@ def post_process_pred_adj(
 ) -> np.ndarray:
     """
     Post-process predicted adjacency matrix following the paper's approach:
-    1. Binarize at 1/n threshold
+    1. Binarize at 1/(n+2) threshold
     2. Add boundary edges
     3. Transitive reduction
     4. Cycle removal
@@ -76,20 +76,21 @@ def post_process_pred_adj(
     pred_core : np.ndarray
         Raw predicted scores (n_gt x n_gt).
     n_gt : int
-        Number of GT nodes.
+        Number of GT nodes (including START and END).
 
     Returns
     -------
     np.ndarray
         Processed binary adjacency matrix.
     """
-    threshold = 1.0 / n_gt
+    # Threshold: 1/(n+2) matching official code (n+2 = matrix size, includes beta and gamma)
+    threshold = 1.0 / (n_gt + 2)
     pred_binary = (pred_core > threshold).astype(float)
 
-    # Official DO builds graph from transposed matrix: GP = nx.DiGraph(pred_adjacency_matrix.T)
+    # Official DO builds graph from BINARY matrix: np.where(pred_core < threshold, 0, 1)
     # pred_core[i,j] = score for edge j->i in the graph
-    # Building from pred_core.T makes edge (i,j) in graph correspond to pred_core[i,j]
-    GP = nx.DiGraph(pred_core.T)
+    # Building from (pred_core > threshold).T makes edge (i,j) in graph iff score > threshold
+    GP = nx.DiGraph(pred_binary.T)
 
     id_start = 0
     id_end = n_gt - 1

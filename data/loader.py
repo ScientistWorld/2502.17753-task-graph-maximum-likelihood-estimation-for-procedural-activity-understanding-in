@@ -116,7 +116,8 @@ def load_captaincook4d(repo_data_path: str) -> List[TaskGraphData]:
 
         # Convert sequences to matrix indices following the official DO code:
         # [beta, START, unique steps..., END, gamma]
-        # Matrix indices: beta=0, START=1, GT nodes 1..(n-2), END=(n-1), gamma=n
+        # Matrix indices: beta=0, START=1, GT nodes 1..(n-1), END=n, gamma=n+1
+        # where n = n_gt_nodes (number of GT nodes including START and END)
         # taxonomy ID → GT node ID → matrix index (+1)
         converted_seqs = []
         for seq in train_sequences:
@@ -126,7 +127,7 @@ def load_captaincook4d(repo_data_path: str) -> List[TaskGraphData]:
                 if gt_node is not None:
                     new_seq.append(gt_node + 1)  # GT node ID + 1 → matrix index
                 # else: taxonomy ID not in GT (skip)
-            new_seq.append(n_gt_nodes - 1)  # END = n_gt - 1 → matrix index
+            new_seq.append(n_gt_nodes)  # END = n_gt_nodes → matrix index
             new_seq.append(n_matrix - 1)  # gamma = n_matrix - 1 → matrix index
             converted_seqs.append(new_seq)
 

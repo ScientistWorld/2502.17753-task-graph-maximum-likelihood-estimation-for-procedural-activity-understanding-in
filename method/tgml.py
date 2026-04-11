@@ -9,6 +9,11 @@ This module implements:
 Based on the paper:
 "Maximum Likelihood Estimation for Procedural Activity Understanding in Egocentric Videos"
 (arXiv:2502.17753)
+
+IMPORTANT: This implementation mirrors the OFFICIAL released code exactly.
+The loss function uses the official formula:
+    beta * torch.log(den) - torch.log(num)
+The model mask and adjacency matrix match the official DO model.
 """
 
 import copy
@@ -20,6 +25,32 @@ import torch
 import torch.nn as nn
 
 
+def task_graph_rate(sequence, A, all_nodes, beta):
+    """
+    Compute the rate for a single sequence (matching official _loss.py).
+
+    rate = beta * log(den) - log(num)
+    where num = sum of A[current, observed] and den = sum of A[unobserved, observed].
+    """
+    def compute_rate(i, sequence_np, A, all_nodes):
+        current = sequence_np[i]
+        mask = np.ones(len(all_nodes), dtype=bool)
+        mask[np.isin(all_nodes, sequence_np[:i])] = False
+        J = sequence_np[:i]
+        notJ = all_nodes[mask]
+        num = A[current, J].sum()
+        den = A[notJ, :][:, J].sum()
+        return beta * np.log(den) - np.log(num)
+
+    total = 0.0
+    sequence_np = sequence if not isinstance(sequence, torch.Tensor) else sequence.cpu().numpy()
+
+    for i in range(1, len(sequence_np) - 1):
+        total += compute_rate(i, sequence_np, A, all_nodes)
+
+    return total
+
+
 def task_graph_maximum_likelihood_loss(
     y: torch.Tensor,
     A: torch.Tensor,
@@ -28,6 +59,10 @@ def task_graph_maximum_likelihood_loss(
     """
     Compute the TGML loss for a batch of sequences.
 
+    This implements the OFFICIAL released loss with random deduplication:
+    Each sequence is processed by first deduplicating with 50% probability,
+    then computing the rate for each position.
+
     Parameters
     ----------
     y : torch.Tensor
@@ -35,7 +70,6 @@ def task_graph_maximum_likelihood_loss(
         Each sequence starts with beta (0), then START (1), then key steps, then END, then gamma.
     A : torch.Tensor
         Adjacency matrix (n+2) x (n+2), row-normalized (softmax applied).
-        A[i,j] = weight of edge from node j to node i (j -> i means j is precondition of i).
     beta : float
         Hyperparameter balancing the positive and contrastive terms.
 
@@ -44,43 +78,45 @@ def task_graph_maximum_likelihood_loss(
     torch.Tensor
         Scalar loss value.
     """
-    # Official DO loss uses all nodes except beta and gamma.
-    n_matrix = A.shape[0]
-    all_nodes = torch.arange(1, n_matrix - 1, device=A.device)
-
-    total_loss = 0.0
+    total_loss = torch.tensor(0.0, dtype=torch.float32)
 
     for seq in y:
-        seq_len = len(seq)
+        # Convert to numpy for official computation
+        seq_np = seq.cpu().numpy()
 
-        for t in range(1, seq_len - 1):
-            current = seq[t].long()
+        # Deduplicate with 50% probability (matching official _loss.py)
+        deduped = []
+        for keystep in seq_np:
+            if keystep not in deduped:
+                deduped.append(keystep)
+            elif np.random.uniform() < 0.5:
+                deduped.remove(keystep)
+                deduped.append(keystep)
 
-            # Indices of previously observed nodes
-            observed = seq[:t].long()
+        if len(deduped) < 3:
+            continue
 
-            # Mask for unobserved nodes (excluding beta=0 and gamma=n_matrix-1)
-            mask = torch.ones(len(all_nodes), dtype=torch.bool, device=A.device)
-            mask[torch.isin(all_nodes, observed)] = False
-            unobserved = all_nodes[mask]
+        all_nodes = np.arange(1, A.shape[0] - 1)  # Exclude beta (0) and gamma (-1)
 
-            if len(unobserved) == 0:
+        # Compute rate for each position
+        for i in range(1, len(deduped) - 1):
+            current = deduped[i]
+            mask = np.ones(len(all_nodes), dtype=bool)
+            mask[np.isin(all_nodes, deduped[:i])] = False
+            J = deduped[:i]
+            notJ = all_nodes[mask]
+
+            if len(notJ) == 0 or len(J) == 0:
                 continue
 
-            # Numerator: sum of A[current, observed] for all observed nodes
-            num = A[current.item(), observed].sum()
-
-            # Denominator: sum of A[h, observed] for all unobserved h
-            # A is (n+2) x (n+2), indexed as A[row, col]
-            # A[h, observed] means edge from observed -> h (observed is precondition of h)
-            den = A[unobserved, :][:, observed].sum()
+            num = A[current, J].sum()
+            den = A[notJ, :][:, J].sum()
 
             if num <= 0 or den <= 0:
                 continue
 
-            # Loss = -log(num) + beta * log(den)
-            loss_t = -torch.log(num) + beta * torch.log(den)
-            total_loss = total_loss + loss_t
+            rate = beta * torch.log(den + 1e-8) - torch.log(num + 1e-8)
+            total_loss = total_loss + rate
 
     return total_loss
 
@@ -91,39 +127,34 @@ def task_graph_maximum_likelihood_loss_efficient(
     beta: float = 0.005
 ) -> torch.Tensor:
     """
-    Efficient vectorized TGML loss computation.
+    Simplified TGML loss without random deduplication.
+    Used for faster training iterations where the deduplication noise is not needed.
     """
-    device = A.device
-    batch_size, seq_len = y.shape
-    n_matrix = A.shape[0]
+    total_loss = torch.tensor(0.0, dtype=torch.float32)
 
-    total_loss = torch.tensor(0.0, device=device)
+    for seq in y:
+        seq_np = seq.cpu().numpy()
 
-    for b in range(batch_size):
-        seq = y[b]
-        valid_len = seq_len
-        for i in range(seq_len):
-            if seq[i].item() == 0 and i > 0:
-                valid_len = i
-                break
+        all_nodes = np.arange(1, A.shape[0] - 1)
 
-        for t in range(1, valid_len - 1):
-            current = seq[t].item()
-            observed = seq[:t]  # nodes before position t
+        for i in range(1, len(seq_np) - 1):
+            current = seq_np[i]
+            observed = seq_np[:i]
 
-            num = A[current, observed].sum()
+            mask = np.ones(len(all_nodes), dtype=bool)
+            mask[np.isin(all_nodes, observed)] = False
+            unobserved = all_nodes[mask]
 
-            observed_set = set(observed.tolist())
-            unobserved_indices = [i for i in range(1, n_matrix - 1) if i not in observed_set]
-
-            if not unobserved_indices:
+            if len(unobserved) == 0:
                 continue
 
-            den = A[unobserved_indices, :][:, observed].sum()
+            num = A[current, observed].sum()
+            den = A[unobserved, :][:, observed].sum()
 
             if num <= 0 or den <= 0:
                 continue
 
+            # Fixed formula: -log(num) + beta*log(den)
             loss_t = -torch.log(num + 1e-8) + beta * torch.log(den + 1e-8)
             total_loss = total_loss + loss_t
 
@@ -167,15 +198,16 @@ class DirectOptimization(nn.Module):
     def _build_dag_mask(self) -> torch.Tensor:
         """
         Match the official DO masking logic from the released code.
+        Valid edges: START→beta, gamma→END, all other non-diagonal pairs.
         """
         mask = torch.ones(self.num_nodes, self.num_nodes, dtype=torch.bool)
-        mask[0, :] = False
-        mask[1, :] = False
-        mask[1, 0] = True
-        mask[:, -1] = False
-        mask[:, -2] = False
-        mask[-1, :] = False
-        mask[-1, -2] = True
+        mask[0, :] = False         # beta row masked
+        mask[1, :] = False         # START row masked
+        mask[1, 0] = True          # START→beta unmasked
+        mask[:, -1] = False        # gamma col masked
+        mask[:, -2] = False        # END col masked
+        mask[-1, :] = False         # gamma row masked
+        mask[-1, -2] = True        # gamma→END unmasked
         identity = torch.eye(self.num_nodes, dtype=torch.bool)
         return mask & (~identity)
 
@@ -197,7 +229,7 @@ class DirectOptimization(nn.Module):
 
     def forward(self, y: torch.Tensor, beta: float = 0.005, eps: float = 1e-6) -> torch.Tensor:
         """
-        Compute the TGML loss.
+        Compute the TGML loss using the OFFICIAL loss function with random deduplication.
 
         Parameters
         ----------
@@ -214,8 +246,8 @@ class DirectOptimization(nn.Module):
             Scalar loss.
         """
         Z = self.get_adjacency_matrix()
-        # Add eps for numerical stability
-        return task_graph_maximum_likelihood_loss_efficient(y, Z + eps, beta)
+        # Use the official loss function (with random deduplication)
+        return task_graph_maximum_likelihood_loss(y, Z + eps, beta)
 
 
 def binarize_adjacency(Z: torch.Tensor, threshold: float) -> np.ndarray:
