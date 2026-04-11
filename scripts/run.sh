@@ -1,9 +1,8 @@
 #!/bin/bash
-# Training ONLY remaining 11 scenarios (14-24) on GPU.
-# Skip scenarios 0-13 (already done).
+# Training remaining scenarios (14-23, i.e. index 14-23, all 10 remaining)
 set -e
 cd /home/user
-echo "=== $(date) === DO training batch 14-17 ==="
+echo "=== $(date) === DO training scenarios 14-23 ==="
 
 python3 -c "import torch; print('CUDA:', torch.cuda.is_available()); torch.set_num_threads(1)"
 mkdir -p checkpoints/do_captaincook4d
@@ -21,11 +20,10 @@ from method.tgml import DirectOptimization
 data = load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')
 output_dir = 'checkpoints/do_captaincook4d'
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-print(f"Device: {device}")
+print(f"Device: {device}, training indices 14-23 (10 scenarios)")
 
-# Scenarios 14-17: Mugcake, Panfriedtofu, Pinwheels, Ramen
-batch_idx = [14, 15, 16, 17]
-for idx in batch_idx:
+t0 = time.time()
+for idx in range(14, 24):
     sd = data[idx]
     safe = sd.scenario_name.lower().replace(" ", "_")
     npz_path = os.path.join(output_dir, f"{safe}_predictions.npz")
@@ -66,126 +64,8 @@ for idx in batch_idx:
     if device == 'cuda':
         torch.cuda.empty_cache()
     gc.collect()
-PYEOF
 
-echo "=== $(date) === Batch 18-21 ==="
-python3 << 'PYEOF'
-import sys, os, time, gc
-sys.path.insert(0, '/home/user')
-import numpy as np
-import torch
-torch.set_num_threads(1)
-
-from data.loader import load_data
-from method.tgml import DirectOptimization
-
-data = load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')
-output_dir = 'checkpoints/do_captaincook4d'
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-# Scenarios 18-21: Sautedmushrooms, Scrambledeggs, Spicedhotchocolate, Spicytunaavocadowraps
-batch_idx = [18, 19, 20, 21]
-for idx in batch_idx:
-    sd = data[idx]
-    safe = sd.scenario_name.lower().replace(" ", "_")
-    npz_path = os.path.join(output_dir, f"{safe}_predictions.npz")
-    if os.path.exists(npz_path):
-        print(f"  [{idx+1}/24] {sd.scenario_name}: SKIP")
-        continue
-
-    t1 = time.time()
-    np.random.seed(42)
-    torch.manual_seed(42)
-    n_gt = sd.gt_node_count
-    n_matrix = n_gt + 2
-    max_len = max(len(seq) for seq in sd.sequences)
-    y = np.zeros((len(sd.sequences), max_len), dtype=np.int64)
-    for i, seq in enumerate(sd.sequences):
-        y[i, :len(seq)] = seq
-
-    y_tensor = torch.tensor(y, dtype=torch.long, device=device)
-    model = DirectOptimization(n_matrix, device=device).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
-
-    for epoch in range(300):
-        optimizer.zero_grad()
-        loss = model(y_tensor, beta=0.005)
-        loss.backward()
-        optimizer.step()
-
-    with torch.no_grad():
-        Z = model.get_adjacency_matrix().cpu().numpy()
-
-    pred_core = Z[1:-1, 1:-1]
-    np.savez_compressed(npz_path,
-        pred_cores=np.array([pred_core], dtype=np.float32),
-        seeds=np.array([42], dtype=np.int64),
-    )
-    print(f"  [{idx+1}/24] {sd.scenario_name}: {time.time()-t1:.1f}s")
-    del model, optimizer, y_tensor, Z, pred_core, y
-    if device == 'cuda':
-        torch.cuda.empty_cache()
-    gc.collect()
-PYEOF
-
-echo "=== $(date) === Batch 22-23 ==="
-python3 << 'PYEOF'
-import sys, os, time, gc
-sys.path.insert(0, '/home/user')
-import numpy as np
-import torch
-torch.set_num_threads(1)
-
-from data.loader import load_data
-from method.tgml import DirectOptimization
-
-data = load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')
-output_dir = 'checkpoints/do_captaincook4d'
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-# Scenarios 22-23: Tomatochutney, Tomatomozzarellasalad
-batch_idx = [22, 23]
-for idx in batch_idx:
-    sd = data[idx]
-    safe = sd.scenario_name.lower().replace(" ", "_")
-    npz_path = os.path.join(output_dir, f"{safe}_predictions.npz")
-    if os.path.exists(npz_path):
-        print(f"  [{idx+1}/24] {sd.scenario_name}: SKIP")
-        continue
-
-    t1 = time.time()
-    np.random.seed(42)
-    torch.manual_seed(42)
-    n_gt = sd.gt_node_count
-    n_matrix = n_gt + 2
-    max_len = max(len(seq) for seq in sd.sequences)
-    y = np.zeros((len(sd.sequences), max_len), dtype=np.int64)
-    for i, seq in enumerate(sd.sequences):
-        y[i, :len(seq)] = seq
-
-    y_tensor = torch.tensor(y, dtype=torch.long, device=device)
-    model = DirectOptimization(n_matrix, device=device).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
-
-    for epoch in range(300):
-        optimizer.zero_grad()
-        loss = model(y_tensor, beta=0.005)
-        loss.backward()
-        optimizer.step()
-
-    with torch.no_grad():
-        Z = model.get_adjacency_matrix().cpu().numpy()
-
-    pred_core = Z[1:-1, 1:-1]
-    np.savez_compressed(npz_path,
-        pred_cores=np.array([pred_core], dtype=np.float32),
-        seeds=np.array([42], dtype=np.int64),
-    )
-    print(f"  [{idx+1}/24] {sd.scenario_name}: {time.time()-t1:.1f}s")
-    del model, optimizer, y_tensor, Z, pred_core, y
-    if device == 'cuda':
-        torch.cuda.empty_cache()
-    gc.collect()
+print(f"=== Training done: {time.time()-t0:.1f}s ===")
 PYEOF
 
 # Evaluate
