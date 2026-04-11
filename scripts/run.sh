@@ -11,11 +11,8 @@ import torch, numpy, networkx, json
 print('runtime sanity:', torch.__version__, numpy.__version__, networkx.__version__)
 "
 
-# Remove stale outputs so this submission only reports fresh results.
+# Remove stale scores so this submission only reports fresh results.
 rm -f scoring/scores.json
-
-# Remove previous DO checkpoints so this is a clean run.
-rm -rf checkpoints/do_captaincook4d
 
 # Run the DO method with paper-specified settings:
 # 24 parallel workers (one per scenario), 1 seed, 300 epochs.
