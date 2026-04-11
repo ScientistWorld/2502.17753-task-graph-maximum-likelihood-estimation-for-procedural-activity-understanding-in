@@ -1,5 +1,5 @@
 action: submit
 gpus: 0
-test: true
+test: false
 milestone: core_claim
-notes: "CPU training on remaining 20 scenarios (4 already done). ~17min expected. Then evaluate both methods."
+notes: "Batch CPU training: 6 saved, training 18 remaining in batches. Non-test node for stability."
