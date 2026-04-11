@@ -1,8 +1,8 @@
 #!/bin/bash
-# Training remaining scenarios (14-23, i.e. index 14-23, all 10 remaining)
+# Train remaining 8 scenarios (indices 17-23: Ramen through Zoodles)
 set -e
 cd /home/user
-echo "=== $(date) === DO training scenarios 14-23 ==="
+echo "=== $(date) === DO training scenarios 17-23 ==="
 
 python3 -c "import torch; print('CUDA:', torch.cuda.is_available()); torch.set_num_threads(1)"
 mkdir -p checkpoints/do_captaincook4d
@@ -20,10 +20,10 @@ from method.tgml import DirectOptimization
 data = load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')
 output_dir = 'checkpoints/do_captaincook4d'
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-print(f"Device: {device}, training indices 14-23 (10 scenarios)")
+print(f"Device: {device}, training indices 16-23 (8 scenarios)")
 
 t0 = time.time()
-for idx in range(14, 24):
+for idx in range(16, 24):  # Ramen through Zoodles (8 scenarios: indices 16-23)
     sd = data[idx]
     safe = sd.scenario_name.lower().replace(" ", "_")
     npz_path = os.path.join(output_dir, f"{safe}_predictions.npz")
