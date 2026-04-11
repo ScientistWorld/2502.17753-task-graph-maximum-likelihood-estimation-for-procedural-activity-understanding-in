@@ -1,8 +1,9 @@
 #!/bin/bash
-# Train Tomatomozzarellasalad and Zoodles
+# Retrain DO with 3 seeds per scenario, then evaluate.
+# Skip scenarios with 3 seeds already (to support incremental).
 set -e
 cd /home/user
-echo "=== $(date) === DO training last 2 ==="
+echo "=== $(date) === DO multi-seed retraining ==="
 python3 -c "import torch; print('CUDA:', torch.cuda.is_available())"
 mkdir -p checkpoints/do_captaincook4d
 
@@ -18,63 +19,82 @@ from method.tgml import DirectOptimization
 data = load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')
 output_dir = 'checkpoints/do_captaincook4d'
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-done = {'blenderbananapancakes', 'breakfastburritos', 'broccolistirfry', 'buttercorncup',
-        'capresebruschetta', 'cheesepimiento', 'coffee', 'cucumberraita', 'dressedupmeatballs',
-        'herbomeletwithfriedtomatoes', 'microwaveeggsandwich', 'microwavefrenchtoast',
-        'microwavemugpizza', 'mugcake', 'panfriedtofu', 'pinwheels', 'ramen',
-        'sautedmushrooms', 'scrambledeggs', 'spicedhotchocolate',
-        'spicytunaavocadowraps', 'tomatochutney'}
+seeds = [42, 123, 456]
 
 for sd in data:
     safe = sd.scenario_name.lower().replace(" ", "_")
-    if safe in done:
-        continue
     npz_path = os.path.join(output_dir, f"{safe}_predictions.npz")
+
+    # Check if already has 3 seeds
+    needs_training = True
     if os.path.exists(npz_path):
-        print(f"  {sd.scenario_name}: SKIP")
+        saved = np.load(npz_path)
+        saved_seeds = saved.get("seeds", np.array([]))
+        if len(saved_seeds) >= 3:
+            print(f"  {sd.scenario_name}: SKIP (has {len(saved_seeds)} seeds)")
+            needs_training = False
+        else:
+            existing = set(saved_seeds.tolist())
+            seeds_to_run = [s for s in seeds if s not in existing]
+            if not seeds_to_run:
+                print(f"  {sd.scenario_name}: SKIP (done)")
+                needs_training = False
+
+    if not needs_training:
         continue
-    t1 = time.time()
-    np.random.seed(42)
-    torch.manual_seed(42)
-    n_gt = sd.gt_node_count
-    n_matrix = n_gt + 2
-    max_len = max(len(seq) for seq in sd.sequences)
-    y = np.zeros((len(sd.sequences), max_len), dtype=np.int64)
-    for i, seq in enumerate(sd.sequences):
-        y[i, :len(seq)] = seq
-    y_tensor = torch.tensor(y, dtype=torch.long, device=device)
-    model = DirectOptimization(n_matrix, device=device).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
-    for epoch in range(300):
-        optimizer.zero_grad()
-        loss = model(y_tensor, beta=0.005)
-        loss.backward()
-        optimizer.step()
-    with torch.no_grad():
-        Z = model.get_adjacency_matrix().cpu().numpy()
-    pred_core = Z[1:-1, 1:-1]
+
+    print(f"  {sd.scenario_name}: training...")
+    pred_cores = []
+    for seed in seeds:
+        t1 = time.time()
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+        n_gt = sd.gt_node_count
+        n_matrix = n_gt + 2
+        max_len = max(len(seq) for seq in sd.sequences)
+        y = np.zeros((len(sd.sequences), max_len), dtype=np.int64)
+        for i, seq in enumerate(sd.sequences):
+            y[i, :len(seq)] = seq
+        y_tensor = torch.tensor(y, dtype=torch.long, device=device)
+        model = DirectOptimization(n_matrix, device=device).to(device)
+        optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
+        for epoch in range(300):
+            optimizer.zero_grad()
+            loss = model(y_tensor, beta=0.005)
+            loss.backward()
+            optimizer.step()
+        with torch.no_grad():
+            Z = model.get_adjacency_matrix().cpu().numpy()
+        pred_core = Z[1:-1, 1:-1]
+        pred_cores.append(pred_core)
+        del model, optimizer, y_tensor, Z, y
+        if device == 'cuda':
+            torch.cuda.empty_cache()
+        gc.collect()
+        print(f"    seed {seed}: {time.time()-t1:.1f}s")
+
+    all_cores = np.stack(pred_cores, axis=0).astype(np.float32)
     np.savez_compressed(npz_path,
-        pred_cores=np.array([pred_core], dtype=np.float32),
-        seeds=np.array([42], dtype=np.int64),
+        pred_cores=all_cores,
+        seeds=np.array(seeds, dtype=np.int64),
     )
-    print(f"  {sd.scenario_name}: {time.time()-t1:.1f}s")
-    del model, optimizer, y_tensor, Z, pred_core, y
-    if device == 'cuda':
-        torch.cuda.empty_cache()
-    gc.collect()
+    print(f"  {sd.scenario_name}: saved {len(pred_cores)} seeds")
+
+print("=== Training done ===")
 PYEOF
 
-# Evaluate all 24
+# Evaluate
 python3 << 'PYEOF'
 import sys
 sys.path.insert(0, '/home/user')
 from eval.evaluator import evaluate_all_scenarios, write_scores_json
 from data.loader import load_data
+
 data = load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')
 results = evaluate_all_scenarios(data, method='count_based')
 print(f'Count: P={results["aggregate"]["mean_precision"]:.1f}, R={results["aggregate"]["mean_recall"]:.1f}, F1={results["aggregate"]["mean_f1"]:.1f}')
 write_scores_json(results, 'captaincook4d_count')
+
 results_do = evaluate_all_scenarios(data, do_predictions_dir='checkpoints/do_captaincook4d', method='do')
 print(f'DO: P={results_do["aggregate"]["mean_precision"]:.1f}, R={results_do["aggregate"]["mean_recall"]:.1f}, F1={results_do["aggregate"]["mean_f1"]:.1f}, std={results_do["aggregate"]["std_f1"]:.1f}')
 write_scores_json(results_do, 'captaincook4d_do')
