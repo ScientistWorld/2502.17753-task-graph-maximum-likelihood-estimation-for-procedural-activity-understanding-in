@@ -1,8 +1,6 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: submit
-gpus: 0
-test: false
+action: done
 milestone: core_claim
-notes: "Continue the normal CPU CaptainCook4D rerun from the corrected 8-scenario subset. The job will log checkpoint coverage up front, skip baseline if already present, and extend the next shortest pending scenario (currently Microwavefrenchtoast at 2/5 seeds) under the isolated packaged Python path."
+notes: "Verification passed. Root artifacts were moved under tmp/, gym-facing docs were made method-agnostic, scoring coefficients were tightened around F1, and the workspace is ready for gym use at core_claim with the current 8-scenario CaptainCook4D subset as its main limitation."

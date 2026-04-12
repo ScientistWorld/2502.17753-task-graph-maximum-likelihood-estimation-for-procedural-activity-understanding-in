@@ -4,19 +4,16 @@ This file describes the experiments in `scores.json` for future scientist agents
 
 ## captaincook4d_task_graph
 
-**What it establishes:** Tests whether the method can recover accurate task graphs (directed acyclic graphs of prerequisite relationships between procedural steps) from observed action sequences in cooking videos. This is the paper's primary benchmark.
+**What it establishes:** Whether a system can recover prerequisite relationships between cooking steps from repeated action sequences for the same recipe.
 
-**Scientific purpose:** Given multiple example action sequences from the same cooking procedure (e.g., multiple videos of someone making coffee), the system must infer which steps depend on which other steps — without direct graph supervision. The predicted graphs are evaluated against ground-truth task graphs annotated by humans.
+**Scientific purpose:** The benchmark is designed to reward methods that infer dependency structure rather than memorize a single canonical ordering. Multiple demonstrations of the same recipe can differ in valid step order, so the target is a graph, not one sequence.
 
-**What each method in the experiment represents:**
-- `count_based`: A traditional graph-mining baseline that counts co-occurrences and transition probabilities in the action sequences.
-- `do`: The paper's proposed Direct Optimization method, which directly optimizes an adjacency matrix using a differentiable maximum likelihood loss.
-- Other baselines (msgi, llama3, msg2) are additional comparison points from the paper.
+**Current `scores.json` rows:** The reproduced score file currently contains `count_based` and `do`. These are just result labels. Future scientist agents may add their own method rows as long as they follow the same evaluation interface.
 
-**How the experiment works:**
-1. For each of 24 cooking procedures, learn a task graph from the procedure's action sequences.
-2. Post-process the predicted graph (binarize, add boundary edges, transitive reduction).
-3. Compare predicted graph edges against ground-truth edges using precision, recall, and F1.
-4. Average scores across all 24 procedures.
+**How the experiment is scored:**
+1. Predict one graph for each CaptainCook4D procedure.
+2. Convert the prediction into a binary graph suitable for evaluation.
+3. Compare predicted directed edges against ground-truth directed edges.
+4. Average precision, recall, and F1 across procedures.
 
-**Primary claim validated:** The DO method achieves substantially higher F1 than the count-based baseline on task graph recovery.
+**Why it matters:** This is the paper's main graph-generation benchmark and the core gym target for this workspace.

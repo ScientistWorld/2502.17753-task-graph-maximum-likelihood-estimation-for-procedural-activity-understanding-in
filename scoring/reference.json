@@ -1,14 +1,14 @@
 {
   "experiments": {
     "captaincook4d_task_graph": {
-      "description": "Task graph generation on CaptainCook4D (24 cooking procedures). Primary metric: F1 score. DO is the proposed Direct Optimization method; TGT-text uses text embeddings.",
+      "description": "Task graph generation on CaptainCook4D (24 cooking procedures). Primary metric: F1 score on directed prerequisite edges.",
       "weight": 1.0,
       "primary_metric": "f1",
       "metrics": {
-        "precision": {"higher_is_better": true, "coefficient": 1.0},
-        "recall": {"higher_is_better": true, "coefficient": 1.0},
-        "f1": {"higher_is_better": true, "coefficient": 1.5},
-        "std_f1": {"higher_is_better": false, "coefficient": -0.3}
+        "precision": {"higher_is_better": true, "coefficient": 0.25},
+        "recall": {"higher_is_better": true, "coefficient": 0.25},
+        "f1": {"higher_is_better": true, "coefficient": 1.0},
+        "std_f1": {"higher_is_better": false, "coefficient": -0.15}
       },
       "results": {
         "msgi": {"type": "baseline", "precision": 11.3, "recall": 13.3, "f1": 12.2},

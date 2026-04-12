@@ -1,44 +1,23 @@
 # Scientist Constraints
 
-## Model
-The scientist must use the Direct Optimization (DO) model architecture: a learnable
-scoring matrix that is row-normalized via softmax and masked to enforce DAG constraints
-(no self-loops, beta→START, no edges to/from gamma). This is implemented in
-`method/tgml.py::DirectOptimization`. The scientist may modify:
-- The learning rate, beta parameter, and other hyperparameters
-- The loss computation (e.g., alternative formulations of the TGML loss)
-- The post-processing pipeline (threshold, transitive reduction)
-- Initialization of the scoring matrix
-
-The scientist may NOT:
-- Replace the DO model with a neural network architecture (TGT or otherwise)
-- Use pretrained weights or external models
-- Change the overall formulation from direct adjacency matrix optimization
-
 ## Data
-The scientist must use only the CaptainCook4D dataset from the cloned repository at
-`method/repo/data/captaincook4d/`, which contains 24 cooking procedure scenarios
-with ground truth task graphs and video annotations. No external datasets or
-additional training data may be used.
+Use CaptainCook4D only for scored comparisons in this gym. No external datasets, extra human labels, or additional corpora should be introduced for the scored experiment.
 
 ## Evaluation
-The scientist must evaluate using edge-level precision/recall/F1 against the ground
-truth task graphs, matching the protocol in `method/train.py::train_do()`:
-1. Extract core adjacency matrix (remove beta/gamma rows/columns)
-2. Threshold at 1/n where n is the number of GT nodes
-3. Add boundary edges (START→nodes with no incoming, END←nodes with no outgoing)
-4. Apply transitive reduction
-5. Compare with ground truth using sklearn metrics on the flattened matrices
+Use the existing evaluation contract:
+1. produce one predicted graph per procedure,
+2. score directed prerequisite edges against ground truth,
+3. report precision, recall, and F1 in the `scores.json` structure written by `scripts/evaluate.sh`.
 
-## Training Procedure
-The scientist may modify the training loop (optimizer choice, scheduling,
-early stopping criteria) but must keep training at the scenario level
-(one model per cooking procedure) and respect a maximum of 1000 epochs per scenario.
+## Supervision Level
+Keep the comparable weak-supervision setting: action sequences may be used for learning, but ground-truth task graphs are for evaluation only.
+
+## Problem Scope
+Stay within graph induction for procedural step dependencies. Do not change the task into a different prediction problem such as step classification, language modeling, or free-form instruction generation.
 
 ## Compliance Checklist
-- [ ] Model is Direct Optimization (DO): learnable scoring matrix with softmax + DAG mask
-- [ ] No pretrained models or external weights used
-- [ ] Training data is CaptainCook4D only from the repo's data/captaincook4d directory
-- [ ] Evaluation uses edge-level F1 on ground truth task graphs
-- [ ] Post-processing includes thresholding, boundary edges, and transitive reduction
-- [ ] Maximum 1000 epochs per scenario
+- [ ] CaptainCook4D only for the scored experiment
+- [ ] No extra graph supervision during learning
+- [ ] Output is one graph per procedure
+- [ ] Evaluation uses the provided graph-edge scoring pipeline
+- [ ] Results are written in the existing `scores.json` experiment format
