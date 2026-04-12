@@ -59,7 +59,7 @@ PY
 fi
 
 METHOD_DEVICE=cpu METHOD_SEEDS=42,1337,2024,2025,2026 METHOD_MAX_EPOCHS=1000 \
-METHOD_OUTPUT_DIR=checkpoints/do_captaincook4d_fixedtgml METHOD_MAX_SCENARIOS=4 \
+METHOD_OUTPUT_DIR=checkpoints/do_captaincook4d_fixedtgml METHOD_MAX_SCENARIOS=2 \
 bash scripts/method.sh
 bash scripts/evaluate.sh captaincook4d_partial_compare checkpoints/do_captaincook4d_fixedtgml 5 || true
 python3 validate.py
