@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: true
 milestone: core_claim
-notes: "Audit restored core_claim. Submit a 1-hour CPU retry focused only on Cheesepimiento, the lone partially completed corrected scenario (2/5 seeds), using the repaired environment and resumable runner."
+notes: "Retry after environment setup timeout: setup.sh now installs only clean system networkx, while PYTHONPATH prefers that system path ahead of the mounted .local packages. Re-run the 1-hour CPU Cheesepimiento-focused retry."
