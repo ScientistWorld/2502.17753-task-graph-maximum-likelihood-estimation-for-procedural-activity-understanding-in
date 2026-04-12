@@ -25,6 +25,8 @@
 **The previously written DO scores are not treated as valid evidence now.**
 This turn uncovered that the local TGML loss had been detaching the adjacency matrix to NumPy, which breaks gradient flow. The stored DO numbers in `scoring/scores.json` were produced before fixing that bug, so they are retained only as stale artifacts and will be overwritten by the next submission.
 
+**Fresh post-fix DO rerun status:** after moving to `checkpoints/do_captaincook4d_fixedtgml/`, one scenario (`Blenderbananapancakes`) has all 5 corrected seeds saved and a second (`Breakfastburritos`) has 1/5 seeds saved. The rerun is making honest forward progress, but dataset-level DO metrics are still incomplete and therefore not yet claimable.
+
 ## Issues Encountered
 
 1. **GT adjacency matrix orientation bug (FIXED)**: Initially built gt_adj[dst, src] = 1 (adjacency form), but evaluation uses graph form adj[u,v] = 1 meaning edge u→v. Fixed to gt_adj[src, dst] = 1 matching official graph orientation.
@@ -36,12 +38,14 @@ This turn uncovered that the local TGML loss had been detaching the adjacency ma
 7. **Training selection leakage risk (FIXED IN SCRIPTS)**: `scripts/method.sh` previously selected the best epoch using GT F1 during training. Updated it to save only the final fixed-epoch model, keeping training weakly supervised.
 8. **Autograd break in TGML loss (FIXED)**: `method/tgml.py` detached the adjacency matrix to NumPy inside the loss, so `loss.backward()` could not update the graph parameters. Replaced this with a torch-only implementation and trimmed padded sequences at the first `gamma` token.
 9. **Stale checkpoint reuse risk (FIXED IN SCRIPTS)**: the rerun path would have reused old per-scenario `.npz` files from the broken-loss run whenever seed IDs overlapped, mixing invalid and valid outputs. The method now writes to a fresh `checkpoints/do_captaincook4d_fixedtgml/` directory by default and flushes each completed seed to disk immediately for crash-safe resume.
+10. **Repeated worker-node deaths (MITIGATED IN SCRIPTS)**: the latest job again failed with exit `-9` because the worker node died mid-run, not because of a Python error. The runner now skips recomputing the already-trusted baseline and trains pending DO scenarios in ascending estimated workload so each retry banks more corrected outputs before a preemption or node loss.
 
 ## What Remains
 
 - Rerun CaptainCook4D DO from scratch with the corrected differentiable loss
 - Use only the fresh post-fix checkpoint directory when scoring DO
 - Produce fresh `scores.json` before claiming `core_claim`
+- Continue resumable shortest-first DO reruns until all 24 CaptainCook4D scenarios have 5 corrected seeds
 - If the corrected rerun still trails badly, inspect per-scenario failures and only then make tightly scoped training/evaluation fixes
 
 ## Implementation Details

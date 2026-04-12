@@ -17,8 +17,9 @@ SEED_LIST=($(echo "$SEEDS" | tr ',' '\n'))
 MAX_EPOCHS="${METHOD_MAX_EPOCHS:-1000}"
 DEVICE="${METHOD_DEVICE:-cpu}"
 OUTPUT_DIR="${METHOD_OUTPUT_DIR:-checkpoints/do_captaincook4d_fixedtgml}"
+SCENARIO_FILTER="${METHOD_SCENARIOS:-}"
 
-echo "DO settings: seeds=$SEEDS, epochs=$MAX_EPOCHS, device=$DEVICE, output=$OUTPUT_DIR"
+echo "DO settings: seeds=$SEEDS, epochs=$MAX_EPOCHS, device=$DEVICE, output=$OUTPUT_DIR, scenarios=${SCENARIO_FILTER:-ALL}"
 
 mkdir -p "$OUTPUT_DIR"
 
@@ -37,11 +38,41 @@ if device != 'cpu' and not torch.cuda.is_available():
     device = 'cpu'
 seeds = [int(s) for s in "$SEEDS".split(',')]
 max_epochs = $MAX_EPOCHS
-print(f"Device: {device}, seeds: {seeds}, max_epochs: {max_epochs}")
+scenario_filter = [s.strip().lower() for s in "$SCENARIO_FILTER".split(',') if s.strip()]
+if scenario_filter:
+    data = [
+        sd for sd in data
+        if sd.scenario_name.lower().replace(" ", "_") in scenario_filter
+        or sd.scenario_name.lower() in scenario_filter
+    ]
+print(f"Device: {device}, seeds: {seeds}, max_epochs: {max_epochs}, scenarios={len(data)}")
 
+def safe_name(sd):
+    return sd.scenario_name.lower().replace(" ", "_")
 
+pending = []
+complete = []
 for sd in data:
-    safe = sd.scenario_name.lower().replace(" ", "_")
+    npz_path = os.path.join(output_dir, f"{safe_name(sd)}_predictions.npz")
+    existing_seeds = []
+    if os.path.exists(npz_path):
+        saved = np.load(npz_path)
+        existing_seeds = list(saved['seeds'])
+    missing = [s for s in seeds if s not in existing_seeds]
+    if missing:
+        workload = sum(len(seq) for seq in sd.sequences) * max(sd.gt_node_count, 1)
+        pending.append((workload, sd))
+    else:
+        complete.append(sd.scenario_name)
+
+pending.sort(key=lambda x: (x[0], x[1].gt_node_count, x[1].scenario_name))
+if complete:
+    print(f"Already complete: {len(complete)} scenarios")
+if pending:
+    print("Pending order:", [sd.scenario_name for _, sd in pending])
+
+for _, sd in pending:
+    safe = safe_name(sd)
     npz_path = os.path.join(output_dir, f"{safe}_predictions.npz")
 
     # Load existing seeds
