@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: core_claim
-notes: "Continue CPU completion-first resumable DO rerun after worker death: Breakfastburritos is now complete, the corrected completed subset is 6 scenarios, and METHOD_MAX_SCENARIOS=2 should finish Microwaveeggsandwich before opening more new CaptainCook4D scenarios."
+notes: "Continue CPU completion-first resumable DO rerun after worker death: Microwaveeggsandwich is now complete, the corrected completed subset is 7 scenarios, and METHOD_MAX_SCENARIOS=1 should finish Cheesepimiento before opening any new CaptainCook4D scenario."

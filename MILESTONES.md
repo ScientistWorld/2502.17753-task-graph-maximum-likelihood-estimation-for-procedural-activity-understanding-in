@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-12 03:27] - core_claim
+- Reviewed job `83772436-f7f`: another worker-node death with exit `-9`, but still no code exception; `Microwaveeggsandwich` reached 5/5 corrected seeds before the node died during `Cheesepimiento`
+- Refreshed `scoring/scores.json` from the actual completed 7-scenario corrected subset: count-based F1=69.9 versus DO F1=79.9 (`std_f1=5.8`), keeping the paper's central DO-beats-count result on a larger honest subset
+- Tightened the retry batch once more from 2 scenarios to 1 so the next resumable CPU run can focus exclusively on finishing `Cheesepimiento`
+
 ### [2026-04-12 03:18] - core_claim
 - Reviewed job `1b636c76-157`: another worker-node death with exit `-9`, but still no code exception; `Breakfastburritos` reached 5/5 corrected seeds before the node died during `Microwaveeggsandwich`
 - Refreshed `scoring/scores.json` from the actual completed 6-scenario corrected subset: count-based F1=68.0 versus DO F1=79.4 (`std_f1=6.1`), keeping the paper's central DO-beats-count result on a larger honest subset

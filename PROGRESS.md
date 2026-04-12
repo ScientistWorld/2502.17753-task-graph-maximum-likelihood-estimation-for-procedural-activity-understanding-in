@@ -22,21 +22,21 @@
 
 **Count-based baseline MATCHES paper within 1.2 F1 points.**
 
-**Fresh post-fix DO scores are now available on an even larger completed corrected subset.**
+**Fresh post-fix DO scores are now available on a still larger completed corrected subset.**
 Using only scenarios with all 5 corrected seeds saved in `checkpoints/do_captaincook4d_fixedtgml/`, the current partial experiment is:
 
 | Experiment | Method | Precision | Recall | F1 | std_f1 |
 |-----------|--------|-----------|--------|----|--------|
-| `captaincook4d_task_graph` corrected completed subset (6 scenarios), stored as `count_based` in `scores.json` | count_based | 74.7 | 62.5 | 68.0 | — |
-| `captaincook4d_task_graph` corrected completed subset (6 scenarios), stored as `do` in `scores.json` | DO | 81.4 | 77.6 | 79.4 | 6.1 |
+| `captaincook4d_task_graph` corrected completed subset (7 scenarios), stored as `count_based` in `scores.json` | count_based | 76.1 | 64.8 | 69.9 | — |
+| `captaincook4d_task_graph` corrected completed subset (7 scenarios), stored as `do` in `scores.json` | DO | 81.2 | 78.8 | 79.9 | 5.8 |
 
 The completed corrected subset is now:
-`Blenderbananapancakes`, `Breakfastburritos`, `Buttercorncup`, `Pinwheels`, `Spicedhotchocolate`, `Zoodles`.
+`Blenderbananapancakes`, `Breakfastburritos`, `Buttercorncup`, `Microwaveeggsandwich`, `Pinwheels`, `Spicedhotchocolate`, `Zoodles`.
 
 This subset is non-trivial and still supports the paper's core claim: corrected DO clearly outperforms the count-based baseline on edge-prediction F1 while using the real TGML/DO training procedure rather than stale pre-fix outputs.
 
 **Full-dataset DO scores are still not claimable.**
-Only 6/24 scenarios currently have all 5 corrected seeds. `Microwaveeggsandwich` has begun and should be the next scenario completed if the resumable retry survives long enough, so the stale pre-fix full-dataset DO entry is still being removed from `scores.json` during each retry until the corrected rerun is complete.
+Only 7/24 scenarios currently have all 5 corrected seeds. `Cheesepimiento` has been started and should be finished next, so the stale pre-fix full-dataset DO entry is still being removed from `scores.json` during each retry until the corrected rerun is complete.
 
 ## Issues Encountered
 
@@ -51,13 +51,13 @@ Only 6/24 scenarios currently have all 5 corrected seeds. `Microwaveeggsandwich`
 9. **Stale checkpoint reuse risk (FIXED IN SCRIPTS)**: the rerun path would have reused old per-scenario `.npz` files from the broken-loss run whenever seed IDs overlapped, mixing invalid and valid outputs. The method now writes to a fresh `checkpoints/do_captaincook4d_fixedtgml/` directory by default and flushes each completed seed to disk immediately for crash-safe resume.
 10. **Repeated worker-node deaths (MITIGATED IN SCRIPTS)**: the latest job again failed with exit `-9` because the worker node died mid-run, not because of a Python error. The runner now skips recomputing the already-trusted baseline and trains pending DO scenarios in ascending estimated workload so each retry banks more corrected outputs before a preemption or node loss.
 11. **Partial corrected-subset scoring added (FIXED IN EVAL/RUNNER)**: the workspace no longer has to wait for all 24 scenarios before reporting any honest corrected DO result. `scripts/evaluate.sh captaincook4d_partial_compare ...` now scores only scenarios with 5 corrected seeds and writes them into the standard `count_based` and `do` slots in `scoring/scores.json`; this is documented as a temporary subset-based deviation until the full 24-scenario corrected rerun completes.
-12. **Completion-first retry scheduling added (FIXED IN RUNNER)**: repeated node failures were leaving some scenarios nearly finished but not completed. `scripts/method.sh` now prioritizes scenarios with the fewest missing seeds before using workload as a tie-breaker, and the retry batch is now capped at `METHOD_MAX_SCENARIOS=2` so unstable jobs are more likely to finish `Microwaveeggsandwich` before opening more new scenarios.
+12. **Completion-first retry scheduling added (FIXED IN RUNNER)**: repeated node failures were leaving some scenarios nearly finished but not completed. `scripts/method.sh` now prioritizes scenarios with the fewest missing seeds before using workload as a tie-breaker, and the retry batch is now capped at `METHOD_MAX_SCENARIOS=1` so unstable jobs are more likely to finish `Cheesepimiento` before opening more new scenarios.
 
 ## What Remains
 
 - Rerun CaptainCook4D DO from scratch with the corrected differentiable loss
-- Expand the corrected 5-seed rerun beyond the current 6-scenario subset
-- Finish `Microwaveeggsandwich`, then keep raising the number of 5-seed completed scenarios
+- Expand the corrected 5-seed rerun beyond the current 7-scenario subset
+- Finish `Cheesepimiento`, then keep raising the number of 5-seed completed scenarios
 - Replace the partial `core_claim` experiment with a full 24-scenario corrected DO result in `scores.json`
 - Continue resumable shortest-first DO reruns until all 24 CaptainCook4D scenarios have 5 corrected seeds
 - If the corrected rerun still trails badly, inspect per-scenario failures and only then make tightly scoped training/evaluation fixes
