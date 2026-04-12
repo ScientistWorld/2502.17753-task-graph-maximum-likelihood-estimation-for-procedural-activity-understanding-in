@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: method_runs
-notes: "Run CaptainCook4D baseline plus a fresh fixed-epoch 5-seed DO reproduction on CPU using the corrected differentiable TGML loss and no GT-guided checkpoint selection."
+notes: "Audit-complete CPU rerun: rebuild CaptainCook4D baseline and 5-seed fixed-epoch DO into checkpoints/do_captaincook4d_fixedtgml with corrected differentiable TGML loss, no GT-guided checkpoint selection, and per-seed crash-safe checkpoint flushing."
