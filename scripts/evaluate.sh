@@ -17,6 +17,17 @@ source /home/user/scripts/common_env.sh
 
 mkdir -p scoring
 
+# Standalone evaluation should work both inside the clean compute container
+# and on the login node, where only the mounted user-site NumPy/NetworkX stack
+# may be available. Keep run.sh strict; only evaluation gets this fallback.
+if ! python3 - <<'PY' >/dev/null 2>&1
+import numpy
+import networkx
+PY
+then
+  export PYTHONPATH="${PYTHONPATH}:/home/user/.local/lib/python3.12/site-packages"
+fi
+
 # Parse arguments
 METHOD_NAME="${1:-captaincook4d_do}"
 CHECKPOINT_DIR="${2:-checkpoints/}"

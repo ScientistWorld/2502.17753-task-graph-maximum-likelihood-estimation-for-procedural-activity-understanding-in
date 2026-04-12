@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-12 07:53] - core_claim
+- Re-audited the handed-off workspace and kept `core_claim`: the implementation still matches the paper's real TGML + Direct Optimization method, and the corrected 7-scenario subset still supports DO > count-based on CaptainCook4D
+- Fixed an honest deliverable bug found during the audit: `scripts/evaluate.sh` was not standalone-functional on the current workspace because strict path isolation hid local `numpy`; it now falls back in a controlled way that preserves the clean vendored `networkx`
+- Revalidated the repaired standalone evaluation path with `captaincook4d_partial_compare`, which reproduces the same 7-scenario subset scores already in `scoring/scores.json` (count-based F1=69.9, DO F1=79.9)
+
 ### [2026-04-12 07:27] - core_claim
 - Reviewed job `5eac6b2f-963`: it failed before training started because compute jobs were still importing a corrupted mounted `/home/user/.local` `torch`, raising `ModuleNotFoundError: torch.masked.maskedtensor.core`
 - Hardened the packaged environment so future jobs no longer depend on the broken user-site tree: `setup.sh` now installs clean overlay copies of `numpy`, `networkx`, and `torch`, `container.def` drops `/home/user/.local` from `PYTHONPATH`, and all shell entrypoints now source `scripts/common_env.sh`
