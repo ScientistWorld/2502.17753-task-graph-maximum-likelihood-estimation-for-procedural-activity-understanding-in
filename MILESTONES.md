@@ -9,6 +9,10 @@
 - On this honest corrected subset, DO reaches F1=82.0 versus count-based F1=70.3, with `std_f1=4.5`, so the paper's central DO-beats-count claim now holds without using stale pre-fix outputs
 - The full 24-scenario CaptainCook4D rerun is still in progress and is now the path toward `core_claim_plus`
 
+### [2026-04-12 02:50] - core_claim
+- Reviewed job `7065b8f4-dd8`: another worker-node death with exit `-9`, but the corrected rerun progressed to 4 fully completed scenarios, plus `Zoodles` at 4/5 seeds and `Breakfastburritos` at 1/5
+- Updated the CPU runner to prioritize scenarios with the fewest missing seeds and capped each retry to a small batch so unstable jobs finish partial scenarios before opening many new ones
+
 ### [2026-04-12 02:22] - method_runs
 - Reviewed job `fd9f35da-8b1`: exit `-9` came from another worker-node death, not a code exception
 - Confirmed the clean post-fix DO rerun is progressing honestly: `Blenderbananapancakes` has 5/5 corrected seeds and `Breakfastburritos` has 1/5 saved in `checkpoints/do_captaincook4d_fixedtgml/`

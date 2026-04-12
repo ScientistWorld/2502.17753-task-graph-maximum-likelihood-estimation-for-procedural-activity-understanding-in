@@ -18,8 +18,9 @@ MAX_EPOCHS="${METHOD_MAX_EPOCHS:-1000}"
 DEVICE="${METHOD_DEVICE:-cpu}"
 OUTPUT_DIR="${METHOD_OUTPUT_DIR:-checkpoints/do_captaincook4d_fixedtgml}"
 SCENARIO_FILTER="${METHOD_SCENARIOS:-}"
+MAX_SCENARIOS="${METHOD_MAX_SCENARIOS:-0}"
 
-echo "DO settings: seeds=$SEEDS, epochs=$MAX_EPOCHS, device=$DEVICE, output=$OUTPUT_DIR, scenarios=${SCENARIO_FILTER:-ALL}"
+echo "DO settings: seeds=$SEEDS, epochs=$MAX_EPOCHS, device=$DEVICE, output=$OUTPUT_DIR, scenarios=${SCENARIO_FILTER:-ALL}, max_scenarios=$MAX_SCENARIOS"
 
 mkdir -p "$OUTPUT_DIR"
 
@@ -39,6 +40,7 @@ if device != 'cpu' and not torch.cuda.is_available():
 seeds = [int(s) for s in "$SEEDS".split(',')]
 max_epochs = $MAX_EPOCHS
 scenario_filter = [s.strip().lower() for s in "$SCENARIO_FILTER".split(',') if s.strip()]
+max_scenarios = int("$MAX_SCENARIOS")
 if scenario_filter:
     data = [
         sd for sd in data
@@ -61,17 +63,19 @@ for sd in data:
     missing = [s for s in seeds if s not in existing_seeds]
     if missing:
         workload = sum(len(seq) for seq in sd.sequences) * max(sd.gt_node_count, 1)
-        pending.append((workload, sd))
+        pending.append((len(missing), workload, sd))
     else:
         complete.append(sd.scenario_name)
 
-pending.sort(key=lambda x: (x[0], x[1].gt_node_count, x[1].scenario_name))
+pending.sort(key=lambda x: (x[0], x[1], x[2].gt_node_count, x[2].scenario_name))
+if max_scenarios > 0:
+    pending = pending[:max_scenarios]
 if complete:
     print(f"Already complete: {len(complete)} scenarios")
 if pending:
-    print("Pending order:", [sd.scenario_name for _, sd in pending])
+    print("Pending order:", [sd.scenario_name for _, _, sd in pending])
 
-for _, sd in pending:
+for _, _, sd in pending:
     safe = safe_name(sd)
     npz_path = os.path.join(output_dir, f"{safe}_predictions.npz")
 
