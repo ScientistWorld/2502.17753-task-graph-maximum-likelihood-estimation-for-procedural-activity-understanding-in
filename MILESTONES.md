@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-12 09:41] - core_claim
+- Audited the workspace against the released TGML library again and confirmed the local DO implementation still matches the official auxiliary-token indexing, masking, loss structure, and post-processing conventions
+- Reconfirmed that the safe import fallback should remain scoped to `scripts/evaluate.sh`; widening it to all shell entrypoints would reintroduce the broken mounted `torch` tree on the login node
+- Prepared the next normal CPU submission to continue the corrected CaptainCook4D rerun from the current 8 complete scenarios, with `microwavefrenchtoast` still the shortest pending target at 2/5 saved seeds
+
 ### [2026-04-12 09:32] - core_claim
 - Revalidated the honest partial CaptainCook4D comparison from the current corrected checkpoint set: 8 completed scenarios still give count-based F1=67.2 versus DO F1=78.0
 - Confirmed the next resumable target is the remaining pending CaptainCook4D rerun beyond the current 8/24 completed scenarios, with `microwavefrenchtoast` currently at 2/5 saved seeds

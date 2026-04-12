@@ -48,7 +48,7 @@ The next partially completed scenario is now `Microwavefrenchtoast` with 2/5 cor
 This subset is non-trivial and still supports the paper's core claim: corrected DO clearly outperforms the count-based baseline on edge-prediction F1 while using the real TGML/DO training procedure rather than stale pre-fix outputs.
 
 **Full-dataset DO scores are still not claimable.**
-Only 7/24 scenarios currently have all 5 corrected seeds. `Cheesepimiento` has been started and should be finished next, so the stale pre-fix full-dataset DO entry is still being removed from `scores.json` during each retry until the corrected rerun is complete.
+Only 8/24 scenarios currently have all 5 corrected seeds. `Microwavefrenchtoast` is the next partially completed scenario at 2/5 seeds, so the stale pre-fix full-dataset DO entry is still being removed from `scores.json` during each retry until the corrected rerun is complete.
 
 ## Issues Encountered
 
@@ -75,7 +75,7 @@ Only 7/24 scenarios currently have all 5 corrected seeds. `Cheesepimiento` has b
 ## What Remains
 
 - Rerun CaptainCook4D DO from scratch with the corrected differentiable loss
-- Expand the corrected 5-seed rerun beyond the current 7-scenario subset
+- Expand the corrected 5-seed rerun beyond the current 8-scenario subset
 - Expand beyond the now-completed `Cheesepimiento` scenario by finishing the next shortest pending CaptainCook4D procedure
 - Replace the partial `core_claim` experiment with a full 24-scenario corrected DO result in `scores.json`
 - Continue resumable shortest-first DO reruns until all 24 CaptainCook4D scenarios have 5 corrected seeds
@@ -99,4 +99,4 @@ Only 7/24 scenarios currently have all 5 corrected seeds. `Cheesepimiento` has b
 - The next submission restores the paper's 5-seed / 1000-epoch regime on CaptainCook4D with the corrected differentiable loss
 - Evaluation aggregates per-scenario metrics into the reported dataset means
 - Count-based baseline reimplemented without pandas/pygraphviz
-- Because of repeated worker-node deaths, the current `scores.json` still reflects the completed corrected subset (7 scenarios) rather than the full 24-scenario benchmark
+- Because of repeated worker-node deaths, the current `scores.json` still reflects the completed corrected subset (8 scenarios) rather than the full 24-scenario benchmark

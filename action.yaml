@@ -1,6 +1,8 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: done
+action: submit
+gpus: 0
+test: false
 milestone: core_claim
-notes: "Verification passed. Root artifacts were moved under tmp/, gym-facing docs were made method-agnostic, scoring coefficients were tightened around F1, and the workspace is ready for gym use at core_claim with the current 8-scenario CaptainCook4D subset as its main limitation."
+notes: "Normal CPU retry to continue the corrected CaptainCook4D DO rerun from the current 8 complete scenarios. The next pending target is Microwave French Toast (2/5 seeds), followed by the remaining untouched procedures."
