@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: core_claim
-notes: "Run a normal CPU retry focused only on Cheesepimiento to finish the remaining 3 corrected DO seeds after repeated test-node worker deaths. Shell entrypoints now prepend a clean vendored networkx so local/job-side scoring are consistent."
+notes: "Retry the CPU Cheesepimiento run after packaging a clean overlay Python stack. The next job first validates clean numpy/networkx/torch imports outside the broken /home/user/.local tree, then resumes the remaining 3 corrected DO seeds if startup succeeds."

@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-12 07:27] - core_claim
+- Reviewed job `5eac6b2f-963`: it failed before training started because compute jobs were still importing a corrupted mounted `/home/user/.local` `torch`, raising `ModuleNotFoundError: torch.masked.maskedtensor.core`
+- Hardened the packaged environment so future jobs no longer depend on the broken user-site tree: `setup.sh` now installs clean overlay copies of `numpy`, `networkx`, and `torch`, `container.def` drops `/home/user/.local` from `PYTHONPATH`, and all shell entrypoints now source `scripts/common_env.sh`
+- Added an explicit Python import sanity check at the top of `scripts/run.sh` so the next job will print the exact `numpy`/`networkx`/`torch` versions and file paths before attempting any CaptainCook4D work
+
 ### [2026-04-12 07:15] - core_claim
 - Re-audited the handed-off workspace and reconfirmed the implementation is the paper's real TGML + Direct Optimization method rather than a surrogate; standalone partial evaluation still supports the central DO-beats-count claim on the corrected completed subset
 - Fixed a remaining training-side faithfulness drift in `method/train.py` by removing `delete_cycles` from the sequence-accuracy post-processing path so it matches the released `train_with_gt.py` cleanup more closely
