@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: true
 milestone: core_claim
-notes: "Retry after environment setup timeout: setup.sh now installs only clean system networkx, while PYTHONPATH prefers that system path ahead of the mounted .local packages. Re-run the 1-hour CPU Cheesepimiento-focused retry."
+notes: "Retry after fixing environment split: container.def now contains only OS-level setup, while setup.sh installs just clean system networkx. Re-run the 1-hour CPU Cheesepimiento-focused retry."

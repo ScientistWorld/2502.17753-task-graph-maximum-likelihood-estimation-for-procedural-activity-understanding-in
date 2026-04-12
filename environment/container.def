@@ -6,14 +6,6 @@ From: python:3.12-slim-bookworm
         libgomp1 \
         && rm -rf /var/lib/apt/lists/*
 
-
-    # --- Merged from setup.sh ---
-    pip install --break-system-packages uv 2>/dev/null || pip install uv 2>/dev/null || true
-    export UV_SYSTEM_PYTHON=1 UV_BREAK_SYSTEM_PACKAGES=1
-    # No-op: all Python packages come from the mounted workspace site-packages.
-    set -e
-    echo "setup.sh: done (workspace packages)"
-
 %environment
     export HOME=/home/user
     export PATH=/usr/local/bin:/usr/bin:/bin
