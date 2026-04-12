@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-12 09:48] - core_claim
+- Completed the final gym verification pass without finding a correctness issue that would justify downgrading the milestone
+- Reconfirmed method/problem separation, standalone evaluation, and scoring validity with `python validate.py --compare`
+- Marked the workspace done at `core_claim`; the remaining limitation is still the honest 8-procedure scored subset rather than a full 24-procedure rerun
+
 ### [2026-04-12 09:41] - core_claim
 - Audited the workspace against the released TGML library again and confirmed the local DO implementation still matches the official auxiliary-token indexing, masking, loss structure, and post-processing conventions
 - Reconfirmed that the safe import fallback should remain scoped to `scripts/evaluate.sh`; widening it to all shell entrypoints would reintroduce the broken mounted `torch` tree on the login node
