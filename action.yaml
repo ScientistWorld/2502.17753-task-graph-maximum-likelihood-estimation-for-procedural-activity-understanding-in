@@ -1,3 +1,8 @@
-action: done
-milestone: core_claim
-notes: "core_claim achieved. Count-based matches paper (61.4 vs 60.2). DO F1=79.6 vs paper 87.8. Environment usable. All critical bugs fixed (GT orientation, graph direction, delete_cycles, count-based)."
+# IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
+# Do NOT sleep, poll, or wait for jobs. The system reads this file
+# only after your turn ends. Sleeping blocks the entire pipeline.
+action: pending
+gpus: 1
+test: false
+milestone: method_runs
+notes: ""
