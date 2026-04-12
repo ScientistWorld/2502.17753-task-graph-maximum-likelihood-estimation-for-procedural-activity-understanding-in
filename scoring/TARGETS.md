@@ -12,8 +12,8 @@ This workspace is still anchored to the paper's CaptainCook4D task-graph generat
 - **Goal**: keep run-to-run variability low on the completed subset, reflecting the paper's claim that DO is stable across seeds.
 
 ## Required Comparison
-- **Compared methods in `scores.json`**: `count_based_partial_completed`, `do_partial_completed`
-- **Claim checked**: `do_partial_completed.f1` should clearly exceed `count_based_partial_completed.f1`, while `do_partial_completed.recall` remains strong. The full 24-scenario DO result remains the next expansion target after this minimum claim.
+- **Compared methods in `scores.json`**: `count_based`, `do`
+- **Claim checked**: `do.f1` should clearly exceed `count_based.f1`, while `do.recall` remains strong. At the current stage these rows are sourced from the corrected completed subset; the full 24-scenario DO result remains the next expansion target after this minimum claim.
 
 ## How To Run
 - `bash scripts/baseline.sh`

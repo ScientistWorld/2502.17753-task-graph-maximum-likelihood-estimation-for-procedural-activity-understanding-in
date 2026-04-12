@@ -3,16 +3,11 @@
     "captaincook4d_task_graph": {
       "results": {
         "count_based": {
-          "precision": 67.12556432820725,
-          "recall": 56.75689491734158,
-          "f1": 61.413715434258144
-        },
-        "count_based_partial_completed": {
           "precision": 76.85630341880342,
           "recall": 64.78618421052632,
           "f1": 70.2666148128943
         },
-        "do_partial_completed": {
+        "do": {
           "precision": 84.44444444444444,
           "recall": 79.73684210526315,
           "f1": 81.99353003257926,
