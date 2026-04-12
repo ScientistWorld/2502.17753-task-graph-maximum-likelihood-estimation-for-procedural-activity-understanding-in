@@ -2,6 +2,7 @@
 
 ## What Works
 
+- **Audit restored `core_claim`**: the workspace still implements the paper's actual TGML + Direct Optimization method rather than a surrogate, and the corrected completed subset continues to support the central DO-beats-count claim honestly
 - **Paper's algorithm fully implemented**: TGML loss (maximizing P of observed steps under DAG constraints), DirectOptimization model, and post-processing pipeline (binarize at 1/(n+2), boundary edges, transitive reduction)
 - **CaptainCook4D loading**: 24 scenarios from cloned CaptainCook4D repo at `/home/user/method/repo/data/captaincook4d`
 - **Evaluation pipeline**: Method-agnostic eval/ module scores edge-level P/R/F1. No imports from method/

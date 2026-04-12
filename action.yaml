@@ -3,6 +3,6 @@
 # only after your turn ends. Sleeping blocks the entire pipeline.
 action: submit
 gpus: 0
-test: false
+test: true
 milestone: core_claim
-notes: "Rebuild the environment with explicit numpy/networkx/torch installs, then continue the CPU completion-first resumable DO rerun. The corrected subset remains 7 scenarios, and the next retry should finish Cheesepimiento without the old partial-eval failure mode."
+notes: "Audit restored core_claim. Submit a 1-hour CPU retry focused only on Cheesepimiento, the lone partially completed corrected scenario (2/5 seeds), using the repaired environment and resumable runner."

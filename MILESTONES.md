@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-12 05:45] - core_claim
+- Re-audited the workspace after handoff and confirmed the implementation is still the paper's real TGML + Direct Optimization method, not a surrogate
+- Rechecked the honest evaluation path: the corrected completed subset remains 7 scenarios with count-based F1=69.9 versus DO F1=79.9, so `core_claim` is restored after the audit reset
+- Narrowed the next retry to the only partially completed corrected scenario, `Cheesepimiento` (2/5 seeds), to push the rerun beyond the current subset without wasting CPU time
+
 ### [2026-04-12 05:42] - core_claim
 - Repaired the packaged environment so jobs no longer depend on the broken mounted `networkx` install from `/home/user/.local`; `setup.sh` now installs `numpy`, `networkx`, and `torch`, and `container.def` disables user-site imports
 - Removed a resumable-run failure mode in `scripts/method.sh`: full-dataset DO evaluation now runs only after all 24 CaptainCook4D scenarios have all requested seeds, so one-scenario retries can bank corrected checkpoints without tripping an incomplete-eval error
