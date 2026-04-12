@@ -6,9 +6,19 @@ cd /home/user
 source /home/user/scripts/common_env.sh
 echo "=== $(date) === CaptainCook4D baseline + DO reproduction ==="
 python3 - <<'PY'
+import os
+import site
+import sys
 import numpy
 import networkx
 import torch
+print('PYTHONNOUSERSITE:', os.environ.get('PYTHONNOUSERSITE'))
+print('ENABLE_USER_SITE:', site.ENABLE_USER_SITE)
+print('sys.path:')
+for path in sys.path:
+    print('  ', path)
+if any(path.startswith('/home/user/.local') for path in sys.path):
+    raise SystemExit('Refusing to run: /home/user/.local is present on sys.path')
 print('numpy:', numpy.__version__, numpy.__file__)
 print('networkx:', networkx.__version__, networkx.__file__)
 print('torch:', torch.__version__, torch.__file__)
