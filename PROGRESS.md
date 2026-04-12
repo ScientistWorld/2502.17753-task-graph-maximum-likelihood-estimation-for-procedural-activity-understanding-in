@@ -35,10 +35,12 @@ This turn uncovered that the local TGML loss had been detaching the adjacency ma
 6. **Compute node failures**: 10+ consecutive job submissions failed with exit -9 due to cluster node hardware failures. Resolved by switching to CPU-only training and resumable scripts.
 7. **Training selection leakage risk (FIXED IN SCRIPTS)**: `scripts/method.sh` previously selected the best epoch using GT F1 during training. Updated it to save only the final fixed-epoch model, keeping training weakly supervised.
 8. **Autograd break in TGML loss (FIXED)**: `method/tgml.py` detached the adjacency matrix to NumPy inside the loss, so `loss.backward()` could not update the graph parameters. Replaced this with a torch-only implementation and trimmed padded sequences at the first `gamma` token.
+9. **Stale checkpoint reuse risk (FIXED IN SCRIPTS)**: the rerun path would have reused old per-scenario `.npz` files from the broken-loss run whenever seed IDs overlapped, mixing invalid and valid outputs. The method now writes to a fresh `checkpoints/do_captaincook4d_fixedtgml/` directory by default and flushes each completed seed to disk immediately for crash-safe resume.
 
 ## What Remains
 
 - Rerun CaptainCook4D DO from scratch with the corrected differentiable loss
+- Use only the fresh post-fix checkpoint directory when scoring DO
 - Produce fresh `scores.json` before claiming `core_claim`
 - If the corrected rerun still trails badly, inspect per-scenario failures and only then make tightly scoped training/evaluation fixes
 

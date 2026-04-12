@@ -7,6 +7,8 @@ echo "=== $(date) === CaptainCook4D baseline + DO reproduction ==="
 python3 -c "import torch; print('CUDA:', torch.cuda.is_available())"
 
 bash scripts/baseline.sh
-METHOD_DEVICE=cpu METHOD_SEEDS=42,1337,2024,2025,2026 METHOD_MAX_EPOCHS=1000 bash scripts/method.sh
+METHOD_DEVICE=cpu METHOD_SEEDS=42,1337,2024,2025,2026 METHOD_MAX_EPOCHS=1000 \
+METHOD_OUTPUT_DIR=checkpoints/do_captaincook4d_fixedtgml \
+bash scripts/method.sh
 python3 validate.py --compare
 echo "=== Done ==="

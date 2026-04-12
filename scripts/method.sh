@@ -16,10 +16,11 @@ SEEDS="${METHOD_SEEDS:-42,1337,2024,2025,2026}"
 SEED_LIST=($(echo "$SEEDS" | tr ',' '\n'))
 MAX_EPOCHS="${METHOD_MAX_EPOCHS:-1000}"
 DEVICE="${METHOD_DEVICE:-cpu}"
+OUTPUT_DIR="${METHOD_OUTPUT_DIR:-checkpoints/do_captaincook4d_fixedtgml}"
 
-echo "DO settings: seeds=$SEEDS, epochs=$MAX_EPOCHS, device=$DEVICE"
+echo "DO settings: seeds=$SEEDS, epochs=$MAX_EPOCHS, device=$DEVICE, output=$OUTPUT_DIR"
 
-mkdir -p checkpoints/do_captaincook4d
+mkdir -p "$OUTPUT_DIR"
 
 python3 << PYEOF
 import sys, os, time, gc
@@ -30,7 +31,7 @@ from data.loader import load_data
 from method.tgml import DirectOptimization
 
 data = load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')
-output_dir = 'checkpoints/do_captaincook4d'
+output_dir = "$OUTPUT_DIR"
 device = "$DEVICE"
 if device != 'cpu' and not torch.cuda.is_available():
     device = 'cpu'
@@ -89,22 +90,25 @@ for sd in data:
 
         existing_cores.append(pred_core)
         existing_seeds.append(seed)
+
+        order = np.argsort(np.array(existing_seeds, dtype=np.int64))
+        ordered_cores = np.stack([existing_cores[i] for i in order], axis=0)
+        ordered_seeds = np.array([existing_seeds[i] for i in order], dtype=np.int64)
+        np.savez_compressed(npz_path,
+            pred_cores=ordered_cores,
+            seeds=ordered_seeds,
+        )
         print(f"    seed={seed}: saved final adjacency")
         del model, optimizer, y_tensor, Z
         if device == 'cuda':
             torch.cuda.empty_cache()
         gc.collect()
 
-    all_cores = np.stack(existing_cores, axis=0)
-    np.savez_compressed(npz_path,
-        pred_cores=all_cores,
-        seeds=np.array(existing_seeds, dtype=np.int64),
-    )
     print(f"  {sd.scenario_name}: saved {len(existing_seeds)} seeds")
 
 print("=== Training done ===")
 PYEOF
 
 echo "Evaluating..."
-bash scripts/evaluate.sh captaincook4d_do checkpoints/do_captaincook4d/
+bash scripts/evaluate.sh captaincook4d_do "$OUTPUT_DIR/"
 echo "Done."
