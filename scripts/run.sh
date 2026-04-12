@@ -1,107 +1,12 @@
 #!/bin/bash
-# CPU-based multi-seed DO training (resumable).
-# Skips scenarios that already have all 3 seeds (42, 123, 456).
+# Paper-faithful CaptainCook4D reproduction job.
+# Runs the count-based baseline, then fixed-epoch DO training with 5 seeds.
 set -e
 cd /home/user
-echo "=== $(date) === CPU multi-seed DO training (resumable) ==="
+echo "=== $(date) === CaptainCook4D baseline + DO reproduction ==="
 python3 -c "import torch; print('CUDA:', torch.cuda.is_available())"
 
-python3 << 'PYEOF'
-import sys, os, time, gc
-sys.path.insert(0, '/home/user')
-import numpy as np
-import torch
-torch.set_num_threads(4)
-from data.loader import load_data
-from method.tgml import DirectOptimization
-
-data = load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')
-output_dir = 'checkpoints/do_captaincook4d'
-os.makedirs(output_dir, exist_ok=True)
-device = 'cpu'
-all_seeds = [42, 123, 456]
-
-print(f"Device: {device}, {len(data)} scenarios, seeds {all_seeds}")
-
-done_count = 0
-for sd in data:
-    safe = sd.scenario_name.lower().replace(" ", "_")
-    npz_path = os.path.join(output_dir, f"{safe}_predictions.npz")
-
-    if os.path.exists(npz_path):
-        saved = np.load(npz_path)
-        existing_seeds = set(saved['seeds'].tolist())
-    else:
-        existing_seeds = set()
-
-    seeds_to_run = [s for s in all_seeds if s not in existing_seeds]
-    if not seeds_to_run:
-        done_count += 1
-        print(f"  {sd.scenario_name}: SKIP ({sorted(existing_seeds)} done)")
-        continue
-
-    print(f"  {sd.scenario_name}: seeds {seeds_to_run}...", flush=True)
-    pred_cores = []
-    all_seeds_list = list(existing_seeds)
-
-    if os.path.exists(npz_path):
-        saved = np.load(npz_path)
-        pred_cores.extend(saved['pred_cores'].tolist())
-
-    for seed in seeds_to_run:
-        t1 = time.time()
-        np.random.seed(seed)
-        torch.manual_seed(seed)
-        n_gt = sd.gt_node_count
-        n_matrix = n_gt + 2
-        max_len = max(len(seq) for seq in sd.sequences)
-        y = np.zeros((len(sd.sequences), max_len), dtype=np.int64)
-        for i, seq in enumerate(sd.sequences):
-            y[i, :len(seq)] = seq
-        y_tensor = torch.tensor(y, dtype=torch.long, device=device)
-        model = DirectOptimization(n_matrix, device=device).to(device)
-        optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
-        for epoch in range(300):
-            optimizer.zero_grad()
-            loss = model(y_tensor, beta=0.005)
-            loss.backward()
-            optimizer.step()
-        with torch.no_grad():
-            Z = model.get_adjacency_matrix().cpu().numpy()
-        pred_core = Z[1:-1, 1:-1]
-        pred_cores.append(pred_core)
-        all_seeds_list.append(seed)
-        del model, optimizer, y_tensor, Z, y
-        gc.collect()
-        print(f"    seed {seed}: {time.time()-t1:.1f}s", flush=True)
-
-    all_cores = np.stack(pred_cores, axis=0).astype(np.float32)
-    np.savez_compressed(npz_path,
-        pred_cores=all_cores,
-        seeds=np.array(sorted(all_seeds_list), dtype=np.int64),
-    )
-    done_count += 1
-    print(f"  [{done_count}/{len(data)}] {sd.scenario_name}: {sorted(all_seeds_list)} saved", flush=True)
-
-print(f"=== Training done ({done_count}/{len(data)} scenarios complete) ===")
-PYEOF
-
-# Evaluate
-python3 << 'PYEOF'
-import sys
-sys.path.insert(0, '/home/user')
-from eval.evaluator import evaluate_all_scenarios, write_scores_json
-from data.loader import load_data
-
-data = load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')
-
-results = evaluate_all_scenarios(data, method='count_based')
-print(f'Count: P={results["aggregate"]["mean_precision"]:.1f}, R={results["aggregate"]["mean_recall"]:.1f}, F1={results["aggregate"]["mean_f1"]:.1f}')
-write_scores_json(results, 'captaincook4d_count')
-
-results_do = evaluate_all_scenarios(data, do_predictions_dir='checkpoints/do_captaincook4d', method='do')
-print(f'DO: P={results_do["aggregate"]["mean_precision"]:.1f}, R={results_do["aggregate"]["mean_recall"]:.1f}, F1={results_do["aggregate"]["mean_f1"]:.1f}, std={results_do["aggregate"]["std_f1"]:.1f}')
-write_scores_json(results_do, 'captaincook4d_do')
-PYEOF
+bash scripts/baseline.sh
+METHOD_DEVICE=cpu METHOD_SEEDS=42,1337,2024,2025,2026 METHOD_MAX_EPOCHS=1000 bash scripts/method.sh
 python3 validate.py --compare
 echo "=== Done ==="

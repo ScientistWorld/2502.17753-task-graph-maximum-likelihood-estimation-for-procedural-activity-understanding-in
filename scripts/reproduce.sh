@@ -14,9 +14,9 @@ rm -f scoring/scores.json
 echo "[1/2] Running Count-Based baseline..."
 bash scripts/baseline.sh
 
-# Step 2: DO method (3 seeds, 300 epochs each)
-echo "[2/2] Running DO method (seeds 42, 123, 456)..."
-bash scripts/method.sh
+# Step 2: DO method
+echo "[2/2] Running DO method (5 seeds, 1000 epochs each)..."
+METHOD_DEVICE=cpu METHOD_SEEDS=42,1337,2024,2025,2026 METHOD_MAX_EPOCHS=1000 bash scripts/method.sh
 
 echo ""
 echo "=== Reproduction complete ==="

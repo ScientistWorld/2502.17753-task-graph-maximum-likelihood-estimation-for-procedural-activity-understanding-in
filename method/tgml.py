@@ -78,16 +78,18 @@ def task_graph_maximum_likelihood_loss(
     torch.Tensor
         Scalar loss value.
     """
-    # Convert A to numpy for fast indexing (detach to avoid gradient tracking)
-    A_np = A.detach().cpu().numpy() if isinstance(A, torch.Tensor) else A
-    total_loss = torch.tensor(0.0, dtype=torch.float32, requires_grad=True)
+    gamma_idx = A.shape[0] - 1
+    all_nodes = torch.arange(1, A.shape[0] - 1, device=A.device, dtype=torch.long)
+    total_loss = A.new_zeros(())
 
     for seq in y:
-        seq_np = seq.cpu().numpy()
+        seq_list = seq.detach().cpu().tolist()
+        if gamma_idx in seq_list:
+            seq_list = seq_list[:seq_list.index(gamma_idx) + 1]
 
         # Deduplicate with 50% probability (matching official _loss.py)
         deduped = []
-        for keystep in seq_np:
+        for keystep in seq_list:
             if keystep not in deduped:
                 deduped.append(keystep)
             elif np.random.uniform() < 0.5:
@@ -97,33 +99,25 @@ def task_graph_maximum_likelihood_loss(
         if len(deduped) < 3:
             continue
 
-        all_nodes = np.arange(1, A_np.shape[0] - 1)  # Exclude beta (0) and gamma (-1)
+        deduped_tensor = torch.tensor(deduped, dtype=torch.long, device=A.device)
 
         # Compute rate for each position
         for i in range(1, len(deduped) - 1):
-            current = deduped[i]
-            observed = set(deduped[:i])
-            if not observed:
+            current = deduped_tensor[i]
+            observed = deduped_tensor[:i]
+            if observed.numel() == 0:
                 continue
 
-            obs_mask = np.array([n in observed for n in all_nodes])
+            obs_mask = torch.isin(all_nodes, observed)
             J = all_nodes[obs_mask]
             notJ = all_nodes[~obs_mask]
 
-            if len(notJ) == 0 or len(J) == 0:
+            if notJ.numel() == 0 or J.numel() == 0:
                 continue
 
-            # Index into numpy array for fast computation
-            A_row = torch.from_numpy(A_np[current, J]).to(A.device)
-            A_sub = torch.from_numpy(A_np[np.ix_(notJ, J)]).to(A.device)
-            num = A_row.sum()
-            den = A_sub.sum()
-
-            if num <= 0 or den <= 0:
-                continue
-
-            rate = beta * torch.log(den + 1e-8) - torch.log(num + 1e-8)
-            total_loss = total_loss + rate
+            num = A[current, J].sum()
+            den = A[notJ][:, J].sum()
+            total_loss = total_loss + (beta * torch.log(den) - torch.log(num))
 
     return total_loss
 
@@ -137,34 +131,30 @@ def task_graph_maximum_likelihood_loss_efficient(
     Simplified TGML loss without random deduplication.
     Used for faster training iterations where the deduplication noise is not needed.
     """
-    A_np = A.detach().cpu().numpy() if isinstance(A, torch.Tensor) else A
-    total_loss = torch.tensor(0.0, dtype=torch.float32, requires_grad=True)
+    gamma_idx = A.shape[0] - 1
+    all_nodes = torch.arange(1, A.shape[0] - 1, device=A.device, dtype=torch.long)
+    total_loss = A.new_zeros(())
 
     for seq in y:
-        seq_np = seq.cpu().numpy()
-        all_nodes = np.arange(1, A_np.shape[0] - 1)
+        seq_list = seq.detach().cpu().tolist()
+        if gamma_idx in seq_list:
+            seq_list = seq_list[:seq_list.index(gamma_idx) + 1]
+        seq_tensor = torch.tensor(seq_list, dtype=torch.long, device=A.device)
 
-        for i in range(1, len(seq_np) - 1):
-            current = seq_np[i]
-            observed = set(seq_np[:i].tolist())
+        for i in range(1, len(seq_tensor) - 1):
+            current = seq_tensor[i]
+            observed = seq_tensor[:i]
 
-            obs_mask = np.array([n in observed for n in all_nodes])
+            obs_mask = torch.isin(all_nodes, observed)
             J = all_nodes[obs_mask]
             notJ = all_nodes[~obs_mask]
 
-            if len(notJ) == 0 or len(J) == 0:
+            if notJ.numel() == 0 or J.numel() == 0:
                 continue
 
-            A_row = torch.from_numpy(A_np[current, J]).to(A.device)
-            A_sub = torch.from_numpy(A_np[np.ix_(notJ, J)]).to(A.device)
-            num = A_row.sum()
-            den = A_sub.sum()
-
-            if num <= 0 or den <= 0:
-                continue
-
-            rate = beta * torch.log(den + 1e-8) - torch.log(num + 1e-8)
-            total_loss = total_loss + rate
+            num = A[current, J].sum()
+            den = A[notJ][:, J].sum()
+            total_loss = total_loss + (beta * torch.log(den) - torch.log(num))
 
     return total_loss
 
