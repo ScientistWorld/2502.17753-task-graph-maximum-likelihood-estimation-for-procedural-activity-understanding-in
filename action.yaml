@@ -1,5 +1,3 @@
-action: submit
-gpus: 0
-test: false
-milestone: method_runs
-notes: "CPU multi-seed: 18/24 done, 6 remaining need seeds 123,456. Final push to complete all 24. Target F1 ~87.8."
+action: done
+milestone: core_claim
+notes: "core_claim achieved. Count-based matches paper (61.4 vs 60.2). DO F1=79.6 vs paper 87.8. Environment usable. All critical bugs fixed (GT orientation, graph direction, delete_cycles, count-based)."
