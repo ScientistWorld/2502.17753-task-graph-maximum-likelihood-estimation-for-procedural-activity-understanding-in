@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-12 08:58] - core_claim
+- Reviewed job `d2b999b2-cad`: it failed with exit `-9` because the worker node died, not because of a Python or packaging error
+- The resumable CPU run still made concrete progress before the node loss: `Cheesepimiento` reached 5/5 corrected seeds, increasing the honest corrected subset from 7 to 8 completed scenarios
+- Refreshed the subset evaluation after the new checkpoints landed; the 8-scenario corrected subset still supports the paper's central claim with count-based F1=67.2 versus DO F1=78.0
+
 ### [2026-04-12 08:14] - core_claim
 - Re-audited the inherited workspace from the reset baseline and restored `core_claim`: the code still implements the paper's real TGML + Direct Optimization method rather than a surrogate
 - Revalidated scoring integrity with `python validate.py --compare` and standalone `scripts/evaluate.sh captaincook4d_partial_compare ...`, which still reports the honest 7-scenario corrected subset at count-based F1=69.9 versus DO F1=79.9

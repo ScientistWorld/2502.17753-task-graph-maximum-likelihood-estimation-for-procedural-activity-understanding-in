@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: core_claim
-notes: "Audit restored core_claim and kept the next normal CPU retry active. The job uses the isolated packaged Python path, prints resolved numpy/networkx/torch imports inside the container, and resumes the remaining 3 corrected Cheesepimiento DO seeds."
+notes: "Job d2b999b2-cad died at the worker level after successfully finishing Cheesepimiento. Submit the next normal CPU retry with the same isolated packaged Python path, but let the resumable trainer automatically select the next shortest pending CaptainCook4D scenario."

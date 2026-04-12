@@ -2,6 +2,7 @@
 
 ## What Works
 
+- **Resumable training keeps banking progress across node deaths**: job `d2b999b2-cad` died at the worker level with exit `-9`, but two new DO seeds were flushed to disk before failure, bringing `Cheesepimiento` to 5/5 corrected seeds
 - **Audit-restored `core_claim` after reset**: a fresh audit from the lower reset baseline confirms the workspace still implements the paper's actual TGML + Direct Optimization method, and the existing corrected-subset evidence is still valid
 - **Audit-restored standalone evaluation**: `scripts/evaluate.sh` now runs again on the current workspace instead of failing on missing `numpy`, while still preserving the clean vendored `networkx` ahead of the broken mounted package tree
 - **Audit re-restored `core_claim`**: the current handed-off workspace still implements the paper's actual TGML + Direct Optimization method, and standalone partial evaluation continues to show the corrected completed subset supports the central DO-beats-count claim honestly
@@ -35,11 +36,11 @@ Using only scenarios with all 5 corrected seeds saved in `checkpoints/do_captain
 
 | Experiment | Method | Precision | Recall | F1 | std_f1 |
 |-----------|--------|-----------|--------|----|--------|
-| `captaincook4d_task_graph` corrected completed subset (7 scenarios), stored as `count_based` in `scores.json` | count_based | 76.1 | 64.8 | 69.9 | — |
-| `captaincook4d_task_graph` corrected completed subset (7 scenarios), stored as `do` in `scores.json` | DO | 81.2 | 78.8 | 79.9 | 5.8 |
+| `captaincook4d_task_graph` corrected completed subset (8 scenarios), stored as `count_based` in `scores.json` | count_based | 73.3 | 62.1 | 67.2 | — |
+| `captaincook4d_task_graph` corrected completed subset (8 scenarios), stored as `do` in `scores.json` | DO | 79.4 | 76.7 | 78.0 | 7.4 |
 
 The completed corrected subset is now:
-`Blenderbananapancakes`, `Breakfastburritos`, `Buttercorncup`, `Microwaveeggsandwich`, `Pinwheels`, `Spicedhotchocolate`, `Zoodles`.
+`Blenderbananapancakes`, `Breakfastburritos`, `Buttercorncup`, `Cheesepimiento`, `Microwaveeggsandwich`, `Pinwheels`, `Spicedhotchocolate`, `Zoodles`.
 
 This subset is non-trivial and still supports the paper's core claim: corrected DO clearly outperforms the count-based baseline on edge-prediction F1 while using the real TGML/DO training procedure rather than stale pre-fix outputs.
 
@@ -62,7 +63,7 @@ Only 7/24 scenarios currently have all 5 corrected seeds. `Cheesepimiento` has b
 12. **Completion-first retry scheduling added (FIXED IN RUNNER)**: repeated node failures were leaving some scenarios nearly finished but not completed. `scripts/method.sh` now prioritizes scenarios with the fewest missing seeds before using workload as a tie-breaker, and the retry batch is now capped at `METHOD_MAX_SCENARIOS=1` so unstable jobs are more likely to finish `Cheesepimiento` before opening more new scenarios.
 13. **Broken mounted Python packages (FIXED FOR SHELL ENTRYPOINTS)**: local validation exposed that the mounted `networkx` installation under `/home/user/.local/lib/python3.12/site-packages` was corrupted. A clean `networkx==3.4.2` is now vendored in `/home/user/environment/pylibs`, and all shell entrypoints prepend that path so both local and job-side evaluation avoid the broken package tree while still using the existing mounted `torch` and `numpy`.
 14. **Partial-run full-eval trap (FIXED IN RUNNER)**: `scripts/method.sh` previously forced a full-dataset DO evaluation after every retry, even when only one pending scenario was intentionally being trained. The script now skips that full evaluation until the 24-scenario checkpoint set is complete.
-15. **Test-node instability remains the dominant blocker**: repeated submissions on test resources are being killed by `Worker node died while job was running` before a Python traceback appears. The next retry is moved to a normal CPU queue, still scoped to `Cheesepimiento`, to reduce scheduler-side churn while continuing the resumable rerun.
+15. **Test-node instability remains the dominant blocker**: repeated submissions on test resources are being killed by `Worker node died while job was running` before a Python traceback appears. The next retry stays on a normal CPU queue and now lets `scripts/method.sh` automatically pick the next shortest pending scenario rather than staying pinned to `Cheesepimiento`, which is already complete.
 16. **Audit-induced score-file mixing (FIXED)**: running standalone baseline mode can overwrite the `count_based` row in `scoring/scores.json` with the full-dataset baseline while the DO row still reflects the corrected subset. The score file has been rewritten from `captaincook4d_partial_compare` so the on-disk comparison is once again a like-for-like 7-scenario subset.
 17. **Corrupted mounted torch on compute nodes (FIXED IN PACKAGED ENVIRONMENT)**: job `5eac6b2f-963` failed immediately because the container still searched `/home/user/.local/lib/python3.12/site-packages`, where `torch` is missing `torch.masked.maskedtensor.core`. The packaged fix now installs clean overlay copies of `numpy`, `networkx`, and `torch`, removes `/home/user/.local` from `PYTHONPATH`, and sources `scripts/common_env.sh` from every shell entrypoint so future jobs resolve imports from the overlay instead of the broken mount.
 18. **Standalone evaluation path broke under strict import isolation (FIXED)**: `scripts/evaluate.sh` initially failed on the login node because `common_env.sh` hid the mounted user-site `numpy`, and the first fallback attempt incorrectly reintroduced the broken mounted `networkx`. The evaluation script now appends the local site-packages only after the clean vendored path, so standalone scoring works again without contaminating the `networkx` import order.
@@ -72,7 +73,7 @@ Only 7/24 scenarios currently have all 5 corrected seeds. `Cheesepimiento` has b
 
 - Rerun CaptainCook4D DO from scratch with the corrected differentiable loss
 - Expand the corrected 5-seed rerun beyond the current 7-scenario subset
-- Finish `Cheesepimiento` (currently 2/5 corrected seeds), which would raise the honest corrected subset from 7 to 8 scenarios
+- Expand beyond the now-completed `Cheesepimiento` scenario by finishing the next shortest pending CaptainCook4D procedure
 - Replace the partial `core_claim` experiment with a full 24-scenario corrected DO result in `scores.json`
 - Continue resumable shortest-first DO reruns until all 24 CaptainCook4D scenarios have 5 corrected seeds
 - If the corrected rerun still trails badly, inspect per-scenario failures and only then make tightly scoped training/evaluation fixes
