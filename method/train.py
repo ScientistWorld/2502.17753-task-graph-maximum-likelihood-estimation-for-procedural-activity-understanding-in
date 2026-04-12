@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from data.loader import load_data, TaskGraphData
 from method.tgml import (
     DirectOptimization,
-    delete_redundant_edges, delete_cycles,
+    delete_redundant_edges,
 )
 
 
@@ -53,7 +53,7 @@ def sequences_accuracy(sequences: np.ndarray, pred_predecessors: dict[int, list[
 
 
 def post_process_prediction(pred_core: np.ndarray, n_gt: int, threshold: float) -> np.ndarray:
-    """Mirror the official DO post-processing used before scoring."""
+    """Mirror the released DO training-time post-processing used before scoring."""
     pred_binary = (pred_core > threshold).astype(float)
     graph = nx.DiGraph(pred_binary)
 
@@ -75,7 +75,6 @@ def post_process_prediction(pred_core: np.ndarray, n_gt: int, threshold: float) 
         graph.add_edge(node, id_start)
 
     delete_redundant_edges(graph)
-    delete_cycles(graph)
 
     pred_adj = np.zeros((n_gt, n_gt), dtype=np.float32)
     for u, v in graph.edges():

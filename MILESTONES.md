@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-12 07:15] - core_claim
+- Re-audited the handed-off workspace and reconfirmed the implementation is the paper's real TGML + Direct Optimization method rather than a surrogate; standalone partial evaluation still supports the central DO-beats-count claim on the corrected completed subset
+- Fixed a remaining training-side faithfulness drift in `method/train.py` by removing `delete_cycles` from the sequence-accuracy post-processing path so it matches the released `train_with_gt.py` cleanup more closely
+- Rewrote `scoring/scores.json` from the standalone partial-compare path so the on-disk results are again a consistent 7-scenario corrected subset: count-based F1=69.9 versus DO F1=79.9, with the next normal-queue CPU retry still focused on finishing `Cheesepimiento`
+
 ### [2026-04-12 06:51] - core_claim
 - Refreshed the honest corrected-subset evaluation from the current checkpoint directory after the latest worker-node death: 7 fully completed scenarios now score count-based F1=69.9 versus DO F1=79.9
 - Fixed a reproducibility bug in the shell entrypoints by vendoring a clean `networkx==3.4.2` in `/home/user/environment/pylibs` and prepending it in the run/eval scripts, so local scoring no longer depends on the corrupted user-site package

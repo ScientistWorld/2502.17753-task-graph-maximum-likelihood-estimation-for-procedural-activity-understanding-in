@@ -2,12 +2,14 @@
 
 ## What Works
 
+- **Audit re-restored `core_claim`**: the current handed-off workspace still implements the paper's actual TGML + Direct Optimization method, and standalone partial evaluation continues to show the corrected completed subset supports the central DO-beats-count claim honestly
 - **Audit restored `core_claim`**: the workspace still implements the paper's actual TGML + Direct Optimization method rather than a surrogate, and the corrected completed subset continues to support the central DO-beats-count claim honestly
 - **Paper's algorithm fully implemented**: TGML loss (maximizing P of observed steps under DAG constraints), DirectOptimization model, and post-processing pipeline (binarize at 1/(n+2), boundary edges, transitive reduction)
 - **CaptainCook4D loading**: 24 scenarios from cloned CaptainCook4D repo at `/home/user/method/repo/data/captaincook4d`
 - **Evaluation pipeline**: Method-agnostic eval/ module scores edge-level P/R/F1. No imports from method/
 - **Count-based baseline**: Matches paper's released code — F1=61.4 vs paper 60.2 ✓
 - **DO training path repaired**: TGML loss now preserves autograd through the adjacency matrix, and a minimal smoke test confirms nonzero gradients and parameter updates
+- **Training-side post-processing aligned more closely with the release**: `method/train.py` no longer applies cycle deletion inside the sequence-accuracy diagnostic path, matching the released `train_with_gt.py` behavior more closely
 - **Environment packaging partially repaired**: `environment/setup.sh` installs a clean system `networkx`, while the shell entrypoints prepend `/home/user/environment/pylibs` to avoid the broken mounted user-site `networkx`; current jobs still rely on the mounted `torch` and `numpy` packages under `/home/user/.local`
 - **Shell entrypoints hardened**: `scripts/run.sh`, `scripts/method.sh`, `scripts/evaluate.sh`, `scripts/baseline.sh`, and `scripts/reproduce.sh` now prepend `/home/user/environment/pylibs`, which contains a clean vendored `networkx==3.4.2`, so login-node evaluation no longer imports the corrupted user-site `networkx`
 - **Resumable orchestration repaired**: `scripts/method.sh` now performs full-dataset DO evaluation only after all 24 CaptainCook4D scenarios have all requested seeds, so partial retries can bank corrected checkpoints without failing at the evaluation stage
@@ -59,6 +61,7 @@ Only 7/24 scenarios currently have all 5 corrected seeds. `Cheesepimiento` has b
 13. **Broken mounted Python packages (FIXED FOR SHELL ENTRYPOINTS)**: local validation exposed that the mounted `networkx` installation under `/home/user/.local/lib/python3.12/site-packages` was corrupted. A clean `networkx==3.4.2` is now vendored in `/home/user/environment/pylibs`, and all shell entrypoints prepend that path so both local and job-side evaluation avoid the broken package tree while still using the existing mounted `torch` and `numpy`.
 14. **Partial-run full-eval trap (FIXED IN RUNNER)**: `scripts/method.sh` previously forced a full-dataset DO evaluation after every retry, even when only one pending scenario was intentionally being trained. The script now skips that full evaluation until the 24-scenario checkpoint set is complete.
 15. **Test-node instability remains the dominant blocker**: repeated submissions on test resources are being killed by `Worker node died while job was running` before a Python traceback appears. The next retry is moved to a normal CPU queue, still scoped to `Cheesepimiento`, to reduce scheduler-side churn while continuing the resumable rerun.
+16. **Audit-induced score-file mixing (FIXED)**: running standalone baseline mode can overwrite the `count_based` row in `scoring/scores.json` with the full-dataset baseline while the DO row still reflects the corrected subset. The score file has been rewritten from `captaincook4d_partial_compare` so the on-disk comparison is once again a like-for-like 7-scenario subset.
 
 ## What Remains
 
