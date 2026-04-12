@@ -9,6 +9,7 @@
 # Usage:
 #   ./evaluate.sh captaincook4d_do        # evaluate DO on CaptainCook4D
 #   ./evaluate.sh captaincook4d_count     # evaluate count-based on CaptainCook4D
+#   ./evaluate.sh captaincook4d_partial_compare checkpoints/do_captaincook4d_fixedtgml 5
 
 set -e
 cd /home/user
@@ -18,6 +19,7 @@ mkdir -p scoring
 # Parse arguments
 METHOD_NAME="${1:-captaincook4d_do}"
 CHECKPOINT_DIR="${2:-checkpoints/}"
+MIN_SEEDS="${3:-5}"
 
 # Run evaluation
 python3 -c "
@@ -32,7 +34,35 @@ repo_path = '/home/user/method/repo/data/captaincook4d'
 data = load_data(repo_data_path=repo_path)
 print(f'Loaded {len(data)} scenarios')
 
-if 'count' in '$METHOD_NAME':
+if '$METHOD_NAME' == 'captaincook4d_partial_compare':
+    do_results = evaluate_all_scenarios(
+        data,
+        do_predictions_dir='$CHECKPOINT_DIR',
+        method='do',
+        allow_partial=True,
+        min_do_seeds=int('$MIN_SEEDS'),
+    )
+    completed = set(do_results['per_scenario'].keys())
+    if not completed:
+        raise SystemExit('No scenarios with sufficient corrected DO seeds are available yet.')
+    subset_data = [sd for sd in data if sd.scenario_name in completed]
+    count_results = evaluate_all_scenarios(subset_data, method='count_based')
+    print(f'Completed subset: {len(completed)} scenarios -> {sorted(completed)}')
+    print(f'Partial Count-Based: F1={count_results[\"aggregate\"][\"mean_f1\"]:.1f}')
+    print(f'Partial DO: F1={do_results[\"aggregate\"][\"mean_f1\"]:.1f}')
+    write_scores_json(
+        count_results,
+        'captaincook4d_count_partial',
+        dataset_override='captaincook4d_task_graph_partial_completed',
+        method_override='count_based',
+    )
+    write_scores_json(
+        do_results,
+        'captaincook4d_do_partial',
+        dataset_override='captaincook4d_task_graph_partial_completed',
+        method_override='do',
+    )
+elif 'count' in '$METHOD_NAME':
     # Count-based baseline
     results = evaluate_all_scenarios(data, method='count_based')
     print(f'Count-Based: F1={results[\"aggregate\"][\"mean_f1\"]:.1f}')

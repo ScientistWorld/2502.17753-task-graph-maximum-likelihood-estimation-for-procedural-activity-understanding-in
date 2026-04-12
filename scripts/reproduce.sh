@@ -19,8 +19,9 @@ echo "[2/2] Running DO method (5 seeds, 1000 epochs each)..."
 METHOD_DEVICE=cpu METHOD_SEEDS=42,1337,2024,2025,2026 METHOD_MAX_EPOCHS=1000 \
 METHOD_OUTPUT_DIR=checkpoints/do_captaincook4d_fixedtgml \
 bash scripts/method.sh
+bash scripts/evaluate.sh captaincook4d_partial_compare checkpoints/do_captaincook4d_fixedtgml 5 || true
 
 echo ""
 echo "=== Reproduction complete ==="
 echo "Results in scoring/scores.json"
-python3 validate.py --compare
+python3 validate.py

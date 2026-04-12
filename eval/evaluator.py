@@ -149,7 +149,9 @@ def evaluate_all_scenarios(
     method: str = "do",
     threshold: float = 0.5,
     seeds: List[int] = None,
-    device: str = "cpu"
+    device: str = "cpu",
+    allow_partial: bool = False,
+    min_do_seeds: Optional[int] = None,
 ) -> Dict[str, Any]:
     """
     Evaluate all scenarios.
@@ -203,11 +205,20 @@ def evaluate_all_scenarios(
                 f"{scenario_name.lower().replace(' ', '_')}_predictions.npz"
             )
             if not os.path.exists(prediction_file):
+                if allow_partial:
+                    continue
                 raise FileNotFoundError(
                     f"Missing DO prediction file for {scenario_name}: {prediction_file}"
                 )
             saved = np.load(prediction_file)
             pred_cores = saved["pred_cores"] if "pred_cores" in saved else saved["pred_core"][None, ...]
+            if min_do_seeds is not None and len(pred_cores) < min_do_seeds:
+                if allow_partial:
+                    continue
+                raise ValueError(
+                    f"Prediction file for {scenario_name} has only {len(pred_cores)} seeds, "
+                    f"but {min_do_seeds} are required."
+                )
             per_seed_metrics = [
                 evaluate_from_adjacency(pred_core, scenario_data.gt_adj_matrix)
                 for pred_core in pred_cores
@@ -244,14 +255,18 @@ def evaluate_all_scenarios(
 def write_scores_json(
     results: Dict[str, Any],
     experiment_name: str,
-    output_path: str = "scoring/scores.json"
+    output_path: str = "scoring/scores.json",
+    dataset_override: Optional[str] = None,
+    method_override: Optional[str] = None,
 ) -> None:
     """
     Write evaluation results to scores.json.
     """
     os.makedirs(os.path.dirname(output_path) if os.path.dirname(output_path) else ".", exist_ok=True)
 
-    if "captaincook" in experiment_name.lower():
+    if dataset_override is not None:
+        dataset = dataset_override
+    elif "captaincook" in experiment_name.lower():
         dataset = "captaincook4d_task_graph"
     elif "egoper" in experiment_name.lower():
         dataset = "egoper_task_graph"
@@ -272,7 +287,7 @@ def write_scores_json(
         scores["experiments"][dataset] = {"results": {}}
 
     agg = results["aggregate"]
-    method_name = "do" if "do" in experiment_name.lower() else "count_based"
+    method_name = method_override or ("do" if "do" in experiment_name.lower() else "count_based")
 
     scores["experiments"][dataset]["results"][method_name] = {
         "precision": agg["mean_precision"],

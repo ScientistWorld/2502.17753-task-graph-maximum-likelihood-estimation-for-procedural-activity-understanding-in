@@ -27,8 +27,40 @@ else
   echo "Skipping baseline; count_based score already present."
 fi
 
+if [ -d checkpoints/do_captaincook4d_fixedtgml ]; then
+  python3 <<'PY'
+import json
+import os
+import numpy as np
+
+scores_path = "scoring/scores.json"
+pred_dir = "checkpoints/do_captaincook4d_fixedtgml"
+complete = 0
+if os.path.isdir(pred_dir):
+    for fn in os.listdir(pred_dir):
+        if not fn.endswith("_predictions.npz"):
+            continue
+        data = np.load(os.path.join(pred_dir, fn))
+        if len(data["pred_cores"]) >= 5:
+            complete += 1
+
+if os.path.exists(scores_path):
+    with open(scores_path) as f:
+        scores = json.load(f)
+    exp = scores.get("experiments", {}).get("captaincook4d_task_graph", {})
+    results = exp.get("results", {})
+    if complete < 24 and "do" in results:
+        print(f"Removing stale full-dataset DO score; only {complete}/24 corrected scenarios are complete.")
+        del results["do"]
+        with open(scores_path, "w") as f:
+            json.dump(scores, f, indent=2)
+PY
+  bash scripts/evaluate.sh captaincook4d_partial_compare checkpoints/do_captaincook4d_fixedtgml 5 || true
+fi
+
 METHOD_DEVICE=cpu METHOD_SEEDS=42,1337,2024,2025,2026 METHOD_MAX_EPOCHS=1000 \
 METHOD_OUTPUT_DIR=checkpoints/do_captaincook4d_fixedtgml \
 bash scripts/method.sh
-python3 validate.py --compare
+bash scripts/evaluate.sh captaincook4d_partial_compare checkpoints/do_captaincook4d_fixedtgml 5 || true
+python3 validate.py
 echo "=== Done ==="
