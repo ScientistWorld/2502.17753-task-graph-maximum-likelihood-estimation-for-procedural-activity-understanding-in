@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: core_claim
-notes: "Continue CPU completion-first resumable DO rerun: finish Zoodles (4/5) and Breakfastburritos (1/5) before opening more scenarios, with METHOD_MAX_SCENARIOS=6, to turn partial corrected outputs into additional 5-seed completed CaptainCook4D results."
+notes: "Continue CPU completion-first resumable DO rerun after worker death: Breakfastburritos is now 2/5 and the corrected completed subset is 5 scenarios; run with METHOD_MAX_SCENARIOS=4 to finish the remaining partial scenario and bank more 5-seed CaptainCook4D results."

@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-12 03:05] - core_claim
+- Reviewed job `c961d2d4-b2c`: another worker-node death with exit `-9`, but no code error; `Zoodles` reached 5/5 corrected seeds and `Breakfastburritos` advanced to 2/5
+- Refreshed `scoring/scores.json` from the actual completed 5-scenario corrected subset: count-based F1=68.7 versus DO F1=79.3 (`std_f1=6.7`), preserving the paper's central DO-beats-count result on a larger honest subset
+- Tightened the retry batch from 6 scenarios to 4 so the next resumable CPU run is more likely to finish the remaining partial scenario before opening additional work
+
 ### [2026-04-12 02:37] - core_claim
 - Evaluated the corrected post-fix DO checkpoints on the completed 4-scenario subset and wrote them into the standard `count_based` and `do` slots in `scoring/scores.json`, with the subset-based deviation documented in `PROGRESS.md`
 - On this honest corrected subset, DO reaches F1=82.0 versus count-based F1=70.3, with `std_f1=4.5`, so the paper's central DO-beats-count claim now holds without using stale pre-fix outputs
