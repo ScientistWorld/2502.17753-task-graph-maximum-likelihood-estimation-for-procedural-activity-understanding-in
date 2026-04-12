@@ -9,6 +9,7 @@
 
 set -e
 cd /home/user
+export PYTHONPATH="/home/user/environment/pylibs${PYTHONPATH:+:$PYTHONPATH}"
 
 echo "Running Direct Optimization (DO) model on CaptainCook4D..."
 

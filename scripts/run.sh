@@ -3,6 +3,7 @@
 # Runs the count-based baseline, then fixed-epoch DO training with 5 seeds.
 set -e
 cd /home/user
+export PYTHONPATH="/home/user/environment/pylibs${PYTHONPATH:+:$PYTHONPATH}"
 echo "=== $(date) === CaptainCook4D baseline + DO reproduction ==="
 python3 -c "import torch; print('CUDA:', torch.cuda.is_available())"
 

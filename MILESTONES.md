@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-12 06:51] - core_claim
+- Refreshed the honest corrected-subset evaluation from the current checkpoint directory after the latest worker-node death: 7 fully completed scenarios now score count-based F1=69.9 versus DO F1=79.9
+- Fixed a reproducibility bug in the shell entrypoints by vendoring a clean `networkx==3.4.2` in `/home/user/environment/pylibs` and prepending it in the run/eval scripts, so local scoring no longer depends on the corrupted user-site package
+- Redirected the next submission away from test-node assumptions: it remains focused on `Cheesepimiento`, but the intent is now a normal CPU retry to finish the remaining 3 missing seeds
+
 ### [2026-04-12 05:45] - core_claim
 - Re-audited the workspace after handoff and confirmed the implementation is still the paper's real TGML + Direct Optimization method, not a surrogate
 - Rechecked the honest evaluation path: the corrected completed subset remains 7 scenarios with count-based F1=69.9 versus DO F1=79.9, so `core_claim` is restored after the audit reset

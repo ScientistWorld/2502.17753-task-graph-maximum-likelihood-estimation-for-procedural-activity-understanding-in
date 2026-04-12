@@ -4,6 +4,7 @@
 
 set -e
 cd /home/user
+export PYTHONPATH="/home/user/environment/pylibs${PYTHONPATH:+:$PYTHONPATH}"
 
 echo "=== Reproducing TGML Paper Results ==="
 

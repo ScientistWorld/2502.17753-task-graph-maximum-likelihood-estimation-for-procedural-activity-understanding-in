@@ -6,6 +6,7 @@
 
 set -e
 cd /home/user
+export PYTHONPATH="/home/user/environment/pylibs${PYTHONPATH:+:$PYTHONPATH}"
 
 echo "Running Count-Based baseline on CaptainCook4D..."
 
