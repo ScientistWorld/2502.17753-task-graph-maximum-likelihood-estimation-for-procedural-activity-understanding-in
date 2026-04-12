@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: core_claim
-notes: "Job d2b999b2-cad died at the worker level after successfully finishing Cheesepimiento. Submit the next normal CPU retry with the same isolated packaged Python path, but let the resumable trainer automatically select the next shortest pending CaptainCook4D scenario."
+notes: "Continue the normal CPU CaptainCook4D rerun from the corrected 8-scenario subset. The job will log checkpoint coverage up front, skip baseline if already present, and extend the next shortest pending scenario (currently Microwavefrenchtoast at 2/5 seeds) under the isolated packaged Python path."

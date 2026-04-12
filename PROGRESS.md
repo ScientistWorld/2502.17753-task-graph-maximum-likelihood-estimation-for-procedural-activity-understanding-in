@@ -2,6 +2,7 @@
 
 ## What Works
 
+- **Coverage audit now prints directly in the submission job**: `scripts/run.sh` now logs the complete and partial CaptainCook4D scenario checkpoint coverage before training starts, which makes progress across unstable worker nodes easier to inspect from job logs
 - **Resumable training keeps banking progress across node deaths**: job `d2b999b2-cad` died at the worker level with exit `-9`, but two new DO seeds were flushed to disk before failure, bringing `Cheesepimiento` to 5/5 corrected seeds
 - **Audit-restored `core_claim` after reset**: a fresh audit from the lower reset baseline confirms the workspace still implements the paper's actual TGML + Direct Optimization method, and the existing corrected-subset evidence is still valid
 - **Audit-restored standalone evaluation**: `scripts/evaluate.sh` now runs again on the current workspace instead of failing on missing `numpy`, while still preserving the clean vendored `networkx` ahead of the broken mounted package tree
@@ -41,6 +42,8 @@ Using only scenarios with all 5 corrected seeds saved in `checkpoints/do_captain
 
 The completed corrected subset is now:
 `Blenderbananapancakes`, `Breakfastburritos`, `Buttercorncup`, `Cheesepimiento`, `Microwaveeggsandwich`, `Pinwheels`, `Spicedhotchocolate`, `Zoodles`.
+
+The next partially completed scenario is now `Microwavefrenchtoast` with 2/5 corrected seeds saved, so the resumable shortest-first rerun should extend the subset further without revisiting completed work.
 
 This subset is non-trivial and still supports the paper's core claim: corrected DO clearly outperforms the count-based baseline on edge-prediction F1 while using the real TGML/DO training procedure rather than stale pre-fix outputs.
 

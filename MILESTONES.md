@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-12 09:32] - core_claim
+- Revalidated the honest partial CaptainCook4D comparison from the current corrected checkpoint set: 8 completed scenarios still give count-based F1=67.2 versus DO F1=78.0
+- Confirmed the next resumable target is the remaining pending CaptainCook4D rerun beyond the current 8/24 completed scenarios, with `microwavefrenchtoast` currently at 2/5 saved seeds
+- Tightened the submission logs in `scripts/run.sh` so future retries print complete versus partial scenario coverage before training starts, making node-failure progress easier to audit
+
 ### [2026-04-12 08:58] - core_claim
 - Reviewed job `d2b999b2-cad`: it failed with exit `-9` because the worker node died, not because of a Python or packaging error
 - The resumable CPU run still made concrete progress before the node loss: `Cheesepimiento` reached 5/5 corrected seeds, increasing the honest corrected subset from 7 to 8 completed scenarios

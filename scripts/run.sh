@@ -25,6 +25,35 @@ print('torch:', torch.__version__, torch.__file__)
 print('CUDA:', torch.cuda.is_available())
 PY
 
+python3 - <<'PY'
+import os
+import numpy as np
+
+pred_dir = "checkpoints/do_captaincook4d_fixedtgml"
+expected = [42, 1337, 2024, 2025, 2026]
+
+complete = []
+partial = []
+if os.path.isdir(pred_dir):
+    for fn in sorted(os.listdir(pred_dir)):
+        if not fn.endswith("_predictions.npz"):
+            continue
+        data = np.load(os.path.join(pred_dir, fn))
+        seeds = sorted(int(x) for x in data["seeds"])
+        if seeds == expected:
+            complete.append(fn.replace("_predictions.npz", ""))
+        else:
+            partial.append((fn.replace("_predictions.npz", ""), seeds))
+
+print(f"Checkpoint coverage: {len(complete)} complete scenarios")
+if complete:
+    print("Complete scenarios:", ", ".join(complete))
+if partial:
+    print("Partial scenarios:")
+    for name, seeds in partial:
+        print(f"  {name}: {seeds}")
+PY
+
 if python3 <<'PY'
 import json
 import os
