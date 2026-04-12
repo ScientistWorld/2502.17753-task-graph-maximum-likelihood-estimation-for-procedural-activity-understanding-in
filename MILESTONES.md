@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-12 08:14] - core_claim
+- Re-audited the inherited workspace from the reset baseline and restored `core_claim`: the code still implements the paper's real TGML + Direct Optimization method rather than a surrogate
+- Revalidated scoring integrity with `python validate.py --compare` and standalone `scripts/evaluate.sh captaincook4d_partial_compare ...`, which still reports the honest 7-scenario corrected subset at count-based F1=69.9 versus DO F1=79.9
+- Kept the next normal CPU submission active to finish the remaining 3 `Cheesepimiento` seeds and extend the corrected subset beyond the current minimum core-claim evidence
+
 ### [2026-04-12 07:53] - core_claim
 - Re-audited the handed-off workspace and kept `core_claim`: the implementation still matches the paper's real TGML + Direct Optimization method, and the corrected 7-scenario subset still supports DO > count-based on CaptainCook4D
 - Fixed an honest deliverable bug found during the audit: `scripts/evaluate.sh` was not standalone-functional on the current workspace because strict path isolation hid local `numpy`; it now falls back in a controlled way that preserves the clean vendored `networkx`

@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: core_claim
-notes: "Retry the CPU Cheesepimiento run after packaging a clean overlay Python stack. The next job first validates clean numpy/networkx/torch imports outside the broken /home/user/.local tree, then resumes the remaining 3 corrected DO seeds if startup succeeds."
+notes: "Audit restored core_claim and kept the next normal CPU retry active. The job uses the isolated packaged Python path, prints resolved numpy/networkx/torch imports inside the container, and resumes the remaining 3 corrected Cheesepimiento DO seeds."

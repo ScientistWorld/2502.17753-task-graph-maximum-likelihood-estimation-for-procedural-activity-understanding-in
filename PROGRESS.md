@@ -2,6 +2,7 @@
 
 ## What Works
 
+- **Audit-restored `core_claim` after reset**: a fresh audit from the lower reset baseline confirms the workspace still implements the paper's actual TGML + Direct Optimization method, and the existing corrected-subset evidence is still valid
 - **Audit-restored standalone evaluation**: `scripts/evaluate.sh` now runs again on the current workspace instead of failing on missing `numpy`, while still preserving the clean vendored `networkx` ahead of the broken mounted package tree
 - **Audit re-restored `core_claim`**: the current handed-off workspace still implements the paper's actual TGML + Direct Optimization method, and standalone partial evaluation continues to show the corrected completed subset supports the central DO-beats-count claim honestly
 - **Audit restored `core_claim`**: the workspace still implements the paper's actual TGML + Direct Optimization method rather than a surrogate, and the corrected completed subset continues to support the central DO-beats-count claim honestly
@@ -65,6 +66,7 @@ Only 7/24 scenarios currently have all 5 corrected seeds. `Cheesepimiento` has b
 16. **Audit-induced score-file mixing (FIXED)**: running standalone baseline mode can overwrite the `count_based` row in `scoring/scores.json` with the full-dataset baseline while the DO row still reflects the corrected subset. The score file has been rewritten from `captaincook4d_partial_compare` so the on-disk comparison is once again a like-for-like 7-scenario subset.
 17. **Corrupted mounted torch on compute nodes (FIXED IN PACKAGED ENVIRONMENT)**: job `5eac6b2f-963` failed immediately because the container still searched `/home/user/.local/lib/python3.12/site-packages`, where `torch` is missing `torch.masked.maskedtensor.core`. The packaged fix now installs clean overlay copies of `numpy`, `networkx`, and `torch`, removes `/home/user/.local` from `PYTHONPATH`, and sources `scripts/common_env.sh` from every shell entrypoint so future jobs resolve imports from the overlay instead of the broken mount.
 18. **Standalone evaluation path broke under strict import isolation (FIXED)**: `scripts/evaluate.sh` initially failed on the login node because `common_env.sh` hid the mounted user-site `numpy`, and the first fallback attempt incorrectly reintroduced the broken mounted `networkx`. The evaluation script now appends the local site-packages only after the clean vendored path, so standalone scoring works again without contaminating the `networkx` import order.
+19. **Reset-baseline audit completed cleanly**: after the milestone reset to `method_runs`, a fresh audit reconfirmed that the implementation is still the paper's real method, `validate.py --compare` passes, `scripts/evaluate.sh` works standalone, and the current subset scores remain numerically plausible relative to the paper.
 
 ## What Remains
 
