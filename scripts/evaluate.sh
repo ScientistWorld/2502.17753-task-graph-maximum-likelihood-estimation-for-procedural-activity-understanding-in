@@ -53,14 +53,14 @@ if '$METHOD_NAME' == 'captaincook4d_partial_compare':
     write_scores_json(
         count_results,
         'captaincook4d_count_partial',
-        dataset_override='captaincook4d_task_graph_partial_completed',
-        method_override='count_based',
+        dataset_override='captaincook4d_task_graph',
+        method_override='count_based_partial_completed',
     )
     write_scores_json(
         do_results,
         'captaincook4d_do_partial',
-        dataset_override='captaincook4d_task_graph_partial_completed',
-        method_override='do',
+        dataset_override='captaincook4d_task_graph',
+        method_override='do_partial_completed',
     )
 elif 'count' in '$METHOD_NAME':
     # Count-based baseline

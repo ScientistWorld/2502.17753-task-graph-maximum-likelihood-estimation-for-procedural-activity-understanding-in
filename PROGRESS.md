@@ -27,8 +27,8 @@ Using only scenarios with all 5 corrected seeds saved in `checkpoints/do_captain
 
 | Experiment | Method | Precision | Recall | F1 | std_f1 |
 |-----------|--------|-----------|--------|----|--------|
-| `captaincook4d_task_graph_partial_completed` (4 scenarios) | count_based | 76.9 | 64.8 | 70.3 | — |
-| `captaincook4d_task_graph_partial_completed` (4 scenarios) | DO | 84.4 | 79.7 | 82.0 | 4.5 |
+| `captaincook4d_task_graph` subset, method `count_based_partial_completed` (4 scenarios) | count_based | 76.9 | 64.8 | 70.3 | — |
+| `captaincook4d_task_graph` subset, method `do_partial_completed` (4 scenarios) | DO | 84.4 | 79.7 | 82.0 | 4.5 |
 
 This subset is non-trivial and supports the paper's core claim: corrected DO clearly outperforms the count-based baseline on edge-prediction F1 while maintaining lower variability than the old stale run.
 
@@ -47,7 +47,7 @@ Only 4/24 scenarios currently have all 5 corrected seeds, so the stale pre-fix f
 8. **Autograd break in TGML loss (FIXED)**: `method/tgml.py` detached the adjacency matrix to NumPy inside the loss, so `loss.backward()` could not update the graph parameters. Replaced this with a torch-only implementation and trimmed padded sequences at the first `gamma` token.
 9. **Stale checkpoint reuse risk (FIXED IN SCRIPTS)**: the rerun path would have reused old per-scenario `.npz` files from the broken-loss run whenever seed IDs overlapped, mixing invalid and valid outputs. The method now writes to a fresh `checkpoints/do_captaincook4d_fixedtgml/` directory by default and flushes each completed seed to disk immediately for crash-safe resume.
 10. **Repeated worker-node deaths (MITIGATED IN SCRIPTS)**: the latest job again failed with exit `-9` because the worker node died mid-run, not because of a Python error. The runner now skips recomputing the already-trusted baseline and trains pending DO scenarios in ascending estimated workload so each retry banks more corrected outputs before a preemption or node loss.
-11. **Partial corrected-subset scoring added (FIXED IN EVAL/RUNNER)**: the workspace no longer has to wait for all 24 scenarios before reporting any honest corrected DO result. `scripts/evaluate.sh captaincook4d_partial_compare ...` now scores only scenarios with 5 corrected seeds and writes a separate `captaincook4d_task_graph_partial_completed` experiment to `scoring/scores.json`.
+11. **Partial corrected-subset scoring added (FIXED IN EVAL/RUNNER)**: the workspace no longer has to wait for all 24 scenarios before reporting any honest corrected DO result. `scripts/evaluate.sh captaincook4d_partial_compare ...` now scores only scenarios with 5 corrected seeds and writes them into `scoring/scores.json` as methods `count_based_partial_completed` and `do_partial_completed` under the existing `captaincook4d_task_graph` experiment.
 
 ## What Remains
 

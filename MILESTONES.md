@@ -5,7 +5,7 @@
 ## Progress Log
 
 ### [2026-04-12 02:37] - core_claim
-- Evaluated the corrected post-fix DO checkpoints on the completed 4-scenario subset and wrote them to `scoring/scores.json` as `captaincook4d_task_graph_partial_completed`
+- Evaluated the corrected post-fix DO checkpoints on the completed 4-scenario subset and wrote them to `scoring/scores.json` as methods `count_based_partial_completed` and `do_partial_completed` under `captaincook4d_task_graph`
 - On this honest corrected subset, DO reaches F1=82.0 versus count-based F1=70.3, with `std_f1=4.5`, so the paper's central DO-beats-count claim now holds without using stale pre-fix outputs
 - The full 24-scenario CaptainCook4D rerun is still in progress and is now the path toward `core_claim_plus`
 
