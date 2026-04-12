@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: core_claim
-notes: "Continue CPU shortest-first resumable DO rerun beyond the validated 4-scenario core-claim subset; keep accumulating corrected 5-seed CaptainCook4D outputs in checkpoints/do_captaincook4d_fixedtgml toward broader coverage and full-dataset corrected scores."
+notes: "Continue CPU completion-first resumable DO rerun: finish Zoodles (4/5) and Breakfastburritos (1/5) before opening more scenarios, with METHOD_MAX_SCENARIOS=6, to turn partial corrected outputs into additional 5-seed completed CaptainCook4D results."
