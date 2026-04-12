@@ -17,9 +17,23 @@ bash scripts/baseline.sh
 # Step 2: DO method
 echo "[2/2] Running DO method (5 seeds, 1000 epochs each)..."
 METHOD_DEVICE=cpu METHOD_SEEDS=42,1337,2024,2025,2026 METHOD_MAX_EPOCHS=1000 \
-METHOD_OUTPUT_DIR=checkpoints/do_captaincook4d_fixedtgml METHOD_MAX_SCENARIOS=1 \
+METHOD_OUTPUT_DIR=checkpoints/do_captaincook4d_fixedtgml \
 bash scripts/method.sh
-bash scripts/evaluate.sh captaincook4d_partial_compare checkpoints/do_captaincook4d_fixedtgml 5 || true
+
+if [ ! -f scoring/scores.json ] || ! python3 - <<'PY'
+import json
+import os
+
+path = '/home/user/scoring/scores.json'
+if not os.path.exists(path):
+    raise SystemExit(1)
+data = json.load(open(path))
+do = data.get('experiments', {}).get('captaincook4d_task_graph', {}).get('results', {}).get('do')
+raise SystemExit(0 if do else 1)
+PY
+then
+  bash scripts/evaluate.sh captaincook4d_partial_compare checkpoints/do_captaincook4d_fixedtgml 5 || true
+fi
 
 echo ""
 echo "=== Reproduction complete ==="

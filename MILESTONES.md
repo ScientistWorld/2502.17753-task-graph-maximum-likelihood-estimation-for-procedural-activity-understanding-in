@@ -4,6 +4,11 @@
 
 ## Progress Log
 
+### [2026-04-12 05:42] - core_claim
+- Repaired the packaged environment so jobs no longer depend on the broken mounted `networkx` install from `/home/user/.local`; `setup.sh` now installs `numpy`, `networkx`, and `torch`, and `container.def` disables user-site imports
+- Removed a resumable-run failure mode in `scripts/method.sh`: full-dataset DO evaluation now runs only after all 24 CaptainCook4D scenarios have all requested seeds, so one-scenario retries can bank corrected checkpoints without tripping an incomplete-eval error
+- Revalidated the current corrected subset under the clean import settings: 7 fully completed scenarios still give count-based F1=69.9 versus DO F1=79.9, with `Cheesepimiento` still next at 2/5 corrected seeds
+
 ### [2026-04-12 03:27] - core_claim
 - Reviewed job `83772436-f7f`: another worker-node death with exit `-9`, but still no code exception; `Microwaveeggsandwich` reached 5/5 corrected seeds before the node died during `Cheesepimiento`
 - Refreshed `scoring/scores.json` from the actual completed 7-scenario corrected subset: count-based F1=69.9 versus DO F1=79.9 (`std_f1=5.8`), keeping the paper's central DO-beats-count result on a larger honest subset

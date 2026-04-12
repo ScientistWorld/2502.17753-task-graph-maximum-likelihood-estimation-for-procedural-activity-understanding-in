@@ -144,6 +144,37 @@ for _, _, sd in pending:
 print("=== Training done ===")
 PYEOF
 
-echo "Evaluating..."
-bash scripts/evaluate.sh captaincook4d_do "$OUTPUT_DIR/"
+TOTAL_SCENARIOS="$(python3 - <<'PY'
+import sys
+sys.path.insert(0, '/home/user')
+from data.loader import load_data
+print(len(load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')))
+PY
+)"
+
+COMPLETED_SCENARIOS="$(python3 - <<PY
+import os
+import numpy as np
+
+pred_dir = "$OUTPUT_DIR"
+expected = sorted(int(s) for s in "$SEEDS".split(','))
+complete = 0
+if os.path.isdir(pred_dir):
+    for fn in os.listdir(pred_dir):
+        if not fn.endswith("_predictions.npz"):
+            continue
+        data = np.load(os.path.join(pred_dir, fn))
+        seeds = sorted(int(x) for x in data["seeds"])
+        if seeds == expected:
+            complete += 1
+print(complete)
+PY
+)"
+
+if [ "$COMPLETED_SCENARIOS" -eq "$TOTAL_SCENARIOS" ]; then
+  echo "Evaluating full CaptainCook4D DO result..."
+  bash scripts/evaluate.sh captaincook4d_do "$OUTPUT_DIR/"
+else
+  echo "Skipping full DO evaluation; only $COMPLETED_SCENARIOS/$TOTAL_SCENARIOS scenarios have all requested seeds."
+fi
 echo "Done."

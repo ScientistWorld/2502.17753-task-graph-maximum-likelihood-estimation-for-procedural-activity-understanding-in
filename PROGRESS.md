@@ -7,7 +7,9 @@
 - **Evaluation pipeline**: Method-agnostic eval/ module scores edge-level P/R/F1. No imports from method/
 - **Count-based baseline**: Matches paper's released code — F1=61.4 vs paper 60.2 ✓
 - **DO training path repaired**: TGML loss now preserves autograd through the adjacency matrix, and a minimal smoke test confirms nonzero gradients and parameter updates
-- **Container**: `python:3.12-slim-bookworm` + libgomp1 with workspace site-packages
+- **Environment packaging repaired**: `environment/setup.sh` now installs `numpy`, `networkx`, and `torch` into the container overlay, while `environment/container.def` disables user-site imports so jobs no longer depend on the broken mounted `/home/user/.local` package tree
+- **Resumable orchestration repaired**: `scripts/method.sh` now performs full-dataset DO evaluation only after all 24 CaptainCook4D scenarios have all requested seeds, so partial retries can bank corrected checkpoints without failing at the evaluation stage
+- **Container**: `python:3.12-slim-bookworm` + libgomp1
 - **GitHub repo cloned**: `/home/user/method/repo` contains the official TGML codebase
 
 ## Results
@@ -52,12 +54,14 @@ Only 7/24 scenarios currently have all 5 corrected seeds. `Cheesepimiento` has b
 10. **Repeated worker-node deaths (MITIGATED IN SCRIPTS)**: the latest job again failed with exit `-9` because the worker node died mid-run, not because of a Python error. The runner now skips recomputing the already-trusted baseline and trains pending DO scenarios in ascending estimated workload so each retry banks more corrected outputs before a preemption or node loss.
 11. **Partial corrected-subset scoring added (FIXED IN EVAL/RUNNER)**: the workspace no longer has to wait for all 24 scenarios before reporting any honest corrected DO result. `scripts/evaluate.sh captaincook4d_partial_compare ...` now scores only scenarios with 5 corrected seeds and writes them into the standard `count_based` and `do` slots in `scoring/scores.json`; this is documented as a temporary subset-based deviation until the full 24-scenario corrected rerun completes.
 12. **Completion-first retry scheduling added (FIXED IN RUNNER)**: repeated node failures were leaving some scenarios nearly finished but not completed. `scripts/method.sh` now prioritizes scenarios with the fewest missing seeds before using workload as a tie-breaker, and the retry batch is now capped at `METHOD_MAX_SCENARIOS=1` so unstable jobs are more likely to finish `Cheesepimiento` before opening more new scenarios.
+13. **Broken mounted Python packages (FIXED IN ENVIRONMENT)**: local validation exposed that the mounted `networkx` installation under `/home/user/.local/lib/python3.12/site-packages` was corrupted. The environment now installs dependencies into the overlay and sets `PYTHONNOUSERSITE=1`, preventing that broken package tree from leaking into jobs.
+14. **Partial-run full-eval trap (FIXED IN RUNNER)**: `scripts/method.sh` previously forced a full-dataset DO evaluation after every retry, even when only one pending scenario was intentionally being trained. The script now skips that full evaluation until the 24-scenario checkpoint set is complete.
 
 ## What Remains
 
 - Rerun CaptainCook4D DO from scratch with the corrected differentiable loss
 - Expand the corrected 5-seed rerun beyond the current 7-scenario subset
-- Finish `Cheesepimiento`, then keep raising the number of 5-seed completed scenarios
+- Finish `Cheesepimiento` (currently 2/5 corrected seeds), then keep raising the number of 5-seed completed scenarios
 - Replace the partial `core_claim` experiment with a full 24-scenario corrected DO result in `scores.json`
 - Continue resumable shortest-first DO reruns until all 24 CaptainCook4D scenarios have 5 corrected seeds
 - If the corrected rerun still trails badly, inspect per-scenario failures and only then make tightly scoped training/evaluation fixes
@@ -80,3 +84,4 @@ Only 7/24 scenarios currently have all 5 corrected seeds. `Cheesepimiento` has b
 - The next submission restores the paper's 5-seed / 1000-epoch regime on CaptainCook4D with the corrected differentiable loss
 - Evaluation aggregates per-scenario metrics into the reported dataset means
 - Count-based baseline reimplemented without pandas/pygraphviz
+- Because of repeated worker-node deaths, the current `scores.json` still reflects the completed corrected subset (7 scenarios) rather than the full 24-scenario benchmark
