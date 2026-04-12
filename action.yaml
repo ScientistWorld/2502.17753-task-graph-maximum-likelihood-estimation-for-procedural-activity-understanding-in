@@ -4,5 +4,5 @@
 action: submit
 gpus: 0
 test: false
-milestone: method_runs
-notes: "Resume post-fix CaptainCook4D DO on CPU from checkpoints/do_captaincook4d_fixedtgml; skip redundant baseline work, train pending scenarios shortest-first, and keep accumulating 5-seed corrected outputs despite worker-node failures."
+milestone: core_claim
+notes: "Continue CPU shortest-first resumable DO rerun beyond the validated 4-scenario core-claim subset; keep accumulating corrected 5-seed CaptainCook4D outputs in checkpoints/do_captaincook4d_fixedtgml toward broader coverage and full-dataset corrected scores."
