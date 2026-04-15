@@ -1,34 +1,23 @@
 #!/bin/bash
-# Download all data and models needed for this environment.
-#
-# Estimated total download size: ~0 GB
-# (CaptainCook4D data is included in the cloned repo)
-# EgoPER and EgoProceL annotations are in the repo or downloaded from GitHub
-#
-# This script downloads any remaining data needed beyond what's in the repo.
+# Fetch all public, pre-existing artifacts needed by the reproduction.
 
-set -e
-cd "$(dirname "$0")"
+set -euo pipefail
 
-# The paper's GitHub repo was cloned into method/repo/ during setup.
-# It already contains:
-#   - CaptainCook4D data (task_graph_generation_annotations.json + ground truth graphs)
-#   - Assembly101-O and EPIC-Tent-O annotations
-#   - EgoProceL annotations (newly created by the paper)
-#
-# Check what's available
-REPO_DATA="/home/user/method/repo/data"
-if [ -d "$REPO_DATA" ]; then
-    echo "Data directory found at $REPO_DATA"
-    ls "$REPO_DATA"
-else
-    echo "WARNING: Repo data not found at $REPO_DATA"
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+PAPER_REPO_URL="https://github.com/fpv-iplab/Differentiable-Task-Graph-Learning.git"
+PAPER_REPO_COMMIT="536aaa72fca6b4a16de7ffde05e3864466986aa4"
+PAPER_REPO_DIR="$ROOT_DIR/method/repo"
+CAPTAINCOOK_DIR="$PAPER_REPO_DIR/data/captaincook4d"
+
+if [ ! -d "$PAPER_REPO_DIR/.git" ]; then
+  rm -rf "$PAPER_REPO_DIR"
+  git clone "$PAPER_REPO_URL" "$PAPER_REPO_DIR"
 fi
 
-# EgoProceL annotations should be in the repo. Let's verify.
-EGOPROCEL_ANNOTATIONS="$REPO_DATA/../task-graph-learning/online-mistake-detection"
-if [ -d "$EGOPROCEL_ANNOTATIONS" ]; then
-    echo "Found online-mistake-detection data"
-fi
+git -C "$PAPER_REPO_DIR" fetch --depth 1 origin "$PAPER_REPO_COMMIT"
+git -C "$PAPER_REPO_DIR" checkout --detach "$PAPER_REPO_COMMIT"
 
-echo "Download check complete. All required data is in the cloned repository."
+test -f "$CAPTAINCOOK_DIR/task_graph_generation_annotations.json"
+test -d "$CAPTAINCOOK_DIR/ground_truth_task_graphs"
+
+echo "Downloaded paper repository and verified CaptainCook4D task-graph data."

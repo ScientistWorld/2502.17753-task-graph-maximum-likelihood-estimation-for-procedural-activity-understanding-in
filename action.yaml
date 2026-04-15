@@ -3,4 +3,4 @@
 # only after your turn ends. Sleeping blocks the entire pipeline.
 action: done
 milestone: core_claim
-notes: "Final verification passed. The workspace is gym-usable at core_claim, with the documented limitation that scores.json reflects the corrected 8-procedure subset rather than the full 24-procedure benchmark."
+notes: "Packaged fresh-clone downloads by fetching the paper repo from its public origin and fixing data ignore rules."
