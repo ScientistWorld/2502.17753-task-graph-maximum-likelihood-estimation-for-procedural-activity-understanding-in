@@ -3,4 +3,4 @@
 # only after your turn ends. Sleeping blocks the entire pipeline.
 action: done
 milestone: core_claim
-notes: "Packaged fresh-clone downloads by fetching the paper repo from its public origin and fixing data ignore rules."
+notes: "Balanced 12/12 CaptainCook4D scenario split; train/test DO F1 79.543/79.590, count F1 61.429/61.398; score files produced by evaluate_train/test."
