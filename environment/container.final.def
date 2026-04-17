@@ -1,0 +1,71 @@
+Bootstrap: docker
+From: python:3.12-slim-bookworm
+
+%post
+    apt-get update && apt-get install -y --no-install-recommends \
+        libgomp1 \
+        && rm -rf /var/lib/apt/lists/*
+
+
+
+    # --- Frozen environment (49 packages) ---
+    # Sources: 3 both, 43 overlay-only, 3 setup-only
+    pip install --break-system-packages uv 2>/dev/null || pip install uv 2>/dev/null || true
+    export UV_SYSTEM_PYTHON=1 UV_BREAK_SYSTEM_PACKAGES=1
+    uv pip install --system \
+        'autocommand==2.2.2' \  # overlay
+        'backports.tarfile==1.2.0' \  # overlay
+        'cuda_bindings==13.2.0' \  # overlay
+        'cuda_pathfinder==1.5.1' \  # overlay
+        'cuda_toolkit==13.0.2' \  # overlay
+        'export' \  # setup
+        'filelock==3.25.2' \  # overlay
+        'fsspec==2026.3.0' \  # overlay
+        'importlib_metadata==8.7.1' \  # overlay
+        'jaraco.context==6.1.0' \  # overlay
+        'jaraco.functools==4.4.0' \  # overlay
+        'jaraco.text==4.0.0' \  # overlay
+        'jinja2==3.1.6' \  # overlay
+        'joblib==1.5.3' \  # overlay
+        'markupsafe==3.0.3' \  # overlay
+        'more_itertools==10.8.0' \  # overlay
+        'mpmath==1.3.0' \  # overlay
+        'networkx==3.4.2' \  # both
+        'numpy==2.4.4' \  # both
+        'nvidia_cublas==13.1.0.3' \  # overlay
+        'nvidia_cuda_cupti==13.0.85' \  # overlay
+        'nvidia_cuda_nvrtc==13.0.88' \  # overlay
+        'nvidia_cuda_runtime==13.0.96' \  # overlay
+        'nvidia_cudnn_cu13==9.19.0.56' \  # overlay
+        'nvidia_cufft==12.0.0.61' \  # overlay
+        'nvidia_cufile==1.15.1.6' \  # overlay
+        'nvidia_curand==10.4.0.35' \  # overlay
+        'nvidia_cusolver==12.0.4.66' \  # overlay
+        'nvidia_cusparse==12.6.3.3' \  # overlay
+        'nvidia_cusparselt_cu13==0.8.0' \  # overlay
+        'nvidia_nccl_cu13==2.28.9' \  # overlay
+        'nvidia_nvjitlink==13.0.88' \  # overlay
+        'nvidia_nvshmem_cu13==3.4.5' \  # overlay
+        'nvidia_nvtx==13.0.85' \  # overlay
+        'packaging==26.0' \  # overlay
+        'platformdirs==4.4.0' \  # overlay
+        'scikit_learn==1.8.0' \  # overlay
+        'scipy==1.17.1' \  # overlay
+        'setuptools==81.0.0' \  # overlay
+        'sympy==1.14.0' \  # overlay
+        'threadpoolctl==3.6.0' \  # overlay
+        'tomli==2.4.0' \  # overlay
+        'torch==2.11.0' \  # both
+        'triton==3.6.0' \  # overlay
+        'typing_extensions==4.15.0' \  # overlay
+        'uv_break_system_packages' \  # setup
+        'uv_system_python' \  # setup
+        'wheel==0.46.3' \  # overlay
+        'zipp==3.23.0'  # overlay
+
+%environment
+    export HOME=/home/user
+    export PATH=/usr/local/bin:/usr/bin:/bin
+    export PYTHONUNBUFFERED=1
+    export PYTHONNOUSERSITE=1
+    export PYTHONPATH=/home/user/environment/pylibs:/home/user:/usr/local/lib/python3.12/site-packages:/usr/local/lib/python3.12/dist-packages
