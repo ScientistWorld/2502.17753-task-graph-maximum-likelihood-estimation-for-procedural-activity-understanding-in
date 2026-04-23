@@ -1,0 +1,5 @@
+#!/bin/sh
+# Minimal fakeroot passthrough: just run the actual command.
+# No shift needed: scheduler calls "fakeroot cmd arg..." so $1=cmd, $2=arg...
+export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/libfakeroot:/lib/x86_64-linux-gnu:/lib64
+exec "$@"
