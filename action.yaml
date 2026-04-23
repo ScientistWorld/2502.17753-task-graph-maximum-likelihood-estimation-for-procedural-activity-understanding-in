@@ -1,6 +1,4 @@
-# IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
-# Do NOT sleep, poll, or wait for jobs. The system reads this file
-# only after your turn ends. Sleeping blocks the entire pipeline.
-action: done
-milestone: core_claim
-notes: "Balanced 12/12 CaptainCook4D scenario split; train/test DO F1 79.543/79.590, count F1 61.429/61.398; score files produced by evaluate_train/test."
+action: submit
+gpus: 0
+test: false
+notes: "Run train/test evaluation with fixed scripts (auto-discovery, slice markers); 13 train scenarios, 12 test scenarios."
