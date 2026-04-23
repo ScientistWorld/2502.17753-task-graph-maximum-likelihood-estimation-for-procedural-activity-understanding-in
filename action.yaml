@@ -1,4 +1,4 @@
-action: submit
+action: done
 gpus: 0
-test: false
-notes: "Re-run train/test evaluation after fixing seed-variance scoring, symmetric density scoring, topological-distance saturation, stale score cleanup, and complete-method discovery; populate scores_{train,test}.json for count_based and do."
+milestone: core_claim
+notes: "12/12 scenario train-test split; 14 train values and 14 test values across count_based/do; F1 gap is stable (do 79.54 train vs 79.59 test, count_based 61.43 vs 61.40); caveat: count_based path_coverage stays near zero but the metric is no longer saturated or byte-identical across slices."
