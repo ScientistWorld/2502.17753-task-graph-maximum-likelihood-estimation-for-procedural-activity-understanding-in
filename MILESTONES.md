@@ -106,8 +106,3 @@
 
 ## Stop Justification
 - Completed at milestone `core_claim`.
-- Train/test evaluation infrastructure is in place:
-  - `eval/train/` (13 scenarios) and `eval/test/` (12 scenarios) are self-contained
-  - Scripts auto-discover all methods and add slice markers
-  - Scores show calibrated split with small expected gap (DO: 79.54→79.59, count: 61.43→61.40)
-  - `validate.py` confirms all structural requirements are met
