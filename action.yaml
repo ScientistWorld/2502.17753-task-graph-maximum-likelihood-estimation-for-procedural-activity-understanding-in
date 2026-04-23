@@ -1,4 +1,4 @@
 action: submit
 gpus: 0
 test: false
-notes: "Run train/test evaluation with fixed scripts (auto-discovery, slice markers); 13 train scenarios, 12 test scenarios."
+notes: "Fixed container.def (removed pip from %post); now running train/test evaluation scripts with auto-discovery and slice markers."
