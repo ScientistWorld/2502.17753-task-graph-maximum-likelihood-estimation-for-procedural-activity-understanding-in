@@ -1,0 +1,27 @@
+{
+  "experiments": {
+    "captaincook4d_task_graph": {
+      "results": {
+        "count_based": {
+          "precision": 67.3310162060162,
+          "recall": 56.6290217142031,
+          "f1": 61.398095459193094,
+          "std_f1": 0.0,
+          "edge_density_ratio": 0.8379867841492051,
+          "path_coverage": 0.016666666666666666,
+          "topological_distance": 0.07261334819577854
+        },
+        "do": {
+          "precision": 79.63656683213487,
+          "recall": 79.5841419138212,
+          "f1": 79.58969088197641,
+          "std_f1": 0.9524570349756223,
+          "edge_density_ratio": 0.9810080891330891,
+          "path_coverage": 0.23987544091710758,
+          "topological_distance": 0.05706154185320852
+        }
+      }
+    }
+  },
+  "slice": "test"
+}

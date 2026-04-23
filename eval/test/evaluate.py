@@ -187,69 +187,58 @@ def post_process_pred_adj(pred_core: np.ndarray, n_gt: int) -> np.ndarray:
 
 def compute_topological_distance(gt_adj: np.ndarray, pred_adj: np.ndarray) -> float:
     """
-    Compute normalized topological ordering distance between two DAGs.
-    Measures how differently the two graphs order nodes by rank.
+    Compute a normalized partial-order distance between two DAGs.
+    Uses disagreement in transitive reachability, which captures wrong,
+    missing, or spurious precedence relations beyond direct edge overlap.
     Lower is better; 0 = identical topological structure.
     """
     try:
         gt_g = nx.DiGraph(gt_adj)
         pred_g = nx.DiGraph(pred_adj)
 
-        gt_nodes = sorted(gt_g.nodes())
-        pred_nodes = sorted(pred_g.nodes())
-
-        if len(gt_nodes) <= 1:
+        if len(gt_g) <= 1:
             return 0.0
 
-        try:
-            gt_ranks = {}
-            for n in gt_nodes:
-                if gt_g.in_degree(n) == 0:
-                    longest = 0
-                    for path in nx.all_simple_paths(gt_g, n, max(gt_nodes)):
-                        longest = max(longest, len(path) - 1)
-                    gt_ranks[n] = longest
-                else:
-                    preds = list(gt_g.predecessors(n))
-                    gt_ranks[n] = max(gt_ranks[p] for p in preds) + 1 if preds else 0
-        except:
-            gt_ranks = {n: i for i, n in enumerate(gt_nodes)}
+        if nx.is_directed_acyclic_graph(gt_g):
+            gt_closure = nx.transitive_closure_dag(gt_g)
+        else:
+            gt_closure = nx.transitive_closure(gt_g)
 
-        try:
-            pred_ranks = {}
-            for n in pred_nodes:
-                if pred_g.in_degree(n) == 0:
-                    longest = 0
-                    for path in nx.all_simple_paths(pred_g, n, max(pred_nodes)):
-                        longest = max(longest, len(path) - 1)
-                    pred_ranks[n] = longest
-                else:
-                    preds = list(pred_g.predecessors(n))
-                    pred_ranks[n] = max(pred_ranks[p] for p in preds) + 1 if preds else 0
-        except:
-            pred_ranks = {n: i for i, n in enumerate(pred_nodes)}
+        if nx.is_directed_acyclic_graph(pred_g):
+            pred_closure = nx.transitive_closure_dag(pred_g)
+        else:
+            pred_closure = nx.transitive_closure(pred_g)
 
-        max_rank = max(max(gt_ranks.values()), max(pred_ranks.values()), 1)
-        gt_norm = {n: gt_ranks.get(n, 0) / max_rank for n in gt_nodes}
-        pred_norm = {n: pred_ranks.get(n, 0) / max_rank for n in pred_nodes}
+        nodes = sorted(set(gt_closure.nodes()) | set(pred_closure.nodes()))
+        pair_count = 0
+        disagreements = 0
+        for src in nodes:
+            for dst in nodes:
+                if src == dst:
+                    continue
+                pair_count += 1
+                gt_has_order = gt_closure.has_edge(src, dst)
+                pred_has_order = pred_closure.has_edge(src, dst)
+                if gt_has_order != pred_has_order:
+                    disagreements += 1
 
-        distance = sum(abs(gt_norm.get(n, 0) - pred_norm.get(n, 0)) for n in gt_nodes) / max(len(gt_nodes), 1)
-        return float(distance)
+        return float(disagreements / pair_count) if pair_count else 0.0
     except Exception:
         return 0.5
 
 
 def compute_edge_density_ratio(gt_adj: np.ndarray, pred_adj: np.ndarray) -> float:
     """
-    Compute ratio of predicted edge count to GT edge count.
-    Catches under-connection (< 1.0) or over-connection (> 1.0).
-    1.0 = perfect density match.
+    Compute a symmetric density-match ratio in [0, 1].
+    1.0 = perfect density match; values decrease for under- or over-connection.
     """
     gt_edges = np.sum(gt_adj > 0)
     pred_edges = np.sum(pred_adj > 0)
     if gt_edges == 0:
-        return 0.0 if pred_edges > 0 else 1.0
-    return pred_edges / gt_edges
+        return 1.0 if pred_edges == 0 else 0.0
+    if pred_edges == 0:
+        return 0.0
+    return min(gt_edges, pred_edges) / max(gt_edges, pred_edges)
 
 
 def compute_path_coverage(gt_adj: np.ndarray, pred_adj: np.ndarray) -> float:
@@ -466,6 +455,7 @@ def evaluate_all_scenarios(
     min_do_seeds: Optional[int] = None,
 ) -> Dict[str, Any]:
     results: Dict[str, Dict[str, float]] = {}
+    seed_f1_totals: Dict[int, List[float]] = {}
 
     for scenario_data in data:
         scenario_name = scenario_data.scenario_name
@@ -491,6 +481,11 @@ def evaluate_all_scenarios(
 
             saved = np.load(prediction_file)
             pred_cores = saved["pred_cores"] if "pred_cores" in saved else saved["pred_core"][None, ...]
+            seed_ids = (
+                [int(seed) for seed in saved["seeds"].tolist()]
+                if "seeds" in saved
+                else list(range(len(pred_cores)))
+            )
             if min_do_seeds is not None and len(pred_cores) < min_do_seeds:
                 if allow_partial:
                     continue
@@ -501,6 +496,8 @@ def evaluate_all_scenarios(
                 evaluate_from_adjacency(pred_core, scenario_data.gt_adj_matrix)
                 for pred_core in pred_cores
             ]
+            for seed_id, metric in zip(seed_ids, per_seed_metrics):
+                seed_f1_totals.setdefault(seed_id, []).append(float(metric[2]))
             precision = float(np.mean([metric[0] for metric in per_seed_metrics]))
             recall = float(np.mean([metric[1] for metric in per_seed_metrics]))
             f1 = float(np.mean([metric[2] for metric in per_seed_metrics]))
@@ -528,6 +525,11 @@ def evaluate_all_scenarios(
     all_density = [result["edge_density_ratio"] for result in results.values()]
     all_path_cov = [result["path_coverage"] for result in results.values()]
     all_topo_dist = [result["topological_distance"] for result in results.values()]
+    if method == "do" and len(seed_f1_totals) > 1:
+        seed_means = [float(np.mean(seed_scores)) for _, seed_scores in sorted(seed_f1_totals.items())]
+        std_f1 = float(np.std(seed_means))
+    else:
+        std_f1 = 0.0
     return {
         "per_scenario": results,
         "aggregate": {
@@ -536,7 +538,7 @@ def evaluate_all_scenarios(
             "mean_f1": float(np.mean(all_f1)),
             "std_precision": float(np.std(all_precision)),
             "std_recall": float(np.std(all_recall)),
-            "std_f1": float(np.std(all_f1)),
+            "std_f1": std_f1,
             "edge_density_ratio": float(np.mean(all_density)),
             "path_coverage": float(np.mean(all_path_cov)),
             "topological_distance": float(np.mean(all_topo_dist)),

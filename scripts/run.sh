@@ -6,6 +6,10 @@ source /home/user/scripts/common_env.sh
 
 echo "=== $(date) === Train/Test Evaluation ==="
 
+# Start from a clean slate so the score files reflect only the methods scored
+# in this run.
+rm -f scoring/scores_train.json scoring/scores_test.json
+
 # Run train slice evaluation
 echo "Running train slice evaluation..."
 bash scripts/evaluate_train.sh

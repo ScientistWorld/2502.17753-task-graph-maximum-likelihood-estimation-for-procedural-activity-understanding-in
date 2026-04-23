@@ -3,8 +3,9 @@
 # Auto-discovers all methods in checkpoint directories and scores them.
 #
 # Usage:
-#   ./evaluate_test.sh                    # auto-discover all methods
-#   ./evaluate_test.sh checkpoints/do     # evaluate specific method
+#   ./evaluate_test.sh                    # auto-discover all complete methods
+#   ./evaluate_test.sh do_captaincook4d   # evaluate a specific method
+#   ./evaluate_test.sh checkpoints/do_captaincook4d
 
 set -e
 cd /home/user
@@ -21,17 +22,22 @@ then
 fi
 
 CHECKPOINT_DIR="${1:-}"  # If empty, auto-discover
+EXPECTED_PREDICTIONS=24
 
-# Auto-discover all method directories with prediction files
+# Auto-discover all complete method directories with prediction files.
+# Require full coverage so incomplete smoke runs do not silently mutate scores.
 if [ -z "$CHECKPOINT_DIR" ]; then
     echo "Auto-discovering methods in checkpoints/..."
     METHODS=()
 
-    # Find all directories containing _predictions.npz files
     for dir in /home/user/checkpoints/*/; do
-        if [ -d "$dir" ] && ls "$dir"/*_predictions.npz 1>/dev/null 2>&2; then
-            dirname=$(basename "$dir")
-            METHODS+=("$dirname")
+        if [ -d "$dir" ]; then
+            count=$(find "$dir" -maxdepth 1 -name '*_predictions.npz' | wc -l)
+            if [ "$count" -eq "$EXPECTED_PREDICTIONS" ]; then
+                METHODS+=("$(basename "$dir")")
+            elif [ "$count" -gt 0 ]; then
+                echo "Skipping $(basename "$dir") ($count/$EXPECTED_PREDICTIONS prediction files)"
+            fi
         fi
     done
 
@@ -44,12 +50,12 @@ if [ -z "$CHECKPOINT_DIR" ]; then
 
     # Always run count_based first (no checkpoint needed)
     echo "Evaluating count_based..."
-    python3 /home/user/eval/test/evaluate.py captaincook4d_count checkpoints/ 5 || true
+    python3 /home/user/eval/test/evaluate.py captaincook4d_count checkpoints/ 5
 
     # Then evaluate each discovered DO method
     for method in "${METHODS[@]}"; do
         echo "Evaluating $method..."
-        python3 /home/user/eval/test/evaluate.py "$method" "checkpoints/$method" 5 || true
+        python3 /home/user/eval/test/evaluate.py "$method" "checkpoints/$method" 5
     done
 else
     # Specific method provided
@@ -57,8 +63,15 @@ else
         echo "Evaluating count_based..."
         python3 /home/user/eval/test/evaluate.py captaincook4d_count checkpoints/ 5
     else
-        echo "Evaluating $CHECKPOINT_DIR..."
-        python3 /home/user/eval/test/evaluate.py "$CHECKPOINT_DIR" "checkpoints/$CHECKPOINT_DIR" 5
+        if [ -d "$CHECKPOINT_DIR" ]; then
+            METHOD_NAME="$(basename "$CHECKPOINT_DIR")"
+            PRED_DIR="$CHECKPOINT_DIR"
+        else
+            METHOD_NAME="$(basename "$CHECKPOINT_DIR")"
+            PRED_DIR="checkpoints/$CHECKPOINT_DIR"
+        fi
+        echo "Evaluating $METHOD_NAME..."
+        python3 /home/user/eval/test/evaluate.py "$METHOD_NAME" "$PRED_DIR" 5
     fi
 fi
 

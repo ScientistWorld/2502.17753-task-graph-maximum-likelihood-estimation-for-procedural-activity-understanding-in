@@ -1,3 +1,4 @@
-action: done
+action: submit
 gpus: 0
-notes: "Train/test split: 13 train scenarios, 12 test scenarios; train F1=79.54/61.43 (do/count), test F1=79.59/61.40 (do/count); small expected gap; scripts auto-discover all methods."
+test: false
+notes: "Re-run train/test evaluation after fixing seed-variance scoring, symmetric density scoring, topological-distance saturation, stale score cleanup, and complete-method discovery; populate scores_{train,test}.json for count_based and do."
