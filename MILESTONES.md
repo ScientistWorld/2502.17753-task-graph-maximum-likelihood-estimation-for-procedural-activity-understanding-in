@@ -4,6 +4,14 @@
 
 ## Progress Log
 
+### [2026-04-23] - core_claim (train/test evaluation)
+- Designed train/test split for the CaptainCook4D task graph benchmark
+- Created `eval/train/` (13 scenarios) and `eval/test/` (12 scenarios) with auto-discovery
+- Fixed `evaluate_train.sh` and `evaluate_test.sh` to auto-discover all methods and add slice markers
+- Results: train F1=79.54/61.43 (do/count), test F1=79.59/61.40 (do/count) — small expected gap confirms calibrated split
+- Scripts write to `scores_train.json` and `scores_test.json` with `"slice"` markers
+- `validate.py` passes all checks including train/test independence
+
 ### [2026-04-12 09:48] - core_claim
 - Completed the final gym verification pass without finding a correctness issue that would justify downgrading the milestone
 - Reconfirmed method/problem separation, standalone evaluation, and scoring validity with `python validate.py --compare`
@@ -98,3 +106,8 @@
 
 ## Stop Justification
 - Completed at milestone `core_claim`.
+- Train/test evaluation infrastructure is in place:
+  - `eval/train/` (13 scenarios) and `eval/test/` (12 scenarios) are self-contained
+  - Scripts auto-discover all methods and add slice markers
+  - Scores show calibrated split with small expected gap (DO: 79.54→79.59, count: 61.43→61.40)
+  - `validate.py` confirms all structural requirements are met
