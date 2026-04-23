@@ -5,10 +5,13 @@
       "weight": 1.0,
       "primary_metric": "f1",
       "metrics": {
-        "precision": {"higher_is_better": true, "coefficient": 0.25},
-        "recall": {"higher_is_better": true, "coefficient": 0.25},
-        "f1": {"higher_is_better": true, "coefficient": 1.0},
-        "std_f1": {"higher_is_better": false, "coefficient": -0.15}
+        "precision": {"higher_is_better": true, "coefficient": 0.25, "description": "Edge-level precision on directed prerequisite edges."},
+        "recall": {"higher_is_better": true, "coefficient": 0.25, "description": "Edge-level recall on directed prerequisite edges."},
+        "f1": {"higher_is_better": true, "coefficient": 1.0, "description": "F1 score on directed prerequisite edges — primary benchmark metric."},
+        "std_f1": {"higher_is_better": false, "coefficient": -0.15, "description": "Seed-to-seed variance — penalizes unstable methods."},
+        "edge_density_ratio": {"higher_is_better": true, "coefficient": 0.15, "description": "Ratio of predicted edge count to GT edge count — catches under/over-connection."},
+        "path_coverage": {"higher_is_better": true, "coefficient": 0.12, "description": "Fraction of GT directed paths covered by predicted graph — validates DAG structure."},
+        "topological_distance": {"higher_is_better": false, "coefficient": -0.18, "description": "Normalized topological ordering distance — rewards structurally similar graphs regardless of edge overlap."}
       },
       "results": {
         "msgi": {"type": "baseline", "precision": 11.3, "recall": 13.3, "f1": 12.2},

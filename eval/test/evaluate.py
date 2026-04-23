@@ -185,8 +185,125 @@ def post_process_pred_adj(pred_core: np.ndarray, n_gt: int) -> np.ndarray:
     return pred_adj
 
 
-def evaluate_from_adjacency(pred_core: np.ndarray, gt_adj: np.ndarray) -> Tuple[float, float, float]:
-    return compute_precision_recall_f1(gt_adj, post_process_pred_adj(pred_core, gt_adj.shape[0]))
+def compute_topological_distance(gt_adj: np.ndarray, pred_adj: np.ndarray) -> float:
+    """
+    Compute normalized topological ordering distance between two DAGs.
+    Measures how differently the two graphs order nodes by rank.
+    Lower is better; 0 = identical topological structure.
+    """
+    try:
+        gt_g = nx.DiGraph(gt_adj)
+        pred_g = nx.DiGraph(pred_adj)
+
+        gt_nodes = sorted(gt_g.nodes())
+        pred_nodes = sorted(pred_g.nodes())
+
+        if len(gt_nodes) <= 1:
+            return 0.0
+
+        try:
+            gt_ranks = {}
+            for n in gt_nodes:
+                if gt_g.in_degree(n) == 0:
+                    longest = 0
+                    for path in nx.all_simple_paths(gt_g, n, max(gt_nodes)):
+                        longest = max(longest, len(path) - 1)
+                    gt_ranks[n] = longest
+                else:
+                    preds = list(gt_g.predecessors(n))
+                    gt_ranks[n] = max(gt_ranks[p] for p in preds) + 1 if preds else 0
+        except:
+            gt_ranks = {n: i for i, n in enumerate(gt_nodes)}
+
+        try:
+            pred_ranks = {}
+            for n in pred_nodes:
+                if pred_g.in_degree(n) == 0:
+                    longest = 0
+                    for path in nx.all_simple_paths(pred_g, n, max(pred_nodes)):
+                        longest = max(longest, len(path) - 1)
+                    pred_ranks[n] = longest
+                else:
+                    preds = list(pred_g.predecessors(n))
+                    pred_ranks[n] = max(pred_ranks[p] for p in preds) + 1 if preds else 0
+        except:
+            pred_ranks = {n: i for i, n in enumerate(pred_nodes)}
+
+        max_rank = max(max(gt_ranks.values()), max(pred_ranks.values()), 1)
+        gt_norm = {n: gt_ranks.get(n, 0) / max_rank for n in gt_nodes}
+        pred_norm = {n: pred_ranks.get(n, 0) / max_rank for n in pred_nodes}
+
+        distance = sum(abs(gt_norm.get(n, 0) - pred_norm.get(n, 0)) for n in gt_nodes) / max(len(gt_nodes), 1)
+        return float(distance)
+    except Exception:
+        return 0.5
+
+
+def compute_edge_density_ratio(gt_adj: np.ndarray, pred_adj: np.ndarray) -> float:
+    """
+    Compute ratio of predicted edge count to GT edge count.
+    Catches under-connection (< 1.0) or over-connection (> 1.0).
+    1.0 = perfect density match.
+    """
+    gt_edges = np.sum(gt_adj > 0)
+    pred_edges = np.sum(pred_adj > 0)
+    if gt_edges == 0:
+        return 0.0 if pred_edges > 0 else 1.0
+    return pred_edges / gt_edges
+
+
+def compute_path_coverage(gt_adj: np.ndarray, pred_adj: np.ndarray) -> float:
+    """
+    Compute fraction of GT directed paths covered by predicted graph.
+    A path is a sequence of edges forming a chain in topological order.
+    Measures structural correctness beyond edge overlap.
+    """
+    try:
+        gt_g = nx.DiGraph(gt_adj)
+        pred_g = nx.DiGraph(pred_adj)
+
+        sources = [n for n in gt_g.nodes() if gt_g.in_degree(n) == 0]
+        sinks = [n for n in gt_g.nodes() if gt_g.out_degree(n) == 0]
+
+        if not sources or not sinks:
+            return 0.5
+
+        all_paths = []
+        for src in sources:
+            for sink in sinks:
+                try:
+                    for path in nx.all_simple_paths(gt_g, src, sink):
+                        all_paths.append(tuple(sorted(zip(path[:-1], path[1:]))))
+                except nx.NetworkXNoPath:
+                    continue
+                except nx.NetworkXError:
+                    continue
+
+        if not all_paths:
+            return 0.5
+
+        covered = 0
+        pred_edges = set(pred_g.edges())
+        for path_edges in all_paths:
+            if all(edge in pred_edges for edge in path_edges):
+                covered += 1
+
+        return covered / len(all_paths)
+    except Exception:
+        return 0.5
+
+
+def evaluate_from_adjacency(pred_core: np.ndarray, gt_adj: np.ndarray) -> Tuple[float, float, float, float, float, float]:
+    """
+    Evaluate a predicted adjacency matrix against ground truth.
+    Returns (precision, recall, f1, density, path_cov, topo_dist).
+    """
+    pred_adj = post_process_pred_adj(pred_core, gt_adj.shape[0])
+    precision, recall, f1 = compute_precision_recall_f1(gt_adj, pred_adj)
+    density = compute_edge_density_ratio(gt_adj, pred_adj)
+    path_cov = compute_path_coverage(gt_adj, pred_adj)
+    topo_dist = compute_topological_distance(gt_adj, pred_adj)
+    return precision, recall, f1, density, path_cov, topo_dist
 
 
 def strip_matrix_tokens(sequences: List[List[int]], n_gt: int) -> List[List[int]]:
@@ -325,7 +442,7 @@ def evaluate_count_based(
     sequences: List[List[int]],
     gt_adj: np.ndarray,
     threshold: float = 0.5,
-) -> Tuple[float, float, float]:
+) -> Tuple[float, float, float, float, float, float]:
     n_gt = gt_adj.shape[0]
     pred_adj = count_based_with_threshold(sequences, threshold=threshold, n_gt=n_gt)
     if pred_adj.shape != gt_adj.shape:
@@ -333,7 +450,11 @@ def evaluate_count_based(
         min_n = min(pred_adj.shape[0], n_gt)
         pred_resized[:min_n, :min_n] = pred_adj[:min_n, :min_n]
         pred_adj = pred_resized
-    return compute_precision_recall_f1(gt_adj, pred_adj)
+    precision, recall, f1 = compute_precision_recall_f1(gt_adj, pred_adj)
+    density = compute_edge_density_ratio(gt_adj, pred_adj)
+    path_cov = compute_path_coverage(gt_adj, pred_adj)
+    topo_dist = compute_topological_distance(gt_adj, pred_adj)
+    return precision, recall, f1, density, path_cov, topo_dist
 
 
 def evaluate_all_scenarios(
@@ -349,7 +470,7 @@ def evaluate_all_scenarios(
     for scenario_data in data:
         scenario_name = scenario_data.scenario_name
         if method == "count_based":
-            precision, recall, f1 = evaluate_count_based(
+            precision, recall, f1, density, path_cov, topo_dist = evaluate_count_based(
                 scenario_data.sequences,
                 scenario_data.gt_adj_matrix,
                 threshold,
@@ -383,6 +504,9 @@ def evaluate_all_scenarios(
             precision = float(np.mean([metric[0] for metric in per_seed_metrics]))
             recall = float(np.mean([metric[1] for metric in per_seed_metrics]))
             f1 = float(np.mean([metric[2] for metric in per_seed_metrics]))
+            density = float(np.mean([metric[3] for metric in per_seed_metrics]))
+            path_cov = float(np.mean([metric[4] for metric in per_seed_metrics]))
+            topo_dist = float(np.mean([metric[5] for metric in per_seed_metrics]))
         else:
             raise ValueError(f"Unknown method: {method}")
 
@@ -390,6 +514,9 @@ def evaluate_all_scenarios(
             "precision": float(precision),
             "recall": float(recall),
             "f1": float(f1),
+            "edge_density_ratio": float(density),
+            "path_coverage": float(path_cov),
+            "topological_distance": float(topo_dist),
         }
 
     if not results:
@@ -398,6 +525,9 @@ def evaluate_all_scenarios(
     all_precision = [result["precision"] for result in results.values()]
     all_recall = [result["recall"] for result in results.values()]
     all_f1 = [result["f1"] for result in results.values()]
+    all_density = [result["edge_density_ratio"] for result in results.values()]
+    all_path_cov = [result["path_coverage"] for result in results.values()]
+    all_topo_dist = [result["topological_distance"] for result in results.values()]
     return {
         "per_scenario": results,
         "aggregate": {
@@ -407,6 +537,9 @@ def evaluate_all_scenarios(
             "std_precision": float(np.std(all_precision)),
             "std_recall": float(np.std(all_recall)),
             "std_f1": float(np.std(all_f1)),
+            "edge_density_ratio": float(np.mean(all_density)),
+            "path_coverage": float(np.mean(all_path_cov)),
+            "topological_distance": float(np.mean(all_topo_dist)),
         },
     }
 
@@ -438,6 +571,9 @@ def write_scores_json(
         "recall": aggregate["mean_recall"],
         "f1": aggregate["mean_f1"],
         "std_f1": aggregate["std_f1"],
+        "edge_density_ratio": aggregate["edge_density_ratio"],
+        "path_coverage": aggregate["path_coverage"],
+        "topological_distance": aggregate["topological_distance"],
     }
 
     with open(output_path, "w") as f:
