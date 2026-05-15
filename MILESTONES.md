@@ -40,7 +40,3 @@
 
 ## Stop Justification
 - Completed at milestone `core_claim`.
-- DO method outperforms count-based baseline by ~11 F1 points on CaptainCook4D
-- Full evaluation infrastructure with train/test split and structural metrics
-- Validation passes all structural checks
-- Method is paper's actual DO+TGML implementation, not a surrogate
