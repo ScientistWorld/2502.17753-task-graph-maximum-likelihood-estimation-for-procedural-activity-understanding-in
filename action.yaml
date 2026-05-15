@@ -1,4 +1,8 @@
-action: done
-gpus: 0
-milestone: core_claim
-notes: "Core claim verified: DO F1=79.5 vs count_based F1=61.4 on CaptainCook4D. Train/test split with 3 structural metrics (density, path_coverage, topo_distance). Validation passes."
+# IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
+# Do NOT sleep, poll, or wait for jobs. The system reads this file
+# only after your turn ends. Sleeping blocks the entire pipeline.
+action: pending
+gpus: 1
+test: false
+milestone: method_runs
+notes: ""
