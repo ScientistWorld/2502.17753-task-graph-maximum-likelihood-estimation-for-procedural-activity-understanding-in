@@ -13,6 +13,4 @@
 - DO outperforms count_based on both train (79.5 vs 61.4) and test (79.6 vs 61.4) slices
 
 ## Stop Justification
-- Core claim reproduced: DO beats count_based by ~11 F1 points on CaptainCook4D
-- Full evaluation infrastructure with train/test split and anti-shortcut metrics
-- Method is the paper's actual DO+TGML algorithm, not a surrogate
+- Completed at milestone `method_runs`.
