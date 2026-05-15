@@ -1952,7 +1952,7 @@ On CaptainCook4D, the strongest prior baseline in the paper reaches about 73 F1,
 
 # Reproduction Milestones
 
-**Current: core_claim**
+**Current: none**
 
 ## Stop Justification
-- Completed at milestone `core_claim`.
+- Completed at milestone `none`.
