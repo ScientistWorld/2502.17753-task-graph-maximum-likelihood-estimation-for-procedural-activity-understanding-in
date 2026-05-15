@@ -2,6 +2,10 @@
 
 ## What Works
 
+- **Reset audit restored `core_claim`**: after the handoff reset to `method_runs`, a fresh audit found the implementation is the paper's real TGML Direct Optimization method, evaluation is independent of `method/`, `scripts/evaluate.sh` works standalone, and `validate.py --compare` passes.
+- **Deliverables audit passed**: briefing files, `reference.json`, `TARGETS.md`, `CONSTRAINTS.md`, `EXPERIMENTS.md`, `DIRECTION.md`, scripts, and environment files are present and reasonable for the CaptainCook4D core-claim reproduction.
+- **Revalidated current core claim before continuation**: `validate.py --compare` and `scripts/evaluate.sh captaincook4d_partial_compare checkpoints/do_captaincook4d_fixedtgml 5` both pass on 2026-05-15, confirming the corrected 8-scenario subset remains DO F1=78.0 vs count-based F1=67.2.
+- **Continuation job prepared**: `scripts/run.sh` now continues the corrected DO rerun on CPU for up to two pending CaptainCook4D procedures, then refreshes `scores.json` with the like-for-like partial comparison and runs `validate.py --compare`.
 - **Coverage audit now prints directly in the submission job**: `scripts/run.sh` now logs the complete and partial CaptainCook4D scenario checkpoint coverage before training starts, which makes progress across unstable worker nodes easier to inspect from job logs
 - **Resumable training keeps banking progress across node deaths**: job `d2b999b2-cad` died at the worker level with exit `-9`, but two new DO seeds were flushed to disk before failure, bringing `Cheesepimiento` to 5/5 corrected seeds
 - **Audit-restored `core_claim` after reset**: a fresh audit from the lower reset baseline confirms the workspace still implements the paper's actual TGML + Direct Optimization method, and the existing corrected-subset evidence is still valid

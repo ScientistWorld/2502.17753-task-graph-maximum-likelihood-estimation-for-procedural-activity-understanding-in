@@ -1,4 +1,5 @@
-action: done
+action: submit
 gpus: 0
+test: false
 milestone: core_claim
-notes: "Core claim reproduced: DO F1=77.98 beats count_based F1=67.20 on CaptainCook4D (24 scenarios). Train/test split with structural metrics passes validation."
+notes: "Core claim already reproduced on the corrected 8-scenario CaptainCook4D subset. Continue the CPU DO rerun for up to two pending procedures, refresh partial scores, and validate."
