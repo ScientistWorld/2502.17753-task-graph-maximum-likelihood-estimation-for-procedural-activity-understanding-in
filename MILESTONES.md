@@ -29,4 +29,4 @@
 - Fixed the main score file to include `worst_quartile_f1`, matching the nonzero metric in `reference.json`.
 
 ## Stop Justification
-- Final verification completed at milestone `core_claim_plus`; the gym is ready for the scoped CaptainCook4D task-graph generation benchmark.
+- Completed at milestone `core_claim_plus`.
