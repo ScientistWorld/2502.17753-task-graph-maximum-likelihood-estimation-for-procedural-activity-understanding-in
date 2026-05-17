@@ -20,4 +20,4 @@
 - Re-ran `python3 validate.py --compare`; all scoring and structure checks passed.
 
 ## Stop Justification
-- Completed at milestone `core_claim_plus`: the paper's actual TGML/DO method runs end-to-end, supports the central DO-over-Count-Based claim on CaptainCook4D, and is also checked on train/test procedure splits.
+- Completed at milestone `core_claim_plus`.
