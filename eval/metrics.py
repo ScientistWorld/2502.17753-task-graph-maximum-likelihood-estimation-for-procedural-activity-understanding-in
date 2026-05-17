@@ -161,12 +161,20 @@ def delete_redundant_edges(G: nx.DiGraph) -> None:
                     G.add_edge(current_node, successor)
 
 
-def delete_cycles(G: nx.DiGraph) -> None:
-    """Remove cycles from graph."""
+def delete_cycles(G: nx.DiGraph, scores: np.ndarray | None = None) -> None:
+    """Remove cycles by deleting the lowest-score edge in each detected cycle."""
     while not nx.is_directed_acyclic_graph(G):
         try:
-            cycle = nx.find_cycle(G, orientation='original')
-            G.remove_edge(cycle[-1][0], cycle[-1][1])
+            cycle = nx.find_cycle(G, orientation="original")
+            cycle_edges = [(edge[0], edge[1]) for edge in cycle]
+            if scores is None:
+                edge_to_remove = cycle_edges[-1]
+            else:
+                edge_to_remove = min(
+                    cycle_edges,
+                    key=lambda edge: float(scores[edge[0], edge[1]]),
+                )
+            G.remove_edge(*edge_to_remove)
         except nx.NetworkXNoCycle:
             break
 
@@ -228,8 +236,8 @@ def post_process_adjacency(
 
     add_boundary_edges(GP, id_start=id_start, id_end=id_end)
 
-    # Transitive reduction (no cycle removal -- official train_with_gt.py doesn't use it)
     delete_redundant_edges(GP)
+    delete_cycles(GP, pred_core)
 
     # pred_adj has graph orientation: adj[u,v]=1 means edge u->v (u is precondition of v)
     pred_adj = np.zeros((n_gt, n_gt), dtype=np.float32)

@@ -173,6 +173,20 @@ def add_boundary_edges(graph: nx.DiGraph, id_start: int, id_end: int) -> None:
         graph.add_edge(node, id_start)
 
 
+def delete_cycles(graph: nx.DiGraph, scores: np.ndarray) -> None:
+    while not nx.is_directed_acyclic_graph(graph):
+        try:
+            cycle = nx.find_cycle(graph, orientation="original")
+        except nx.NetworkXNoCycle:
+            break
+        cycle_edges = [(edge[0], edge[1]) for edge in cycle]
+        edge_to_remove = min(
+            cycle_edges,
+            key=lambda edge: float(scores[edge[0], edge[1]]),
+        )
+        graph.remove_edge(*edge_to_remove)
+
+
 def post_process_pred_adj(pred_core: np.ndarray, n_gt: int) -> np.ndarray:
     threshold = 1.0 / n_gt
     pred_binary = np.where(pred_core < threshold, 0, 1).astype(float)
@@ -180,6 +194,7 @@ def post_process_pred_adj(pred_core: np.ndarray, n_gt: int) -> np.ndarray:
 
     add_boundary_edges(graph, id_start=0, id_end=n_gt - 1)
     delete_redundant_edges(graph)
+    delete_cycles(graph, pred_core)
 
     pred_adj = np.zeros((n_gt, n_gt), dtype=np.float32)
     for src, dst in graph.edges():

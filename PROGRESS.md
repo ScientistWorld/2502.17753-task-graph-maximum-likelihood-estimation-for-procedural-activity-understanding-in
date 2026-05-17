@@ -8,7 +8,7 @@
 - The reusable evaluator is method-agnostic with no imports from `method/`; it reads saved prediction artifacts and writes `scoring/scores.json`.
 - The main score file now includes benefit metrics (`precision`, `recall`, `f1`) and constraint/structure metrics (`std_f1`, `worst_quartile_f1`, `edge_density_ratio`, `path_coverage`, `topological_distance`).
 - `scores_train.json` and `scores_test.json` provide additional fixed 12-procedure slices for future agents.
-- Prepared a new sequence-selection DO rerun that saves the best adjacency according to the paper's weakly supervised sequence-consistency criterion instead of always saving the final epoch.
+- Added faithful postprocessing for the paper's graph cleanup step: inclusive `1/n` thresholding and cycle removal by deleting the lowest-score edge in each detected cycle.
 
 ## Continuation Audit
 
@@ -16,6 +16,7 @@
 - Confirmed the reproduction is not a surrogate: `method/tgml.py` contains the TGML likelihood loss and Direct Optimization adjacency learning described by the paper.
 - Confirmed `eval/` remains independent of `method/` and scores saved prediction artifacts instead of rerunning the method.
 - Re-ran `bash scripts/evaluate.sh captaincook4d_do checkpoints/do_captaincook4d_fixedtgml`, `bash scripts/evaluate_train.sh checkpoints/do_captaincook4d_fixedtgml`, `bash scripts/evaluate_test.sh checkpoints/do_captaincook4d_fixedtgml`, and `python3 validate.py --compare`; all passed.
+- Fixed a reusable scoring edge case so future non-DO prediction methods do not accidentally overwrite the `count_based` row.
 
 ## Results
 
@@ -46,12 +47,13 @@ Additional split checks:
 5. The standard evaluator previously thresholded DO outputs at `1/(n_gt+2)`; it now uses the official threshold `1/n_gt`.
 6. The standard evaluator previously reported `std_f1` as scenario spread; it now reports seed-to-seed spread and writes structural metrics into `scores.json`.
 7. `eval/evaluator.py` previously imported the baseline implementation from `baseline/`; the Count-Based scoring helper now lives inside `eval/` so the standard evaluator remains self-contained.
+8. Postprocessing previously omitted the paper's lowest-score cycle cleanup in the standard evaluator; this is now applied consistently in full, train, and test evaluation.
 
 ## What Remains
 
 - Higher milestones would require additional paper sections: EgoPER, EgoProceL, TGT-text/video, Ego-Exo4D downstream tasks, or online mistake detection.
 - The current packaged gym is scoped to CaptainCook4D task graph generation, which is enough for the core claim and additional train/test split checks.
-- `scripts/run.sh` is prepared to test whether official sequence-accuracy selection closes part of the remaining CaptainCook4D DO F1 gap.
+- `scripts/run.sh` now performs final CPU verification from the saved artifacts; sequence-selection reruns remain available through `METHOD_SELECTION=sequence_accuracy bash scripts/method.sh`.
 
 ## Deviations from Paper
 

@@ -1,22 +1,16 @@
 #!/bin/bash
-# Run a fresh CaptainCook4D TGML Direct Optimization experiment using the
-# paper's weakly supervised sequence-accuracy selection signal, then score it.
+# Final CPU verification for the CaptainCook4D TGML reproduction.
+# This refreshes scores from saved artifacts and runs the structural validator.
 set -e
 cd /home/user
 source /home/user/scripts/common_env.sh
 
-echo "=== $(date) === CaptainCook4D DO sequence-selection rerun ==="
+echo "=== $(date) === CaptainCook4D final verification ==="
 
-export METHOD_OUTPUT_DIR="checkpoints/do_captaincook4d_seqselect"
-export METHOD_SELECTION="sequence_accuracy"
-export METHOD_SEEDS="42,1337,2024,2025,2026"
-export METHOD_MAX_EPOCHS="1000"
-export METHOD_DEVICE="cpu"
-
-bash scripts/method.sh
-bash scripts/evaluate.sh captaincook4d_do "$METHOD_OUTPUT_DIR"
-bash scripts/evaluate_train.sh do "$METHOD_OUTPUT_DIR"
-bash scripts/evaluate_test.sh do "$METHOD_OUTPUT_DIR"
+bash scripts/evaluate.sh captaincook4d_count
+bash scripts/evaluate.sh captaincook4d_do checkpoints/do_captaincook4d_fixedtgml
+bash scripts/evaluate_train.sh do checkpoints/do_captaincook4d_fixedtgml
+bash scripts/evaluate_test.sh do checkpoints/do_captaincook4d_fixedtgml
 
 python3 validate.py --compare --post-design
 

@@ -28,5 +28,10 @@
 - Confirmed method-agnostic briefing/evaluation files, eval-method separation, download portability, and train/test scoring checks.
 - Fixed the main score file to include `worst_quartile_f1`, matching the nonzero metric in `reference.json`.
 
+### [2026-05-17 18:35] - core_claim_plus
+- Added paper-faithful cycle cleanup by removing the lowest-score edge from detected cycles during postprocessing.
+- Kept evaluation method-agnostic while preserving arbitrary future method names in `scores.json`.
+- Refreshed full, train, and test score files locally; validation passed with `python3 validate.py --compare --post-design`.
+
 ## Stop Justification
 - Completed at milestone `core_claim_plus`.

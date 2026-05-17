@@ -101,8 +101,8 @@ def post_process_pred_adj(
     id_end = n_gt - 1
 
     add_boundary_edges(GP, id_start=id_start, id_end=id_end)
-
     delete_redundant_edges(GP)
+    delete_cycles(GP, pred_core)
 
     # pred_adj has graph orientation: adj[u,v]=1 means edge u->v (u is precondition of v)
     # graph edge u->v means adj[u,v]=1
@@ -465,7 +465,20 @@ def write_scores_json(
         scores["experiments"][dataset] = {"results": {}}
 
     agg = results["aggregate"]
-    method_name = method_override or ("do" if "do" in experiment_name.lower() else "count_based")
+    if method_override is not None:
+        method_name = method_override
+    else:
+        experiment_key = experiment_name.lower()
+        if "count" in experiment_key:
+            method_name = "count_based"
+        elif experiment_key in {"do", "captaincook4d_do"} or experiment_key.endswith("_do"):
+            method_name = "do"
+        else:
+            for prefix in ("captaincook4d_", "egoper_", "egoprocel_"):
+                if experiment_key.startswith(prefix):
+                    experiment_key = experiment_key[len(prefix):]
+                    break
+            method_name = experiment_key
 
     scores["experiments"][dataset]["results"][method_name] = {
         "precision": agg["mean_precision"],

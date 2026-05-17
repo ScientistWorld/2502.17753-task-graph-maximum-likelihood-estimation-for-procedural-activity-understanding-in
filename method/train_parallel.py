@@ -46,7 +46,7 @@ def post_process_prediction(pred_core, n_gt, threshold):
     import networkx as nx
     from method.tgml import delete_redundant_edges, delete_cycles
 
-    pred_binary = (pred_core > threshold).astype(float)
+    pred_binary = (pred_core >= threshold).astype(float)
     graph = nx.DiGraph(pred_binary)
     id_start = 0
     id_end = n_gt - 1
@@ -66,7 +66,7 @@ def post_process_prediction(pred_core, n_gt, threshold):
         graph.add_edge(node, id_start)
 
     delete_redundant_edges(graph)
-    delete_cycles(graph)
+    delete_cycles(graph, pred_core)
 
     pred_adj = np.zeros((n_gt, n_gt), dtype=np.float32)
     for u, v in graph.edges():

@@ -248,9 +248,9 @@ class DirectOptimization(nn.Module):
 
 
 def binarize_adjacency(Z: torch.Tensor, threshold: float) -> np.ndarray:
-    """Binarize adjacency matrix using threshold."""
+    """Binarize adjacency matrix using the paper's inclusive threshold."""
     Z_np = Z.cpu().numpy()
-    binary = (Z_np > threshold).astype(np.float32)
+    binary = (Z_np >= threshold).astype(np.float32)
     return binary
 
 
@@ -383,12 +383,20 @@ def delete_redundant_edges(G: nx.DiGraph) -> None:
                     G.add_edge(current_node, successor)
 
 
-def delete_cycles(G: nx.DiGraph) -> None:
-    """Remove cycles from graph."""
+def delete_cycles(G: nx.DiGraph, scores: Optional[np.ndarray] = None) -> None:
+    """Remove cycles by deleting the lowest-score edge in each cycle."""
     while not nx.is_directed_acyclic_graph(G):
         try:
-            cycle = nx.find_cycle(G, orientation='original')
-            G.remove_edge(cycle[-1][0], cycle[-1][1])
+            cycle = nx.find_cycle(G, orientation="original")
+            cycle_edges = [(edge[0], edge[1]) for edge in cycle]
+            if scores is None:
+                edge_to_remove = cycle_edges[-1]
+            else:
+                edge_to_remove = min(
+                    cycle_edges,
+                    key=lambda edge: float(scores[edge[0], edge[1]]),
+                )
+            G.remove_edge(*edge_to_remove)
         except nx.NetworkXNoCycle:
             break
 
