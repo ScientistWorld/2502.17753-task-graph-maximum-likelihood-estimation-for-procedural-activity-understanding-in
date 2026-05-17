@@ -33,5 +33,10 @@
 - Kept evaluation method-agnostic while preserving arbitrary future method names in `scores.json`.
 - Refreshed full, train, and test score files locally; validation passed with `python3 validate.py --compare --post-design`.
 
+### [2026-05-17 18:43] - core_claim_plus
+- Final verification kept the milestone at `core_claim_plus`.
+- Fixed no-argument `scripts/evaluate.sh` so it works as a standalone reusable evaluator for existing result rows or complete prediction directories.
+- Re-ran `bash scripts/evaluate.sh` and `python3 validate.py --compare --post-design`; all checks passed.
+
 ## Stop Justification
 - Completed at milestone `core_claim_plus`.

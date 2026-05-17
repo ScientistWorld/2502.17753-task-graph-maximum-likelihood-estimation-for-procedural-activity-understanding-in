@@ -3,7 +3,7 @@
 ## What Works
 
 - Implemented the paper's actual TGML Direct Optimization method, not a surrogate: a learnable adjacency-score matrix is row-softmaxed under the official DAG mask and optimized with the TGML likelihood loss over observed action sequences.
-- Loaded CaptainCook4D task-graph generation data from the pinned paper repository at `method/repo/data/captaincook4d`.
+- Loaded CaptainCook4D task-graph generation data from the pinned paper repository mirrored by `scripts/download.sh` into `data/downloads/Differentiable-Task-Graph-Learning/data/captaincook4d`.
 - Completed a corrected full CaptainCook4D rerun: all 24 procedures have 5 DO seeds in `checkpoints/do_captaincook4d_fixedtgml/`.
 - The reusable evaluator is method-agnostic with no imports from `method/`; it reads saved prediction artifacts and writes `scoring/scores.json`.
 - The main score file now includes benefit metrics (`precision`, `recall`, `f1`) and constraint/structure metrics (`std_f1`, `worst_quartile_f1`, `edge_density_ratio`, `path_coverage`, `topological_distance`).
@@ -17,6 +17,7 @@
 - Confirmed `eval/` remains independent of `method/` and scores saved prediction artifacts instead of rerunning the method.
 - Re-ran `bash scripts/evaluate.sh captaincook4d_do checkpoints/do_captaincook4d_fixedtgml`, `bash scripts/evaluate_train.sh checkpoints/do_captaincook4d_fixedtgml`, `bash scripts/evaluate_test.sh checkpoints/do_captaincook4d_fixedtgml`, and `python3 validate.py --compare`; all passed.
 - Fixed a reusable scoring edge case so future non-DO prediction methods do not accidentally overwrite the `count_based` row.
+- Final verification confirmed `scripts/download.sh` has a verified public GitHub source, no committed code references `shared/`, `eval/` and `data/` do not import from `method/`, and no-argument `bash scripts/evaluate.sh` now works standalone by scoring discoverable methods.
 
 ## Results
 

@@ -2,32 +2,29 @@
 
 ## Initial Assessment
 
-The workspace entered final verification at `core_claim_plus`. That milestone is justified: the implementation runs the paper's TGML Direct Optimization method on CaptainCook4D, uses saved prediction artifacts for evaluation, and reports a clear F1 gain over the Count-Based baseline on the reproduced benchmark.
+The workspace entered final verification at `core_claim_plus`. That milestone is justified: the implementation runs the paper's TGML Direct Optimization method on CaptainCook4D, evaluates saved prediction artifacts, and reports a clear full-benchmark F1 gain over the Count-Based baseline. The train/test split artifacts are present and calibrated, with matching method keys and comparable difficulty.
 
-The problem-definition files are method-agnostic, and the method details are kept in `briefing/method.md` and `method/`. The evaluation code does not import from `method/`.
+Problem/solution separation is clean. `briefing/problem.md`, `briefing/evaluation.md`, and `scoring/EXPERIMENTS.md` describe the task and scoring without leaking the paper's method. `eval/` and `data/` do not import from `method/`, and the evaluator reads method outputs instead of regenerating the method.
 
 ## Issues Found
 
-- **Minor**: `reference.json` assigned a nonzero coefficient to `worst_quartile_f1`, but the main `scores.json` did not include that metric for the reproduced rows.
-- **Minor**: `action.yaml` was still set to submit a follow-up CPU rerun. Final verification should leave the paper in a completed state.
-- **Cosmetic**: `method/tgml.py` described a Count-Based baseline in the module docstring even though the baseline implementation lives outside that file.
-- **Pre-existing workspace noise**: git status still shows harness/system artifacts (`README.md`, `manifest.json`, deleted `trajectory/*`). These were not created by this verification pass and are outside the gym code path.
+- **Minor**: `scripts/evaluate.sh` did not satisfy the standalone evaluation contract with no arguments; it defaulted to a DO evaluation without a concrete prediction directory and exited.
+- **Cosmetic**: `PROGRESS.md` contained a stale data-path description from an earlier layout.
+- **Pre-existing workspace noise**: git status still shows harness/system artifacts outside the gym code path (`README.md`, `manifest.json`, deleted `trajectory/*`). These were not created by this verification pass and were left untouched.
 
 ## Fixes Applied
 
-- Updated `eval/evaluator.py` so the main evaluator computes and writes `worst_quartile_f1`.
-- Refreshed `scoring/scores.json` by rerunning standalone Count-Based and DO evaluation.
-- Updated `scoring/TARGETS.md` to document `worst_quartile_f1`.
-- Added `environment/runtime/` to `.gitignore` to keep generated container-runtime files out of future status.
-- Corrected the stale `method/tgml.py` docstring.
-- Updated `PROGRESS.md` to mention the complete scored metric set and to avoid describing a pending job.
-- Set `action.yaml` to `done` at `core_claim_plus`.
+- Reworked `scripts/evaluate.sh` so no-argument evaluation enumerates methods from `scoring/scores.json` or complete prediction directories, scores the built-in count baseline and prediction-artifact methods, and still supports explicit method/directory calls.
+- Verified the download source in `scripts/download.sh` with `curl -I -L`; the GitHub repository resolves to HTTP 200 after redirect.
+- Removed generated `__pycache__` directories from gym code directories.
+- Updated `PROGRESS.md` with the portable `data/downloads/` data path and final verification notes.
+- Re-ran `bash scripts/evaluate.sh` and `python3 validate.py --compare --post-design`; all checks passed.
 
 ## Final Judgment
 
-This workspace is ready to serve as a research gym for the scoped CaptainCook4D task-graph generation claim. A scientist agent can use the method-agnostic problem/evaluation/data files in from-scratch mode, or use the full method implementation and scores in improve mode.
+This workspace is ready to serve as a research gym for the scoped CaptainCook4D task-graph generation claim. Improve-mode agents can build on the packaged TGML implementation and saved results; from-scratch agents can use the method-agnostic data, problem definition, and reusable evaluation interface without seeing solution details.
 
-The main limitation is coverage: the gym does not reproduce EgoPER, EgoProceL, TGT text/video, or downstream task results. Within its declared CaptainCook4D scope, the scoring and evaluation pipeline are usable and discriminative.
+The main limitation is coverage: the gym does not reproduce EgoPER, EgoProceL, TGT text/video, or downstream task results. Within the declared CaptainCook4D scope, the scoring is usable and discriminative.
 
 - Milestone: core_claim_plus
 - Ready for gym use: yes
