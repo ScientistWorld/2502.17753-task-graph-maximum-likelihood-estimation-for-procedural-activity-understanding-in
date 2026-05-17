@@ -4,6 +4,12 @@
 
 ## Progress Log
 
+### [2026-05-17 16:50] - core_claim
+- Job `b6f3325a-6ce` completed successfully and expanded corrected CaptainCook4D coverage from 8 to 10 procedures
+- New completed procedures: `Microwavefrenchtoast`, `Capresebruschetta`
+- Updated `scores.json`: DO F1=77.42 vs count_based F1=64.03 on the 10-procedure corrected subset
+- Fixed noisy scenario-count parsing in `scripts/method.sh` and prepared a larger 4-procedure CPU continuation batch
+
 ### [2026-05-15 16:18] - core_claim
 - Audited reset workspace from `method_runs` and restored `core_claim`
 - Confirmed `method/` implements the actual TGML Direct Optimization algorithm, not a surrogate

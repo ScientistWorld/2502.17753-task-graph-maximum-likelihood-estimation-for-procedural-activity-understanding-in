@@ -2,4 +2,4 @@ action: submit
 gpus: 0
 test: false
 milestone: core_claim
-notes: "Core claim already reproduced on the corrected 8-scenario CaptainCook4D subset. Continue the CPU DO rerun for up to two pending procedures, refresh partial scores, and validate."
+notes: "Core claim reproduced on the corrected 10-scenario CaptainCook4D subset after job b6f3325a-6ce. Continue the CPU DO rerun for up to four pending procedures, refresh partial scores, and validate."

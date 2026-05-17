@@ -2,6 +2,10 @@
 
 ## What Works
 
+- **Job `b6f3325a-6ce` expanded corrected coverage**: the CPU continuation completed `Microwavefrenchtoast` and `Capresebruschetta`, raising the corrected 5-seed CaptainCook4D subset from 8/24 to 10/24 procedures.
+- **Current 10-procedure corrected subset supports the core claim**: `scores.json` now reports DO precision=78.55, recall=76.42, F1=77.42, std_f1=8.22 versus count-based precision=69.85, recall=59.20, F1=64.03.
+- **Scenario-count stderr warning fixed**: `scripts/method.sh` now suppresses the data loader banner while computing `TOTAL_SCENARIOS`, avoiding the previous `integer expression expected` warning.
+- **Next continuation batch enlarged**: `scripts/run.sh` now defaults to four pending procedures per CPU submission; the last two-procedure job completed in roughly four minutes, leaving room to reduce queue overhead.
 - **Reset audit restored `core_claim`**: after the handoff reset to `method_runs`, a fresh audit found the implementation is the paper's real TGML Direct Optimization method, evaluation is independent of `method/`, `scripts/evaluate.sh` works standalone, and `validate.py --compare` passes.
 - **Deliverables audit passed**: briefing files, `reference.json`, `TARGETS.md`, `CONSTRAINTS.md`, `EXPERIMENTS.md`, `DIRECTION.md`, scripts, and environment files are present and reasonable for the CaptainCook4D core-claim reproduction.
 - **Revalidated current core claim before continuation**: `validate.py --compare` and `scripts/evaluate.sh captaincook4d_partial_compare checkpoints/do_captaincook4d_fixedtgml 5` both pass on 2026-05-15, confirming the corrected 8-scenario subset remains DO F1=78.0 vs count-based F1=67.2.
@@ -41,18 +45,18 @@ Using only scenarios with all 5 corrected seeds saved in `checkpoints/do_captain
 
 | Experiment | Method | Precision | Recall | F1 | std_f1 |
 |-----------|--------|-----------|--------|----|--------|
-| `captaincook4d_task_graph` corrected completed subset (8 scenarios), stored as `count_based` in `scores.json` | count_based | 73.3 | 62.1 | 67.2 | — |
-| `captaincook4d_task_graph` corrected completed subset (8 scenarios), stored as `do` in `scores.json` | DO | 79.4 | 76.7 | 78.0 | 7.4 |
+| `captaincook4d_task_graph` corrected completed subset (10 scenarios), stored as `count_based` in `scores.json` | count_based | 69.8 | 59.2 | 64.0 | — |
+| `captaincook4d_task_graph` corrected completed subset (10 scenarios), stored as `do` in `scores.json` | DO | 78.5 | 76.4 | 77.4 | 8.2 |
 
 The completed corrected subset is now:
-`Blenderbananapancakes`, `Breakfastburritos`, `Buttercorncup`, `Cheesepimiento`, `Microwaveeggsandwich`, `Pinwheels`, `Spicedhotchocolate`, `Zoodles`.
+`Blenderbananapancakes`, `Breakfastburritos`, `Buttercorncup`, `Capresebruschetta`, `Cheesepimiento`, `Microwaveeggsandwich`, `Microwavefrenchtoast`, `Pinwheels`, `Spicedhotchocolate`, `Zoodles`.
 
 The next partially completed scenario is now `Microwavefrenchtoast` with 2/5 corrected seeds saved, so the resumable shortest-first rerun should extend the subset further without revisiting completed work.
 
 This subset is non-trivial and still supports the paper's core claim: corrected DO clearly outperforms the count-based baseline on edge-prediction F1 while using the real TGML/DO training procedure rather than stale pre-fix outputs.
 
 **Full-dataset DO scores are still not claimable.**
-Only 8/24 scenarios currently have all 5 corrected seeds. `Microwavefrenchtoast` is the next partially completed scenario at 2/5 seeds, so the stale pre-fix full-dataset DO entry is still being removed from `scores.json` during each retry until the corrected rerun is complete.
+Only 10/24 scenarios currently have all 5 corrected seeds, so the stale pre-fix full-dataset DO entry is still being removed from `scores.json` during each retry until the corrected rerun is complete.
 
 ## Issues Encountered
 
@@ -79,8 +83,8 @@ Only 8/24 scenarios currently have all 5 corrected seeds. `Microwavefrenchtoast`
 ## What Remains
 
 - Rerun CaptainCook4D DO from scratch with the corrected differentiable loss
-- Expand the corrected 5-seed rerun beyond the current 8-scenario subset
-- Expand beyond the now-completed `Cheesepimiento` scenario by finishing the next shortest pending CaptainCook4D procedure
+- Expand the corrected 5-seed rerun beyond the current 10-scenario subset
+- Finish the next pending CaptainCook4D procedures in shortest-first order
 - Replace the partial `core_claim` experiment with a full 24-scenario corrected DO result in `scores.json`
 - Continue resumable shortest-first DO reruns until all 24 CaptainCook4D scenarios have 5 corrected seeds
 - If the corrected rerun still trails badly, inspect per-scenario failures and only then make tightly scoped training/evaluation fixes
@@ -103,4 +107,4 @@ Only 8/24 scenarios currently have all 5 corrected seeds. `Microwavefrenchtoast`
 - The next submission restores the paper's 5-seed / 1000-epoch regime on CaptainCook4D with the corrected differentiable loss
 - Evaluation aggregates per-scenario metrics into the reported dataset means
 - Count-based baseline reimplemented without pandas/pygraphviz
-- Because of repeated worker-node deaths, the current `scores.json` still reflects the completed corrected subset (8 scenarios) rather than the full 24-scenario benchmark
+- Because of repeated worker-node deaths and incremental reruns, the current `scores.json` still reflects the completed corrected subset (10 scenarios) rather than the full 24-scenario benchmark

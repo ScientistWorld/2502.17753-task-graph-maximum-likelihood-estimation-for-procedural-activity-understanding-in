@@ -147,9 +147,13 @@ PYEOF
 
 TOTAL_SCENARIOS="$(python3 - <<'PY'
 import sys
+import contextlib
+import io
 sys.path.insert(0, '/home/user')
 from data.loader import load_data
-print(len(load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')))
+with contextlib.redirect_stdout(io.StringIO()):
+    data = load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')
+print(len(data))
 PY
 )"
 
