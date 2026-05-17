@@ -1,8 +1,14 @@
 # Reproduction Milestones
 
-**Current: core_claim**
+**Current: core_claim_plus**
 
 ## Progress Log
+
+### [2026-05-17 16:45] - core_claim_plus
+- Job `6a0a2cb2-040` completed successfully and expanded corrected CaptainCook4D coverage from 10 to 14 procedures
+- New completed procedures: `Tomatomozzarellasalad`, `Microwavemugpizza`, `Panfriedtofu`, `Cucumberraita`
+- Updated `scores.json`: DO F1=76.07 vs count_based F1=63.13 on the 14-procedure corrected subset
+- Prepared the next CPU continuation to attempt the remaining 10 procedures in a single resumable normal-queue job
 
 ### [2026-05-17 16:50] - core_claim
 - Job `b6f3325a-6ce` completed successfully and expanded corrected CaptainCook4D coverage from 8 to 10 procedures
@@ -30,4 +36,4 @@
 - DO outperforms count_based on both train (79.5 vs 61.4) and test (79.6 vs 61.4) slices
 
 ## Stop Justification
-- Not stopped. Current milestone is `core_claim`; the next job continues the corrected CaptainCook4D rerun to expand coverage.
+- Not stopped. Current milestone is `core_claim_plus`; the next job continues the corrected CaptainCook4D rerun to expand toward full CaptainCook4D coverage.
