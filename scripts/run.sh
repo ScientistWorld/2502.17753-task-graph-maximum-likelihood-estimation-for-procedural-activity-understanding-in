@@ -1,26 +1,14 @@
 #!/bin/bash
-# Continue the corrected CaptainCook4D TGML/DO rerun and refresh scores.
+# Run train/test split scoring over existing checkpoint prediction artifacts.
 set -e
 cd /home/user
 source /home/user/scripts/common_env.sh
 
-echo "=== $(date) === Continue corrected DO rerun ==="
+echo "=== $(date) === Evaluate train/test splits ==="
 
-# Bank progress in resumable chunks. The last normal CPU submission completed
-# four procedures comfortably, so this continuation attempts the remaining
-# CaptainCook4D procedures while still flushing each scenario to disk.
-export METHOD_DEVICE=cpu
-export METHOD_MAX_EPOCHS="${METHOD_MAX_EPOCHS:-1000}"
-export METHOD_SEEDS="${METHOD_SEEDS:-42,1337,2024,2025,2026}"
-export METHOD_MAX_SCENARIOS="${METHOD_MAX_SCENARIOS:-10}"
-export METHOD_OUTPUT_DIR="${METHOD_OUTPUT_DIR:-checkpoints/do_captaincook4d_fixedtgml}"
+bash scripts/evaluate_train.sh
+bash scripts/evaluate_test.sh
 
-echo "Training pending DO scenarios..."
-bash scripts/method.sh
-
-echo "Refreshing corrected partial comparison..."
-bash scripts/evaluate.sh captaincook4d_partial_compare "$METHOD_OUTPUT_DIR" 5
-
-python3 validate.py --compare
+python3 validate.py --compare --post-design
 
 echo "=== Done ==="

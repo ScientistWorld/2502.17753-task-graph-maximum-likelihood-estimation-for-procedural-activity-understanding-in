@@ -1,9 +1,7 @@
-# This iteration writes files only — do NOT submit compute jobs.
-# Once you set action to 'done', STOP immediately.
+# Submit a compute job by setting action to 'submit'.
 # Do NOT sleep, poll, or wait. The system reads this file
 # only after your turn ends.
-action: done
+action: submit
 gpus: 0
 test: false
-milestone: core_claim_plus
-notes: "Improvements: added worst_quartile_f1 robustness metric to train/test slices and reference schema; refreshed DESIGN_NOTES with static checks and runner concerns. Notes: no experiments run."
+notes: "Run train/test split scoring over existing checkpoint prediction artifacts and validate post-design outputs."
