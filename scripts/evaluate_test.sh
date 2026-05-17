@@ -35,6 +35,15 @@ run_test_eval() {
     python3 /home/user/eval/test/evaluate.py "$method_name" "$checkpoint_dir" "$min_seeds"
 }
 
+canonical_method_name() {
+    local method_name="$1"
+    if [ "$method_name" = "do_captaincook4d_fixedtgml" ]; then
+        echo "do"
+    else
+        echo "$method_name"
+    fi
+}
+
 methods_from_train_scores() {
     python3 - <<'PY'
 import json
@@ -110,7 +119,7 @@ else
         if [ -z "$CHECKPOINT_DIR" ]; then
             if [ -d "$METHOD_NAME" ]; then
                 CHECKPOINT_DIR="$METHOD_NAME"
-                METHOD_NAME="$(basename "$METHOD_NAME")"
+                METHOD_NAME="$(canonical_method_name "$(basename "$METHOD_NAME")")"
             else
                 CHECKPOINT_DIR="checkpoints/$METHOD_NAME"
             fi

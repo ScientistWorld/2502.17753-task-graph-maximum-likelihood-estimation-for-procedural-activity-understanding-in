@@ -23,17 +23,17 @@
   "experiments": {
     "captaincook4d_task_graph": {
       "results": {
-        "do_captaincook4d": {
-          "precision": 79.60661040511962,
-          "recall": 79.44525302493231,
-          "f1": 79.50371204599757,
-          "std_f1": 0.8365404470736124,
-          "worst_quartile_f1": 69.1472144413321,
-          "edge_density_ratio": 0.9794648792565459,
-          "path_coverage": 0.2367890211640212,
-          "topological_distance": 0.05798065950026734
+        "count_based": {
+          "precision": 67.3310162060162,
+          "recall": 56.6290217142031,
+          "f1": 61.398095459193094,
+          "std_f1": 0.0,
+          "worst_quartile_f1": 48.26427682823432,
+          "edge_density_ratio": 0.8379867841492051,
+          "path_coverage": 0.016666666666666666,
+          "topological_distance": 0.07261334819577854
         },
-        "do_captaincook4d_fixedtgml": {
+        "do": {
           "precision": 77.02162287840038,
           "recall": 75.41206757302463,
           "f1": 76.19455158678745,
@@ -47,11 +47,11 @@
     }
   },
   "method_artifacts": {
-    "do_captaincook4d": {
-      "artifact_type": "npz_prediction_directory",
-      "checkpoint_dir": "checkpoints/do_captaincook4d"
+    "count_based": {
+      "artifact_type": "built_in_count_baseline",
+      "checkpoint_dir": ""
     },
-    "do_captaincook4d_fixedtgml": {
+    "do": {
       "artifact_type": "npz_prediction_directory",
       "checkpoint_dir": "checkpoints/do_captaincook4d_fixedtgml"
     }

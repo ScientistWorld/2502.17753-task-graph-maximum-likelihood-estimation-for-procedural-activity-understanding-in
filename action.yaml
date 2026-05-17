@@ -4,4 +4,4 @@
 action: submit
 gpus: 0
 test: false
-notes: "Run train/test split scoring over existing checkpoint prediction artifacts and validate post-design outputs."
+notes: "Rerun train/test split scoring after canonicalizing score methods to count_based/do and validating post-design outputs."

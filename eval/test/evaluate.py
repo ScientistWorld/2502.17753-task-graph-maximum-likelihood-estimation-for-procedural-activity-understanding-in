@@ -653,7 +653,12 @@ def main(argv: List[str]) -> None:
     elif "count" in method_name:
         results = evaluate_all_scenarios(data, method="count_based")
         print(f"Count-Based {SLICE_NAME}: F1={results['aggregate']['mean_f1']:.1f}")
-        write_scores_json(results, method_name, method_override="count_based")
+        write_scores_json(
+            results,
+            method_name,
+            dataset_override="captaincook4d_task_graph",
+            method_override="count_based",
+        )
     else:
         if checkpoint_dir in ("", "checkpoints/"):
             raise SystemExit("DO evaluation requires an explicit checkpoint/results directory.")
@@ -662,6 +667,7 @@ def main(argv: List[str]) -> None:
         write_scores_json(
             results,
             method_name,
+            dataset_override="captaincook4d_task_graph",
             method_override=method_name,
             artifact_path=checkpoint_dir,
         )
