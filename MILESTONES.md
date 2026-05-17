@@ -42,4 +42,4 @@
 - DO outperforms count_based on both train (79.5 vs 61.4) and test (79.6 vs 61.4) slices
 
 ## Stop Justification
-- Stopped after reaching `core_claim_plus`. The actual TGML Direct Optimization method now runs on the full 24-procedure CaptainCook4D benchmark with the paper's 5-seed / 1000-epoch setting and clearly beats the count-based baseline. Remaining unreproduced items are secondary comparison rows from the paper, not blockers for the core gym.
+- Completed at milestone `core_claim_plus`.
