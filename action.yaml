@@ -5,4 +5,4 @@ action: done
 gpus: 0
 test: false
 milestone: core_claim_plus
-notes: "Core claim supported on full 24-procedure CaptainCook4D rerun: actual TGML DO method F1 76.36 beats count_based F1 61.41 with complete saved predictions; split evaluation also passes with do F1 76.53 train vs 76.19 test."
+notes: "Packaged public CaptainCook4D paper repo fetch under data/downloads and aligned method/eval paths for fresh clones."
