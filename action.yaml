@@ -1,5 +1,3 @@
-action: submit
-gpus: 0
-test: false
+action: done
 milestone: core_claim_plus
-notes: "Core claim plus reproduced on the corrected 14-scenario CaptainCook4D subset after job 6a0a2cb2-040. Continue the CPU DO rerun for up to ten remaining procedures, refresh partial/full scores, and validate."
+notes: "Completed full corrected CaptainCook4D TGML/DO rerun: 24/24 procedures with 5 seeds each. DO F1=76.36 vs count_based F1=61.41, validation passes, environment packaged."

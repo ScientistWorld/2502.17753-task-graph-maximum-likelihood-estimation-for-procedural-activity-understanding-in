@@ -4,6 +4,12 @@
 
 ## Progress Log
 
+### [2026-05-17 17:26] - core_claim_plus
+- Job `022a3108-95f` completed the corrected CaptainCook4D rerun for all 24 procedures with 5 seeds each
+- Full-benchmark `scores.json`: DO F1=76.36 vs count_based F1=61.41; precision and recall both remain higher for DO
+- `validate.py --compare` passed after the full rerun, and `scoring/scores.json` now reflects the full benchmark rather than a partial subset
+- Stopped at `core_claim_plus`: the paper's central TGML/DO claim is reproduced across the full primary CaptainCook4D benchmark, but not all secondary paper baselines or alternative method rows were reimplemented
+
 ### [2026-05-17 16:45] - core_claim_plus
 - Job `6a0a2cb2-040` completed successfully and expanded corrected CaptainCook4D coverage from 10 to 14 procedures
 - New completed procedures: `Tomatomozzarellasalad`, `Microwavemugpizza`, `Panfriedtofu`, `Cucumberraita`
@@ -36,4 +42,4 @@
 - DO outperforms count_based on both train (79.5 vs 61.4) and test (79.6 vs 61.4) slices
 
 ## Stop Justification
-- Not stopped. Current milestone is `core_claim_plus`; the next job continues the corrected CaptainCook4D rerun to expand toward full CaptainCook4D coverage.
+- Stopped after reaching `core_claim_plus`. The actual TGML Direct Optimization method now runs on the full 24-procedure CaptainCook4D benchmark with the paper's 5-seed / 1000-epoch setting and clearly beats the count-based baseline. Remaining unreproduced items are secondary comparison rows from the paper, not blockers for the core gym.

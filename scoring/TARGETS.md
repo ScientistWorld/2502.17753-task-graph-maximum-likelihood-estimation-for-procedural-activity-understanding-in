@@ -1,7 +1,7 @@
 # Evaluation Targets
 
 ## Experiment: `captaincook4d_task_graph`
-This workspace is anchored to the CaptainCook4D task-graph generation benchmark. The current reproduced result is a corrected partial rerun on the subset of procedures that already have complete saved predictions for all required seeds.
+This workspace is anchored to the CaptainCook4D task-graph generation benchmark. The current reproduced result is a corrected full rerun on all 24 procedures with complete saved predictions for all required seeds.
 
 ## Primary Target
 - **Metric**: `f1`
@@ -22,8 +22,8 @@ This workspace is anchored to the CaptainCook4D task-graph generation benchmark.
 - **Compared methods in `scores.json`**: `count_based`, `do`
 - **Claim checked**: the stronger learned method should beat the simple counting baseline by a clear margin on F1 while staying competitive on both precision and recall.
 
-## Current Limitation
-- The present `scores.json` reflects the corrected completed subset rather than a full 24-procedure rerun. Future improvements should keep the same scoring format and ideally expand coverage to the full benchmark.
+## Current Status
+- The present `scores.json` reflects the full corrected 24-procedure rerun. Future improvements should keep the same scoring format and preserve full-procedure coverage.
 
 ## How To Run
 - `bash scripts/baseline.sh`

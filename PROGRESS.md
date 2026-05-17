@@ -2,6 +2,9 @@
 
 ## What Works
 
+- **Job `022a3108-95f` completed the full corrected CaptainCook4D rerun**: all 24 procedures now have 5 corrected DO seeds in `checkpoints/do_captaincook4d_fixedtgml/`, and the final validation pass succeeded.
+- **Full-benchmark core claim is reproduced**: `scores.json` now reports DO precision=77.19, recall=75.61, F1=76.36, std_f1=6.58 versus count-based precision=67.13, recall=56.76, F1=61.41 across all 24 procedures.
+- **Partial-score limitation is resolved**: the on-disk `scoring/scores.json` now reflects the full CaptainCook4D benchmark, not a completed-subset proxy.
 - **Job `6a0a2cb2-040` expanded corrected coverage again, reaching `core_claim_plus`**: the CPU continuation completed `Tomatomozzarellasalad`, `Microwavemugpizza`, `Panfriedtofu`, and `Cucumberraita`, raising the corrected 5-seed CaptainCook4D subset from 10/24 to 14/24 procedures.
 - **Current 14-procedure corrected subset continues to support the core claim**: `scores.json` now reports DO precision=77.16, recall=75.08, F1=76.07, std_f1=7.53 versus count-based precision=69.42, recall=58.01, F1=63.13.
 - **Next continuation targets full corrected coverage**: `scripts/run.sh` now defaults to ten pending procedures per normal CPU submission, enough to attempt the remaining CaptainCook4D procedures while relying on per-scenario checkpoint flushing for resumability.
@@ -40,26 +43,27 @@
 | Paper: count_based | 66.0 | 55.4 | 60.2 | — |
 | **Reproduced: count_based** | **67.1** | **56.8** | **61.4** | — |
 | Paper: DO (5-seed avg) | 86.4 | 89.7 | 87.8 | 1.5 |
+| **Reproduced: DO (5-seed avg)** | **77.2** | **75.6** | **76.4** | **6.6** |
 
 **Count-based baseline MATCHES paper within 1.2 F1 points.**
 
-**Fresh post-fix DO scores are now available on a still larger completed corrected subset.**
-Using only scenarios with all 5 corrected seeds saved in `checkpoints/do_captaincook4d_fixedtgml/`, the current partial experiment is:
+**Fresh post-fix DO scores are now available on the full 24-procedure CaptainCook4D benchmark.**
+Using all scenarios with all 5 corrected seeds saved in `checkpoints/do_captaincook4d_fixedtgml/`, the final experiment is:
 
 | Experiment | Method | Precision | Recall | F1 | std_f1 |
 |-----------|--------|-----------|--------|----|--------|
-| `captaincook4d_task_graph` corrected completed subset (14 scenarios), stored as `count_based` in `scores.json` | count_based | 69.4 | 58.0 | 63.1 | — |
-| `captaincook4d_task_graph` corrected completed subset (14 scenarios), stored as `do` in `scores.json` | DO | 77.2 | 75.1 | 76.1 | 7.5 |
+| `captaincook4d_task_graph` full corrected benchmark (24 scenarios), stored as `count_based` in `scores.json` | count_based | 67.1 | 56.8 | 61.4 | — |
+| `captaincook4d_task_graph` full corrected benchmark (24 scenarios), stored as `do` in `scores.json` | DO | 77.2 | 75.6 | 76.4 | 6.6 |
 
 The completed corrected subset is now:
-`Blenderbananapancakes`, `Breakfastburritos`, `Buttercorncup`, `Capresebruschetta`, `Cheesepimiento`, `Cucumberraita`, `Microwaveeggsandwich`, `Microwavefrenchtoast`, `Microwavemugpizza`, `Panfriedtofu`, `Pinwheels`, `Spicedhotchocolate`, `Tomatomozzarellasalad`, `Zoodles`.
+all 24 CaptainCook4D procedures.
 
-No partially completed scenarios remain after job `6a0a2cb2-040`; the resumable shortest-first rerun can open the remaining 10 procedures without revisiting completed work.
+No partially completed scenarios remain after job `022a3108-95f`; every procedure has all 5 corrected seeds saved.
 
-This subset is non-trivial and still supports the paper's core claim: corrected DO clearly outperforms the count-based baseline on edge-prediction F1 while using the real TGML/DO training procedure rather than stale pre-fix outputs.
+This full benchmark is non-trivial and supports the paper's core claim: corrected DO clearly outperforms the count-based baseline on edge-prediction F1 while using the real TGML/DO training procedure rather than stale pre-fix outputs.
 
-**Full-dataset DO scores are still not claimable.**
-Only 14/24 scenarios currently have all 5 corrected seeds, so the stale pre-fix full-dataset DO entry is still being removed from `scores.json` during each retry until the corrected rerun is complete.
+**Full-dataset DO scores are now claimable.**
+All 24 scenarios have all 5 corrected seeds, and `validate.py --compare` passes with the full-benchmark score file.
 
 ## Issues Encountered
 
@@ -85,12 +89,8 @@ Only 14/24 scenarios currently have all 5 corrected seeds, so the stale pre-fix 
 
 ## What Remains
 
-- Rerun CaptainCook4D DO from scratch with the corrected differentiable loss
-- Expand the corrected 5-seed rerun beyond the current 14-scenario subset
-- Finish the remaining 10 pending CaptainCook4D procedures in shortest-first order
-- Replace the partial `core_claim` experiment with a full 24-scenario corrected DO result in `scores.json`
-- Continue resumable shortest-first DO reruns until all 24 CaptainCook4D scenarios have 5 corrected seeds
-- If the corrected rerun still trails badly, inspect per-scenario failures and only then make tightly scoped training/evaluation fixes
+- Optional higher milestones would require reimplementing additional paper comparison rows such as MSG2, TGT-Text, or Llama3 prompting.
+- The full corrected DO result trails the paper's reported DO F1 by about 11.4 points, likely due to implementation and environment differences, but it preserves the central DO-over-count result on the full benchmark.
 
 ## Implementation Details
 
@@ -110,4 +110,4 @@ Only 14/24 scenarios currently have all 5 corrected seeds, so the stale pre-fix 
 - The next submission restores the paper's 5-seed / 1000-epoch regime on CaptainCook4D with the corrected differentiable loss
 - Evaluation aggregates per-scenario metrics into the reported dataset means
 - Count-based baseline reimplemented without pandas/pygraphviz
-- Because of repeated worker-node deaths and incremental reruns, the current `scores.json` still reflects the completed corrected subset (14 scenarios) rather than the full 24-scenario benchmark
+- Because of repeated worker-node deaths and incremental reruns, the full corrected benchmark was completed across multiple resumable jobs rather than one uninterrupted run
