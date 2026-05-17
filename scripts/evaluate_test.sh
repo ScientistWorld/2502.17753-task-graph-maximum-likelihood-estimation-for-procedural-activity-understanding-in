@@ -1,11 +1,11 @@
 #!/bin/bash
 # Held-out test-slice evaluation entry point.
-# Auto-discovers all methods in checkpoint directories and scores them.
 #
-# Usage:
-#   ./evaluate_test.sh                    # auto-discover all complete methods
-#   ./evaluate_test.sh do_captaincook4d   # evaluate a specific method
-#   ./evaluate_test.sh checkpoints/do_captaincook4d
+# Mirrors scripts/evaluate.sh's contract:
+#   ./evaluate_test.sh METHOD_NAME CHECKPOINT_DIR MIN_SEEDS
+#
+# With no arguments, reads scoring/scores_train.json and scores every method key
+# present there on the held-out eval/test/ slice.
 
 set -e
 cd /home/user
@@ -21,74 +21,102 @@ then
   export PYTHONPATH="${PYTHONPATH}:/home/user/.local/lib/python3.12/site-packages"
 fi
 
-CHECKPOINT_DIR="${1:-}"  # If empty, auto-discover
+METHOD_NAME="${1:-}"
+CHECKPOINT_DIR="${2:-}"
+MIN_SEEDS="${3:-5}"
 EXPECTED_PREDICTIONS=24
 
-# Auto-discover all complete method directories with prediction files.
-# Require full coverage so incomplete smoke runs do not silently mutate scores.
-if [ -z "$CHECKPOINT_DIR" ]; then
-    echo "Auto-discovering methods in checkpoints/..."
-    METHODS=()
+run_test_eval() {
+    local method_name="$1"
+    local checkpoint_dir="$2"
+    local min_seeds="$3"
 
-    for dir in /home/user/checkpoints/*/; do
-        if [ -d "$dir" ]; then
-            count=$(find "$dir" -maxdepth 1 -name '*_predictions.npz' | wc -l)
-            if [ "$count" -eq "$EXPECTED_PREDICTIONS" ]; then
-                METHODS+=("$(basename "$dir")")
-            elif [ "$count" -gt 0 ]; then
-                echo "Skipping $(basename "$dir") ($count/$EXPECTED_PREDICTIONS prediction files)"
-            fi
-        fi
-    done
+    echo "Evaluating ${method_name} on test slice..."
+    python3 /home/user/eval/test/evaluate.py "$method_name" "$checkpoint_dir" "$min_seeds"
+}
 
-    if [ ${#METHODS[@]} -eq 0 ]; then
-        echo "No methods found with prediction files."
-        exit 0
-    fi
-
-    echo "Found methods: ${METHODS[*]}"
-
-    # Always run count_based first (no checkpoint needed)
-    echo "Evaluating count_based..."
-    python3 /home/user/eval/test/evaluate.py captaincook4d_count checkpoints/ 5
-
-    # Then evaluate each discovered DO method
-    for method in "${METHODS[@]}"; do
-        echo "Evaluating $method..."
-        python3 /home/user/eval/test/evaluate.py "$method" "checkpoints/$method" 5
-    done
-else
-    # Specific method provided
-    if [[ "$CHECKPOINT_DIR" == *"count"* ]]; then
-        echo "Evaluating count_based..."
-        python3 /home/user/eval/test/evaluate.py captaincook4d_count checkpoints/ 5
-    else
-        if [ -d "$CHECKPOINT_DIR" ]; then
-            METHOD_NAME="$(basename "$CHECKPOINT_DIR")"
-            PRED_DIR="$CHECKPOINT_DIR"
-        else
-            METHOD_NAME="$(basename "$CHECKPOINT_DIR")"
-            PRED_DIR="checkpoints/$CHECKPOINT_DIR"
-        fi
-        echo "Evaluating $METHOD_NAME..."
-        python3 /home/user/eval/test/evaluate.py "$METHOD_NAME" "$PRED_DIR" 5
-    fi
-fi
-
-# Add slice marker to scores_test.json
-python3 - <<'PY'
+methods_from_train_scores() {
+    python3 - <<'PY'
 import json
 import os
 
-scores_path = "scoring/scores_test.json"
-if os.path.exists(scores_path):
-    with open(scores_path) as f:
-        scores = json.load(f)
-    scores["slice"] = "test"
-    with open(scores_path, "w") as f:
-        json.dump(scores, f, indent=2)
-        f.write("\n")
-    print(f"Added slice='test' marker to {scores_path}")
+path = "scoring/scores_train.json"
+if not os.path.exists(path):
+    raise SystemExit(1)
+
+with open(path) as f:
+    scores = json.load(f)
+
+experiment = scores.get("experiments", {}).get("captaincook4d_task_graph", {})
+results = experiment.get("results", {})
+artifacts = scores.get("method_artifacts", {})
+
+for method_name in results:
+    checkpoint_dir = artifacts.get(method_name, {}).get("checkpoint_dir", "")
+    print(f"{method_name}\t{checkpoint_dir}")
 PY
+}
+
+discover_prediction_methods() {
+    local methods=()
+    local dir count
+
+    for dir in /home/user/checkpoints/*/; do
+        [ -d "$dir" ] || continue
+        count=$(find "$dir" -maxdepth 1 -name '*_predictions.npz' | wc -l)
+        if [ "$count" -eq "$EXPECTED_PREDICTIONS" ]; then
+            methods+=("$(basename "$dir")")
+        elif [ "$count" -gt 0 ]; then
+            echo "Skipping $(basename "$dir") ($count/$EXPECTED_PREDICTIONS prediction files)" >&2
+        fi
+    done
+
+    printf '%s\n' "${methods[@]}"
+}
+
+if [ -z "$METHOD_NAME" ]; then
+    rm -f scoring/scores_test.json
+    if methods_from_train_scores >/tmp/evaluate_test_methods.tsv; then
+        while IFS=$'\t' read -r train_method train_checkpoint; do
+            [ -n "$train_method" ] || continue
+            if [[ "$train_method" == *"count"* ]]; then
+                run_test_eval "$train_method" "" "$MIN_SEEDS"
+            else
+                if [ -z "$train_checkpoint" ]; then
+                    train_checkpoint="checkpoints/$train_method"
+                fi
+                run_test_eval "$train_method" "$train_checkpoint" "$MIN_SEEDS"
+            fi
+        done < /tmp/evaluate_test_methods.tsv
+    else
+        echo "scoring/scores_train.json not found; falling back to checkpoint discovery."
+        mapfile -t METHODS < <(discover_prediction_methods)
+
+        run_test_eval "count_based" "" "$MIN_SEEDS"
+
+        if [ ${#METHODS[@]} -eq 0 ]; then
+            echo "No complete prediction methods found in checkpoints/."
+            exit 0
+        fi
+
+        for method in "${METHODS[@]}"; do
+            run_test_eval "$method" "checkpoints/$method" "$MIN_SEEDS"
+        done
+    fi
+else
+    if [[ "$METHOD_NAME" == *"count"* ]]; then
+        run_test_eval "$METHOD_NAME" "" "$MIN_SEEDS"
+    else
+        if [ -z "$CHECKPOINT_DIR" ]; then
+            if [ -d "$METHOD_NAME" ]; then
+                CHECKPOINT_DIR="$METHOD_NAME"
+                METHOD_NAME="$(basename "$METHOD_NAME")"
+            else
+                CHECKPOINT_DIR="checkpoints/$METHOD_NAME"
+            fi
+        fi
+        run_test_eval "$METHOD_NAME" "$CHECKPOINT_DIR" "$MIN_SEEDS"
+    fi
+fi
 
 echo "Test-slice evaluation complete."

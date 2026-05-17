@@ -21,6 +21,8 @@ import numpy as np
 SLICE_NAME = "train"
 OUTPUT_PATH = "scoring/scores_train.json"
 SCENARIOS = {
+    # Public half of the 24 CaptainCook4D procedures. The split is balanced by
+    # graph scale: 12 scenarios, 200 GT nodes, and 237 GT edges.
     "Broccolistirfry",
     "Capresebruschetta",
     "Cheesepimiento",
@@ -558,20 +560,38 @@ def write_scores_json(
     output_path: str = OUTPUT_PATH,
     dataset_override: Optional[str] = None,
     method_override: Optional[str] = None,
+    artifact_path: Optional[str] = None,
 ) -> None:
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     dataset = dataset_override or (
         "captaincook4d_task_graph" if "captaincook" in experiment_name.lower() else experiment_name
     )
-    method_name = method_override or ("do" if "do" in experiment_name.lower() else "count_based")
+    method_name = method_override or (
+        "count_based" if "count" in experiment_name.lower() else experiment_name
+    )
 
     scores: Dict[str, Any] = {}
     if os.path.exists(output_path):
         with open(output_path) as f:
             scores = json.load(f)
 
+    scores["slice"] = SLICE_NAME
+    scores["slice_manifest"] = {
+        "slice": SLICE_NAME,
+        "dataset": dataset,
+        "split_rule": "balanced fixed 12/12 split over CaptainCook4D procedures by GT node and edge counts",
+        "scenario_count": len(results["per_scenario"]),
+        "scenarios": sorted(results["per_scenario"].keys()),
+    }
     scores.setdefault("experiments", {})
     scores["experiments"].setdefault(dataset, {"results": {}})
+    scores.setdefault("method_artifacts", {})
+    scores["method_artifacts"][method_name] = {
+        "artifact_type": "built_in_count_baseline"
+        if method_name == "count_based"
+        else "npz_prediction_directory",
+        "checkpoint_dir": artifact_path or "",
+    }
 
     aggregate = results["aggregate"]
     scores["experiments"][dataset]["results"][method_name] = {
@@ -629,17 +649,23 @@ def main(argv: List[str]) -> None:
             "captaincook4d_do_partial",
             dataset_override="captaincook4d_task_graph",
             method_override="do",
+            artifact_path=checkpoint_dir,
         )
     elif "count" in method_name:
         results = evaluate_all_scenarios(data, method="count_based")
         print(f"Count-Based {SLICE_NAME}: F1={results['aggregate']['mean_f1']:.1f}")
-        write_scores_json(results, method_name)
+        write_scores_json(results, method_name, method_override="count_based")
     else:
         if checkpoint_dir in ("", "checkpoints/"):
             raise SystemExit("DO evaluation requires an explicit checkpoint/results directory.")
         results = evaluate_all_scenarios(data, do_predictions_dir=checkpoint_dir, method="do")
         print(f"DO {SLICE_NAME}: F1={results['aggregate']['mean_f1']:.1f}")
-        write_scores_json(results, method_name)
+        write_scores_json(
+            results,
+            method_name,
+            method_override=method_name,
+            artifact_path=checkpoint_dir,
+        )
 
     print(f"Scores written to {OUTPUT_PATH}")
 

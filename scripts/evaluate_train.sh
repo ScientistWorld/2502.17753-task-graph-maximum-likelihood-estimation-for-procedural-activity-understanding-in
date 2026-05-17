@@ -1,11 +1,12 @@
 #!/bin/bash
 # Train-slice evaluation entry point.
-# Auto-discovers all methods in checkpoint directories and scores them.
 #
-# Usage:
-#   ./evaluate_train.sh                    # auto-discover all complete methods
-#   ./evaluate_train.sh do_captaincook4d   # evaluate a specific method
-#   ./evaluate_train.sh checkpoints/do_captaincook4d
+# Mirrors scripts/evaluate.sh's contract:
+#   ./evaluate_train.sh METHOD_NAME CHECKPOINT_DIR MIN_SEEDS
+#
+# With no arguments, scores count_based plus every complete prediction directory
+# under checkpoints/. The score file records the checkpoint path for each method
+# so scripts/evaluate_test.sh can score the exact same method keys later.
 
 set -e
 cd /home/user
@@ -21,74 +22,66 @@ then
   export PYTHONPATH="${PYTHONPATH}:/home/user/.local/lib/python3.12/site-packages"
 fi
 
-CHECKPOINT_DIR="${1:-}"  # If empty, auto-discover
+METHOD_NAME="${1:-}"
+CHECKPOINT_DIR="${2:-}"
+MIN_SEEDS="${3:-5}"
 EXPECTED_PREDICTIONS=24
 
-# Auto-discover all complete method directories with prediction files.
-# Require full coverage so incomplete smoke runs do not silently mutate scores.
-if [ -z "$CHECKPOINT_DIR" ]; then
-    echo "Auto-discovering methods in checkpoints/..."
-    METHODS=()
+run_train_eval() {
+    local method_name="$1"
+    local checkpoint_dir="$2"
+    local min_seeds="$3"
+
+    echo "Evaluating ${method_name} on train slice..."
+    python3 /home/user/eval/train/evaluate.py "$method_name" "$checkpoint_dir" "$min_seeds"
+}
+
+discover_prediction_methods() {
+    local methods=()
+    local dir count
 
     for dir in /home/user/checkpoints/*/; do
-        if [ -d "$dir" ]; then
-            count=$(find "$dir" -maxdepth 1 -name '*_predictions.npz' | wc -l)
-            if [ "$count" -eq "$EXPECTED_PREDICTIONS" ]; then
-                METHODS+=("$(basename "$dir")")
-            elif [ "$count" -gt 0 ]; then
-                echo "Skipping $(basename "$dir") ($count/$EXPECTED_PREDICTIONS prediction files)"
-            fi
+        [ -d "$dir" ] || continue
+        count=$(find "$dir" -maxdepth 1 -name '*_predictions.npz' | wc -l)
+        if [ "$count" -eq "$EXPECTED_PREDICTIONS" ]; then
+            methods+=("$(basename "$dir")")
+        elif [ "$count" -gt 0 ]; then
+            echo "Skipping $(basename "$dir") ($count/$EXPECTED_PREDICTIONS prediction files)" >&2
         fi
     done
 
+    printf '%s\n' "${methods[@]}"
+}
+
+if [ -z "$METHOD_NAME" ]; then
+    rm -f scoring/scores_train.json
+    echo "Auto-discovering train-slice methods in checkpoints/..."
+    mapfile -t METHODS < <(discover_prediction_methods)
+
+    run_train_eval "count_based" "" "$MIN_SEEDS"
+
     if [ ${#METHODS[@]} -eq 0 ]; then
-        echo "No methods found with prediction files."
+        echo "No complete prediction methods found in checkpoints/."
         exit 0
     fi
 
-    echo "Found methods: ${METHODS[*]}"
-
-    # Always run count_based first (no checkpoint needed)
-    echo "Evaluating count_based..."
-    python3 /home/user/eval/train/evaluate.py captaincook4d_count checkpoints/ 5
-
-    # Then evaluate each discovered DO method
     for method in "${METHODS[@]}"; do
-        echo "Evaluating $method..."
-        python3 /home/user/eval/train/evaluate.py "$method" "checkpoints/$method" 5
+        run_train_eval "$method" "checkpoints/$method" "$MIN_SEEDS"
     done
 else
-    # Specific method provided
-    if [[ "$CHECKPOINT_DIR" == *"count"* ]]; then
-        echo "Evaluating count_based..."
-        python3 /home/user/eval/train/evaluate.py captaincook4d_count checkpoints/ 5
+    if [[ "$METHOD_NAME" == *"count"* ]]; then
+        run_train_eval "count_based" "" "$MIN_SEEDS"
     else
-        if [ -d "$CHECKPOINT_DIR" ]; then
-            METHOD_NAME="$(basename "$CHECKPOINT_DIR")"
-            PRED_DIR="$CHECKPOINT_DIR"
-        else
-            METHOD_NAME="$(basename "$CHECKPOINT_DIR")"
-            PRED_DIR="checkpoints/$CHECKPOINT_DIR"
+        if [ -z "$CHECKPOINT_DIR" ]; then
+            if [ -d "$METHOD_NAME" ]; then
+                CHECKPOINT_DIR="$METHOD_NAME"
+                METHOD_NAME="$(basename "$METHOD_NAME")"
+            else
+                CHECKPOINT_DIR="checkpoints/$METHOD_NAME"
+            fi
         fi
-        echo "Evaluating $METHOD_NAME..."
-        python3 /home/user/eval/train/evaluate.py "$METHOD_NAME" "$PRED_DIR" 5
+        run_train_eval "$METHOD_NAME" "$CHECKPOINT_DIR" "$MIN_SEEDS"
     fi
 fi
-
-# Add slice marker to scores_train.json
-python3 - <<'PY'
-import json
-import os
-
-scores_path = "scoring/scores_train.json"
-if os.path.exists(scores_path):
-    with open(scores_path) as f:
-        scores = json.load(f)
-    scores["slice"] = "train"
-    with open(scores_path, "w") as f:
-        json.dump(scores, f, indent=2)
-        f.write("\n")
-    print(f"Added slice='train' marker to {scores_path}")
-PY
 
 echo "Train-slice evaluation complete."
