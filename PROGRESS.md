@@ -9,6 +9,13 @@
 - The main score file now includes benefit metrics (`precision`, `recall`, `f1`) and constraint/structure metrics (`std_f1`, `edge_density_ratio`, `path_coverage`, `topological_distance`).
 - `scores_train.json` and `scores_test.json` provide additional fixed 12-procedure slices for future agents.
 
+## Continuation Audit
+
+- Reviewed `method/`, `eval/`, briefing, scoring, scripts, and environment files after the milestone reset.
+- Confirmed the reproduction is not a surrogate: `method/tgml.py` contains the TGML likelihood loss and Direct Optimization adjacency learning described by the paper.
+- Confirmed `eval/` remains independent of `method/` and scores saved prediction artifacts instead of rerunning the method.
+- Re-ran `bash scripts/evaluate.sh captaincook4d_do checkpoints/do_captaincook4d_fixedtgml`, `bash scripts/evaluate_train.sh checkpoints/do_captaincook4d_fixedtgml`, `bash scripts/evaluate_test.sh checkpoints/do_captaincook4d_fixedtgml`, and `python3 validate.py --compare`; all passed.
+
 ## Results
 
 ### `captaincook4d_task_graph`
