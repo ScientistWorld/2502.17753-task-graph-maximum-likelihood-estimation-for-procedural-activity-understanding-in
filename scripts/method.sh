@@ -20,15 +20,18 @@ DEVICE="${METHOD_DEVICE:-cpu}"
 OUTPUT_DIR="${METHOD_OUTPUT_DIR:-checkpoints/do_captaincook4d_fixedtgml}"
 SCENARIO_FILTER="${METHOD_SCENARIOS:-}"
 MAX_SCENARIOS="${METHOD_MAX_SCENARIOS:-0}"
+SELECTION="${METHOD_SELECTION:-final}"
+EARLY_STOP_PATIENCE="${METHOD_EARLY_STOP_PATIENCE:-25}"
 
-echo "DO settings: seeds=$SEEDS, epochs=$MAX_EPOCHS, device=$DEVICE, output=$OUTPUT_DIR, scenarios=${SCENARIO_FILTER:-ALL}, max_scenarios=$MAX_SCENARIOS"
+echo "DO settings: seeds=$SEEDS, epochs=$MAX_EPOCHS, device=$DEVICE, output=$OUTPUT_DIR, scenarios=${SCENARIO_FILTER:-ALL}, max_scenarios=$MAX_SCENARIOS, selection=$SELECTION"
 
 mkdir -p "$OUTPUT_DIR"
 
 python3 << PYEOF
-import sys, os, time, gc
+import sys, os, time, gc, copy
 sys.path.insert(0, '/home/user')
 import numpy as np
+import networkx as nx
 import torch
 from data.loader import load_data
 from method.tgml import DirectOptimization
@@ -42,6 +45,8 @@ seeds = [int(s) for s in "$SEEDS".split(',')]
 max_epochs = $MAX_EPOCHS
 scenario_filter = [s.strip().lower() for s in "$SCENARIO_FILTER".split(',') if s.strip()]
 max_scenarios = int("$MAX_SCENARIOS")
+selection = "$SELECTION"
+early_stop_patience = int("$EARLY_STOP_PATIENCE")
 if scenario_filter:
     data = [
         sd for sd in data
@@ -52,6 +57,46 @@ print(f"Device: {device}, seeds: {seeds}, max_epochs: {max_epochs}, scenarios={l
 
 def safe_name(sd):
     return sd.scenario_name.lower().replace(" ", "_")
+
+def postprocess_for_sequence_accuracy(pred_core, n_gt):
+    threshold = 1.0 / n_gt
+    pred_binary = np.where(pred_core < threshold, 0, 1).astype(float)
+    graph = nx.DiGraph(pred_binary)
+    id_start = 0
+    id_end = n_gt - 1
+    for node in [
+        node for node in graph.nodes
+        if graph.in_degree(node) == 0 and node != id_end and node != id_start
+    ]:
+        graph.add_edge(id_end, node)
+    for node in [
+        node for node in graph.nodes
+        if graph.out_degree(node) == 0 and node != id_end and node != id_start
+    ]:
+        graph.add_edge(node, id_start)
+
+    graph_copy = copy.deepcopy(graph)
+    for current_node in graph.nodes:
+        for successor in list(graph_copy.successors(current_node)):
+            if graph.has_edge(current_node, successor):
+                graph.remove_edge(current_node, successor)
+                if not nx.has_path(graph, current_node, successor):
+                    graph.add_edge(current_node, successor)
+    return graph
+
+def sequence_accuracy(sequences, predecessors):
+    accuracy = 0.0
+    for sequence in sequences:
+        correct = 0.0
+        for index, node in enumerate(sequence):
+            previous = set(sequence[:index])
+            predicted = set(predecessors.get(node, []))
+            if len(previous) == 0 and len(predicted) == 0:
+                correct += 1.0
+            elif len(previous) > 0 and len(predicted) > 0:
+                correct += len(previous.intersection(predicted)) / len(predicted)
+        accuracy += correct / len(sequence)
+    return accuracy / len(sequences) if sequences else 0.0
 
 pending = []
 complete = []
@@ -108,6 +153,13 @@ for _, _, sd in pending:
 
         model = DirectOptimization(n_matrix, device=device).to(device)
         optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
+        train_seq_no_beta_gamma = [
+            [node - 1 for node in seq if 1 <= node <= n_gt]
+            for seq in sd.sequences
+        ]
+        best_core = None
+        best_seq_acc = -float("inf")
+        early_stopping_counter = 0
 
         for epoch in range(max_epochs):
             model.train()
@@ -116,6 +168,27 @@ for _, _, sd in pending:
             loss.backward()
             optimizer.step()
 
+            if selection == "sequence_accuracy":
+                with torch.no_grad():
+                    pred_core_epoch = model.get_adjacency_matrix().cpu().numpy()[1:-1, 1:-1].copy()
+                graph = postprocess_for_sequence_accuracy(pred_core_epoch, n_gt)
+                seq_acc = 0.0
+                if nx.is_directed_acyclic_graph(graph):
+                    predecessors = {node: list(graph.successors(node)) for node in graph.nodes}
+                    seq_acc = sequence_accuracy(train_seq_no_beta_gamma, predecessors)
+                    if seq_acc > 0.95:
+                        if seq_acc == 1.0 and seq_acc == best_seq_acc:
+                            early_stopping_counter += 1
+                        elif seq_acc >= best_seq_acc:
+                            best_seq_acc = seq_acc
+                            best_core = pred_core_epoch
+                            early_stopping_counter = 0
+                        else:
+                            early_stopping_counter += 1
+                if early_stopping_counter >= early_stop_patience:
+                    print(f"    seed={seed}: early stop at epoch={epoch+1}, best_seq_acc={best_seq_acc:.4f}")
+                    break
+
             if (epoch + 1) % 100 == 0:
                 print(f"    seed={seed} epoch={epoch+1}: loss={loss.item():.4f}")
 
@@ -123,6 +196,9 @@ for _, _, sd in pending:
         with torch.no_grad():
             Z = model.get_adjacency_matrix().cpu().numpy()
         pred_core = Z[1:-1, 1:-1].copy()
+        if selection == "sequence_accuracy" and best_core is not None:
+            pred_core = best_core.copy()
+            print(f"    seed={seed}: selected best sequence-accuracy adjacency ({best_seq_acc:.4f})")
 
         existing_cores.append(pred_core)
         existing_seeds.append(seed)

@@ -1,8 +1,8 @@
 # Submit a compute job by setting action to 'submit'.
 # Do NOT sleep, poll, or wait. The system reads this file
 # only after your turn ends.
-action: done
+action: submit
 gpus: 0
 test: false
 milestone: core_claim_plus
-notes: "Packaged public CaptainCook4D paper repo fetch under data/downloads and aligned method/eval paths for fresh clones."
+notes: "CPU rerun of CaptainCook4D TGML Direct Optimization using the paper's weakly supervised sequence-accuracy selection, then full/train/test evaluation."

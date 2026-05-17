@@ -8,6 +8,7 @@
 - The reusable evaluator is method-agnostic with no imports from `method/`; it reads saved prediction artifacts and writes `scoring/scores.json`.
 - The main score file now includes benefit metrics (`precision`, `recall`, `f1`) and constraint/structure metrics (`std_f1`, `edge_density_ratio`, `path_coverage`, `topological_distance`).
 - `scores_train.json` and `scores_test.json` provide additional fixed 12-procedure slices for future agents.
+- Prepared a new sequence-selection DO rerun that saves the best adjacency according to the paper's weakly supervised sequence-consistency criterion instead of always saving the final epoch.
 
 ## Continuation Audit
 
@@ -50,6 +51,7 @@ Additional split checks:
 
 - Higher milestones would require additional paper sections: EgoPER, EgoProceL, TGT-text/video, Ego-Exo4D downstream tasks, or online mistake detection.
 - The current packaged gym is scoped to CaptainCook4D task graph generation, which is enough for the core claim and additional train/test split checks.
+- A pending CPU compute job will test whether official sequence-accuracy selection closes part of the remaining CaptainCook4D DO F1 gap.
 
 ## Deviations from Paper
 

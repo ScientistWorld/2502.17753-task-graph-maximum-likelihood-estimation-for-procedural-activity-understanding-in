@@ -19,5 +19,9 @@
 - Re-ran standalone full, train-slice, and test-slice evaluation scripts; all completed successfully.
 - Re-ran `python3 validate.py --compare`; all scoring and structure checks passed.
 
+### [2026-05-17 18:22] - core_claim_plus
+- Added an opt-in DO sequence-selection mode matching the paper's weakly supervised sequence-accuracy early-stopping signal.
+- Prepared a fresh CaptainCook4D rerun in `checkpoints/do_captaincook4d_seqselect/` to test whether this closes the remaining gap to the paper's reported DO result.
+
 ## Stop Justification
 - Completed at milestone `core_claim_plus`.
