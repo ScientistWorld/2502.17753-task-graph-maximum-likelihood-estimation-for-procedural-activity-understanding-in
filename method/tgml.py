@@ -4,7 +4,6 @@ Task Graph Maximum Likelihood (TGML) implementation.
 This module implements:
 1. The TGML loss function (task_graph_maximum_likelihood_loss)
 2. The Direct Optimization (DO) model
-3. The Count-Based baseline
 
 Based on the paper:
 "Maximum Likelihood Estimation for Procedural Activity Understanding in Egocentric Videos"

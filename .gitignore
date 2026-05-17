@@ -49,6 +49,7 @@ environment/container_sandbox/
 environment/*sandbox*/
 environment/sandbox*/
 environment/rootfs*/
+environment/runtime/
 environment/*-rootfs*
 environment/*.tar.gz
 environment/*.tar

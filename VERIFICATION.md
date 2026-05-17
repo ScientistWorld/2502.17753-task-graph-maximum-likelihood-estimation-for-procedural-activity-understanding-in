@@ -1,24 +1,35 @@
-# Verification
+# Verification Report
 
-## Current Verified State
+## Initial Assessment
 
-- `python3 validate.py --compare` passes.
-- `scoring/scores.json` reflects the full 24-procedure CaptainCook4D benchmark.
-- `checkpoints/do_captaincook4d_fixedtgml/` contains 24 prediction files, each with 5 DO seeds.
-- `scoring/scores_train.json` and `scoring/scores_test.json` provide additional 12-procedure split checks.
+The workspace entered final verification at `core_claim_plus`. That milestone is justified: the implementation runs the paper's TGML Direct Optimization method on CaptainCook4D, uses saved prediction artifacts for evaluation, and reports a clear F1 gain over the Count-Based baseline on the reproduced benchmark.
 
-## Key Numbers
+The problem-definition files are method-agnostic, and the method details are kept in `briefing/method.md` and `method/`. The evaluation code does not import from `method/`.
 
-- Count-Based: precision 67.13, recall 56.76, F1 61.41.
-- TGML DO: precision 77.19, recall 75.61, F1 76.36.
-- TGML DO seed-to-seed `std_f1`: 0.129.
+## Issues Found
 
-## Commands Run
+- **Minor**: `reference.json` assigned a nonzero coefficient to `worst_quartile_f1`, but the main `scores.json` did not include that metric for the reproduced rows.
+- **Minor**: `action.yaml` was still set to submit a follow-up CPU rerun. Final verification should leave the paper in a completed state.
+- **Cosmetic**: `method/tgml.py` described a Count-Based baseline in the module docstring even though the baseline implementation lives outside that file.
+- **Pre-existing workspace noise**: git status still shows harness/system artifacts (`README.md`, `manifest.json`, deleted `trajectory/*`). These were not created by this verification pass and are outside the gym code path.
 
-```bash
-bash scripts/evaluate.sh captaincook4d_count
-bash scripts/evaluate.sh captaincook4d_do checkpoints/do_captaincook4d_fixedtgml
-bash scripts/evaluate_train.sh checkpoints/do_captaincook4d_fixedtgml
-bash scripts/evaluate_test.sh checkpoints/do_captaincook4d_fixedtgml
-python3 validate.py --compare
-```
+## Fixes Applied
+
+- Updated `eval/evaluator.py` so the main evaluator computes and writes `worst_quartile_f1`.
+- Refreshed `scoring/scores.json` by rerunning standalone Count-Based and DO evaluation.
+- Updated `scoring/TARGETS.md` to document `worst_quartile_f1`.
+- Added `environment/runtime/` to `.gitignore` to keep generated container-runtime files out of future status.
+- Corrected the stale `method/tgml.py` docstring.
+- Updated `PROGRESS.md` to mention the complete scored metric set and to avoid describing a pending job.
+- Set `action.yaml` to `done` at `core_claim_plus`.
+
+## Final Judgment
+
+This workspace is ready to serve as a research gym for the scoped CaptainCook4D task-graph generation claim. A scientist agent can use the method-agnostic problem/evaluation/data files in from-scratch mode, or use the full method implementation and scores in improve mode.
+
+The main limitation is coverage: the gym does not reproduce EgoPER, EgoProceL, TGT text/video, or downstream task results. Within its declared CaptainCook4D scope, the scoring and evaluation pipeline are usable and discriminative.
+
+- Milestone: core_claim_plus
+- Ready for gym use: yes
+- Confidence: high
+- Key limitation: scoped to CaptainCook4D task-graph generation only

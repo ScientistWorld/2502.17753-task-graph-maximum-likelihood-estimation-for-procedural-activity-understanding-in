@@ -18,6 +18,9 @@ This workspace is anchored to the CaptainCook4D task-graph generation benchmark.
 - **Metric**: `std_f1`
 - **Goal**: keep seed-to-seed variability low. A method that improves mean F1 only by becoming unstable is less useful.
 
+- **Metric**: `worst_quartile_f1`
+- **Goal**: improve hard procedures rather than only raising the average on already easy procedures.
+
 ## Structural Constraint Targets
 - **Metric**: `edge_density_ratio`
 - **Goal**: avoid improving recall by returning graphs that are much denser than the ground truth.

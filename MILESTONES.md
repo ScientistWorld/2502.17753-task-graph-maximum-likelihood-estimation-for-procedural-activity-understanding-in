@@ -23,5 +23,10 @@
 - Added an opt-in DO sequence-selection mode matching the paper's weakly supervised sequence-accuracy early-stopping signal.
 - Prepared a fresh CaptainCook4D rerun in `checkpoints/do_captaincook4d_seqselect/` to test whether this closes the remaining gap to the paper's reported DO result.
 
+### [2026-05-17 18:30] - core_claim_plus
+- Completed final gym verification.
+- Confirmed method-agnostic briefing/evaluation files, eval-method separation, download portability, and train/test scoring checks.
+- Fixed the main score file to include `worst_quartile_f1`, matching the nonzero metric in `reference.json`.
+
 ## Stop Justification
-- Completed at milestone `core_claim_plus`.
+- Final verification completed at milestone `core_claim_plus`; the gym is ready for the scoped CaptainCook4D task-graph generation benchmark.

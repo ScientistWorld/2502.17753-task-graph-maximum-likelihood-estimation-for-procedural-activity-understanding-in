@@ -1,8 +1,8 @@
 # Submit a compute job by setting action to 'submit'.
 # Do NOT sleep, poll, or wait. The system reads this file
 # only after your turn ends.
-action: submit
+action: done
 gpus: 0
 test: false
 milestone: core_claim_plus
-notes: "CPU rerun of CaptainCook4D TGML Direct Optimization using the paper's weakly supervised sequence-accuracy selection, then full/train/test evaluation."
+notes: "Final verification passed for the scoped CaptainCook4D task-graph gym; scoring metric consistency fixed."
