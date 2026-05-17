@@ -1,5 +1,6 @@
 #!/bin/bash
 # Fetch all public, pre-existing artifacts needed by the reproduction.
+# Estimated download size: <100 MB; disk usage: <200 MB for the pinned paper repo data.
 
 set -euo pipefail
 

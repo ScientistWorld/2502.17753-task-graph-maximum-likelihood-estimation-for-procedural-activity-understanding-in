@@ -34,7 +34,7 @@ The test slice has 12 scenarios (same order of magnitude as train's 13). The DO 
 
 2. **Scenario difficulty stratification**: If scenarios have varying difficulty (e.g., different number of steps), stratify train/test to ensure similar difficulty distributions.
 
-3. **Seed variance analysis**: The current `std_f1` measures scenario-to-scenario variance. Adding seed-to-seed variance analysis could detect unstable methods.
+3. **Seed variance analysis**: Implemented in the standard evaluator as seed-to-seed `std_f1`; future work could add confidence intervals matching the paper's 90% reporting.
 
 ### Known Limitations
 - The path coverage metric uses path enumeration which can be expensive for large graphs. The current implementation has graceful fallbacks on failure.

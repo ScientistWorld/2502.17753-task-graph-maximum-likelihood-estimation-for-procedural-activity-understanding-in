@@ -172,7 +172,7 @@ def add_boundary_edges(graph: nx.DiGraph, id_start: int, id_end: int) -> None:
 
 
 def post_process_pred_adj(pred_core: np.ndarray, n_gt: int) -> np.ndarray:
-    threshold = 1.0 / (n_gt + 2)
+    threshold = 1.0 / n_gt
     pred_binary = np.where(pred_core < threshold, 0, 1).astype(float)
     graph = nx.DiGraph(pred_binary)
 

@@ -7,7 +7,7 @@
 # a JSON dict nested by experiment, matching scoring/reference.json structure.
 #
 # Usage:
-#   ./evaluate.sh captaincook4d_do        # evaluate DO on CaptainCook4D
+#   ./evaluate.sh captaincook4d_do checkpoints/do_captaincook4d_fixedtgml
 #   ./evaluate.sh captaincook4d_count     # evaluate count-based on CaptainCook4D
 #   ./evaluate.sh captaincook4d_partial_compare checkpoints/do_captaincook4d_fixedtgml 5
 

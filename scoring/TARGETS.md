@@ -18,6 +18,16 @@ This workspace is anchored to the CaptainCook4D task-graph generation benchmark.
 - **Metric**: `std_f1`
 - **Goal**: keep seed-to-seed variability low. A method that improves mean F1 only by becoming unstable is less useful.
 
+## Structural Constraint Targets
+- **Metric**: `edge_density_ratio`
+- **Goal**: avoid improving recall by returning graphs that are much denser than the ground truth.
+
+- **Metric**: `path_coverage`
+- **Goal**: preserve useful directed paths in the predicted DAG, not just isolated edge overlap.
+
+- **Metric**: `topological_distance`
+- **Goal**: keep the predicted partial order close to the ground-truth partial order. Lower is better.
+
 ## Required Comparison
 - **Compared methods in `scores.json`**: `count_based`, `do`
 - **Claim checked**: the stronger learned method should beat the simple counting baseline by a clear margin on F1 while staying competitive on both precision and recall.
@@ -27,5 +37,7 @@ This workspace is anchored to the CaptainCook4D task-graph generation benchmark.
 
 ## How To Run
 - `bash scripts/baseline.sh`
-- `bash scripts/evaluate.sh captaincook4d_partial_compare checkpoints/do_captaincook4d_fixedtgml 5`
+- `bash scripts/evaluate.sh captaincook4d_do checkpoints/do_captaincook4d_fixedtgml`
+- `bash scripts/evaluate_train.sh checkpoints/do_captaincook4d_fixedtgml`
+- `bash scripts/evaluate_test.sh checkpoints/do_captaincook4d_fixedtgml`
 - `python validate.py`

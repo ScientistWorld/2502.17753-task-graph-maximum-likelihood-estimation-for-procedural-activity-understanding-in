@@ -55,6 +55,98 @@ def compute_precision_recall_f1(
     return precision, recall, f1
 
 
+def compute_edge_density_ratio(gt_adj: np.ndarray, pred_adj: np.ndarray) -> float:
+    """
+    Compute a symmetric edge-density match ratio in [0, 1].
+
+    This is a constraint metric: it discourages methods from improving recall by
+    predicting much denser graphs than the ground truth.
+    """
+    gt_edges = np.sum(gt_adj > 0)
+    pred_edges = np.sum(pred_adj > 0)
+    if gt_edges == 0:
+        return 1.0 if pred_edges == 0 else 0.0
+    if pred_edges == 0:
+        return 0.0
+    return float(min(gt_edges, pred_edges) / max(gt_edges, pred_edges))
+
+
+def compute_path_coverage(gt_adj: np.ndarray, pred_adj: np.ndarray) -> float:
+    """
+    Fraction of ground-truth source-to-sink paths exactly covered by prediction.
+
+    Edge F1 is the paper's primary metric. This structural metric is an
+    additional gym constraint so future methods preserve useful DAG structure.
+    """
+    try:
+        gt_g = nx.DiGraph(gt_adj)
+        pred_g = nx.DiGraph(pred_adj)
+        sources = [node for node in gt_g.nodes() if gt_g.in_degree(node) == 0]
+        sinks = [node for node in gt_g.nodes() if gt_g.out_degree(node) == 0]
+        if not sources or not sinks:
+            return 0.5
+
+        all_paths = []
+        for src in sources:
+            for sink in sinks:
+                try:
+                    for path in nx.all_simple_paths(gt_g, src, sink):
+                        all_paths.append(tuple(zip(path[:-1], path[1:])))
+                except (nx.NetworkXNoPath, nx.NetworkXError):
+                    continue
+
+        if not all_paths:
+            return 0.5
+
+        pred_edges = set(pred_g.edges())
+        covered = sum(
+            1 for path_edges in all_paths
+            if all(edge in pred_edges for edge in path_edges)
+        )
+        return float(covered / len(all_paths))
+    except Exception:
+        return 0.5
+
+
+def compute_topological_distance(gt_adj: np.ndarray, pred_adj: np.ndarray) -> float:
+    """
+    Normalized disagreement between predicted and GT transitive reachability.
+
+    Lower is better. This captures wrong partial orders beyond direct edge
+    overlap while remaining independent of any method implementation.
+    """
+    try:
+        gt_g = nx.DiGraph(gt_adj)
+        pred_g = nx.DiGraph(pred_adj)
+        if len(gt_g) <= 1:
+            return 0.0
+
+        gt_closure = (
+            nx.transitive_closure_dag(gt_g)
+            if nx.is_directed_acyclic_graph(gt_g)
+            else nx.transitive_closure(gt_g)
+        )
+        pred_closure = (
+            nx.transitive_closure_dag(pred_g)
+            if nx.is_directed_acyclic_graph(pred_g)
+            else nx.transitive_closure(pred_g)
+        )
+
+        nodes = sorted(set(gt_closure.nodes()) | set(pred_closure.nodes()))
+        pair_count = 0
+        disagreements = 0
+        for src in nodes:
+            for dst in nodes:
+                if src == dst:
+                    continue
+                pair_count += 1
+                if gt_closure.has_edge(src, dst) != pred_closure.has_edge(src, dst):
+                    disagreements += 1
+        return float(disagreements / pair_count) if pair_count else 0.0
+    except Exception:
+        return 0.5
+
+
 def delete_redundant_edges(G: nx.DiGraph) -> None:
     """
     Remove redundant edges (transitive reduction).
@@ -121,8 +213,8 @@ def post_process_adjacency(
     np.ndarray
         Processed adjacency matrix (n_gt x n_gt).
     """
-    # Threshold matches official code: 1/(num_nodes - 2) where num_nodes = n_gt + 2
-    threshold = 1.0 / (n_gt + 2)
+    # Official threshold: 1/(num_nodes - 2), where num_nodes = n_gt + 2.
+    threshold = 1.0 / n_gt
 
     # Binarize matching official: np.where(pred_core < threshold, 0, 1)
     pred_binary = np.where(pred_core < threshold, 0, 1).astype(float)

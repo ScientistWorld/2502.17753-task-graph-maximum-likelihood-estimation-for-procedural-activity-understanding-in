@@ -19,11 +19,13 @@ from dataclasses import dataclass
 from data.loader import TaskGraphData, load_data
 from eval.metrics import (
     compute_precision_recall_f1,
+    compute_edge_density_ratio,
+    compute_path_coverage,
+    compute_topological_distance,
     delete_redundant_edges,
     delete_cycles,
     add_boundary_edges,
 )
-from baseline.count_based import count_based_with_threshold
 
 
 @dataclass
@@ -39,7 +41,7 @@ class EvaluationResult:
 def evaluate_from_adjacency(
     pred_core: np.ndarray,
     gt_adj: np.ndarray
-) -> Tuple[float, float, float]:
+) -> Tuple[float, float, float, float, float, float]:
     """
     Evaluate a predicted adjacency matrix against ground truth.
 
@@ -52,12 +54,16 @@ def evaluate_from_adjacency(
 
     Returns
     -------
-    Tuple[float, float, float]
-        (precision, recall, f1)
+    Tuple[float, float, float, float, float, float]
+        (precision, recall, f1, edge_density_ratio, path_coverage, topological_distance)
     """
     n_gt = gt_adj.shape[0]
     pred_adj = post_process_pred_adj(pred_core, n_gt)
-    return compute_precision_recall_f1(gt_adj, pred_adj)
+    precision, recall, f1 = compute_precision_recall_f1(gt_adj, pred_adj)
+    density = compute_edge_density_ratio(gt_adj, pred_adj)
+    path_cov = compute_path_coverage(gt_adj, pred_adj)
+    topo_dist = compute_topological_distance(gt_adj, pred_adj)
+    return precision, recall, f1, density, path_cov, topo_dist
 
 
 def post_process_pred_adj(
@@ -66,7 +72,7 @@ def post_process_pred_adj(
 ) -> np.ndarray:
     """
     Post-process predicted adjacency matrix following the paper's approach:
-    1. Binarize at 1/(n+2) threshold
+    1. Binarize at 1/n_gt threshold, matching the official 1/(num_nodes - 2)
     2. Add boundary edges
     3. Transitive reduction
     4. Cycle removal
@@ -83,8 +89,8 @@ def post_process_pred_adj(
     np.ndarray
         Processed binary adjacency matrix.
     """
-    # Threshold: 1/(n+2) matching official code (n+2 = matrix size, includes beta and gamma)
-    threshold = 1.0 / (n_gt + 2)
+    # Official threshold: 1/(num_nodes - 2), where num_nodes = n_gt + 2.
+    threshold = 1.0 / n_gt
     pred_binary = np.where(pred_core < threshold, 0, 1).astype(float)
 
     # Build graph matching official: pred_binary[row, col] = 1 means edge col -> row
@@ -107,11 +113,140 @@ def post_process_pred_adj(
     return pred_adj
 
 
+def _strip_matrix_tokens(sequences: List[List[int]], n_gt: int) -> List[List[int]]:
+    gt_sequences: List[List[int]] = []
+    for seq in sequences:
+        gt_seq = [node - 1 for node in seq if 1 <= node < n_gt]
+        if gt_seq:
+            gt_sequences.append(gt_seq)
+    return gt_sequences
+
+
+def _build_transition_matrix(sequences: List[List[int]], n_gt: int) -> np.ndarray:
+    transitions = np.zeros((n_gt, n_gt), dtype=np.float64)
+    for seq in sequences:
+        for index in range(len(seq) - 1):
+            transitions[seq[index], seq[index + 1]] += 1.0
+    row_sums = transitions.sum(axis=1)
+    for index in range(n_gt):
+        if row_sums[index] > 0:
+            transitions[index, :] /= row_sums[index]
+    return transitions
+
+
+def _sorted_preconditions(transitions: np.ndarray, step_id: int) -> Dict[int, float]:
+    column = transitions[:, step_id]
+    column_sum = column.sum()
+    if column_sum <= 0:
+        return {}
+    scores = {
+        action: float(column[action] / column_sum)
+        for action in range(len(column))
+        if column[action] > 0
+    }
+    return dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
+
+
+def _sorted_futures(transitions: np.ndarray, step_id: int) -> Dict[int, float]:
+    row = transitions[step_id, :]
+    scores = {action: float(row[action]) for action in range(len(row)) if row[action] > 0}
+    return dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
+
+
+def _remove_cycles_with_min_prob(graph: nx.DiGraph, transitions: np.ndarray) -> None:
+    for cycle in list(nx.simple_cycles(graph)):
+        if len(cycle) < 2:
+            if graph.has_edge(cycle[0], cycle[0]):
+                graph.remove_edge(cycle[0], cycle[0])
+            continue
+        min_prob = float("inf")
+        min_edge = None
+        for index in range(len(cycle)):
+            src, dst = cycle[index], cycle[(index + 1) % len(cycle)]
+            probability = transitions[src, dst]
+            if probability < min_prob:
+                min_prob = probability
+                min_edge = (src, dst)
+        if min_edge is not None and graph.has_edge(*min_edge):
+            graph.remove_edge(*min_edge)
+
+
+def count_based_with_threshold(
+    sequences: List[List[int]],
+    threshold: float = 0.5,
+    n_gt: Optional[int] = None,
+) -> np.ndarray:
+    """Count-Based baseline scorer, kept in eval/ so evaluation is self-contained."""
+    del threshold
+    if not sequences:
+        return np.zeros((2, 2), dtype=np.float32)
+    if n_gt is None:
+        raise ValueError("count_based_with_threshold requires n_gt")
+
+    gt_sequences = _strip_matrix_tokens(sequences, n_gt)
+    transitions = _build_transition_matrix(gt_sequences, n_gt)
+
+    graph = nx.DiGraph()
+    for action in range(n_gt):
+        graph.add_node(action)
+
+    for action in range(n_gt):
+        preconditions = _sorted_preconditions(transitions, action)
+        if not preconditions:
+            continue
+        max_score = max(preconditions.values())
+        for precondition, score in preconditions.items():
+            if score == max_score and precondition != action:
+                graph.add_edge(precondition, action)
+
+    _remove_cycles_with_min_prob(graph, transitions)
+
+    for node in list(graph.nodes()):
+        if graph.in_degree(node) == 0 and node != 0:
+            for precondition in _sorted_preconditions(transitions, node):
+                graph.add_edge(precondition, node)
+                if not nx.is_directed_acyclic_graph(graph):
+                    graph.remove_edge(precondition, node)
+                else:
+                    break
+
+    for node in list(graph.nodes()):
+        if graph.out_degree(node) == 0 and node != (n_gt - 1):
+            for future in _sorted_futures(transitions, node):
+                graph.add_edge(node, future)
+                if not nx.is_directed_acyclic_graph(graph):
+                    graph.remove_edge(node, future)
+                else:
+                    break
+
+    in_degree_zeros = [
+        node for node in graph.nodes
+        if graph.in_degree(node) == 0 and node not in (0, n_gt - 1)
+    ]
+    for node in in_degree_zeros:
+        graph.add_edge(0, node)
+
+    out_degree_zeros = [
+        node for node in graph.nodes
+        if graph.out_degree(node) == 0 and node not in (0, n_gt - 1)
+    ]
+    for node in out_degree_zeros:
+        graph.add_edge(node, n_gt - 1)
+
+    graph = graph.reverse(copy=True)
+    delete_redundant_edges(graph)
+
+    pred_adj = np.zeros((n_gt, n_gt), dtype=np.float32)
+    for src, dst in graph.edges():
+        pred_adj[src, dst] = 1.0
+    return pred_adj
+
+
 def evaluate_count_based(
     sequences: List[List[int]],
     gt_adj: np.ndarray,
     threshold: float = 0.5
-) -> Tuple[float, float, float]:
+) -> Tuple[float, float, float, float, float, float]:
     """
     Evaluate count-based baseline predictions.
 
@@ -138,9 +273,11 @@ def evaluate_count_based(
         pred_resized[:min_n, :min_n] = pred_adj[:min_n, :min_n]
         pred_adj = pred_resized
 
-    # The baseline implementation already matches the released code's boundary
-    # handling, cycle removal, transitive reduction, and adjacency orientation.
-    return compute_precision_recall_f1(gt_adj, pred_adj)
+    precision, recall, f1 = compute_precision_recall_f1(gt_adj, pred_adj)
+    density = compute_edge_density_ratio(gt_adj, pred_adj)
+    path_cov = compute_path_coverage(gt_adj, pred_adj)
+    topo_dist = compute_topological_distance(gt_adj, pred_adj)
+    return precision, recall, f1, density, path_cov, topo_dist
 
 
 def evaluate_all_scenarios(
@@ -180,12 +317,13 @@ def evaluate_all_scenarios(
         seeds = [42]
 
     results = {}
+    seed_f1_totals: Dict[int, List[float]] = {}
 
     for scenario_data in data:
         scenario_name = scenario_data.scenario_name
 
         if method == "count_based":
-            precision, recall, f1 = evaluate_count_based(
+            precision, recall, f1, density, path_cov, topo_dist = evaluate_count_based(
                 scenario_data.sequences,
                 scenario_data.gt_adj_matrix,
                 threshold
@@ -193,7 +331,10 @@ def evaluate_all_scenarios(
             results[scenario_name] = {
                 "precision": float(precision),
                 "recall": float(recall),
-                "f1": float(f1)
+                "f1": float(f1),
+                "edge_density_ratio": float(density),
+                "path_coverage": float(path_cov),
+                "topological_distance": float(topo_dist),
             }
         elif method == "do":
             if not do_predictions_dir or not os.path.exists(do_predictions_dir):
@@ -212,6 +353,11 @@ def evaluate_all_scenarios(
                 )
             saved = np.load(prediction_file)
             pred_cores = saved["pred_cores"] if "pred_cores" in saved else saved["pred_core"][None, ...]
+            seed_ids = (
+                [int(seed) for seed in saved["seeds"].tolist()]
+                if "seeds" in saved
+                else list(range(len(pred_cores)))
+            )
             if min_do_seeds is not None and len(pred_cores) < min_do_seeds:
                 if allow_partial:
                     continue
@@ -223,27 +369,55 @@ def evaluate_all_scenarios(
                 evaluate_from_adjacency(pred_core, scenario_data.gt_adj_matrix)
                 for pred_core in pred_cores
             ]
+            for seed_id, metric in zip(seed_ids, per_seed_metrics):
+                seed_f1_totals.setdefault(seed_id, []).append(float(metric[2]))
             precision = float(np.mean([metric[0] for metric in per_seed_metrics]))
             recall = float(np.mean([metric[1] for metric in per_seed_metrics]))
             f1 = float(np.mean([metric[2] for metric in per_seed_metrics]))
+            density = float(np.mean([metric[3] for metric in per_seed_metrics]))
+            path_cov = float(np.mean([metric[4] for metric in per_seed_metrics]))
+            topo_dist = float(np.mean([metric[5] for metric in per_seed_metrics]))
             results[scenario_name] = {
                 "precision": precision,
                 "recall": recall,
-                "f1": f1
+                "f1": f1,
+                "edge_density_ratio": density,
+                "path_coverage": path_cov,
+                "topological_distance": topo_dist,
             }
+        else:
+            raise ValueError(f"Unknown method: {method}")
 
     # Aggregate
+    if not results:
+        raise ValueError(f"No scenarios were evaluated for method={method}")
+
     all_precision = [r["precision"] for r in results.values()]
     all_recall = [r["recall"] for r in results.values()]
     all_f1 = [r["f1"] for r in results.values()]
+    all_density = [r["edge_density_ratio"] for r in results.values()]
+    all_path_cov = [r["path_coverage"] for r in results.values()]
+    all_topo_dist = [r["topological_distance"] for r in results.values()]
+
+    if method == "do" and len(seed_f1_totals) > 1:
+        seed_means = [
+            float(np.mean(seed_scores))
+            for _, seed_scores in sorted(seed_f1_totals.items())
+        ]
+        std_f1 = float(np.std(seed_means))
+    else:
+        std_f1 = 0.0
 
     aggregate = {
         "mean_precision": float(np.mean(all_precision)),
         "mean_recall": float(np.mean(all_recall)),
         "mean_f1": float(np.mean(all_f1)),
-        "std_f1": float(np.std(all_f1)),
+        "std_f1": std_f1,
         "std_precision": float(np.std(all_precision)),
         "std_recall": float(np.std(all_recall)),
+        "edge_density_ratio": float(np.mean(all_density)),
+        "path_coverage": float(np.mean(all_path_cov)),
+        "topological_distance": float(np.mean(all_topo_dist)),
     }
 
     return {
@@ -293,9 +467,11 @@ def write_scores_json(
         "precision": agg["mean_precision"],
         "recall": agg["mean_recall"],
         "f1": agg["mean_f1"],
+        "std_f1": agg["std_f1"],
+        "edge_density_ratio": agg["edge_density_ratio"],
+        "path_coverage": agg["path_coverage"],
+        "topological_distance": agg["topological_distance"],
     }
-    if "do" in method_name:
-        scores["experiments"][dataset]["results"][method_name]["std_f1"] = agg["std_f1"]
 
     with open(output_path, "w") as f:
         json.dump(scores, f, indent=2)
