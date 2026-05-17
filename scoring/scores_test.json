@@ -1,0 +1,59 @@
+{
+  "slice": "test",
+  "slice_manifest": {
+    "slice": "test",
+    "dataset": "captaincook4d_task_graph",
+    "split_rule": "balanced fixed 12/12 split over CaptainCook4D procedures by GT node and edge counts",
+    "scenario_count": 12,
+    "scenarios": [
+      "Blenderbananapancakes",
+      "Breakfastburritos",
+      "Buttercorncup",
+      "Coffee",
+      "Cucumberraita",
+      "Panfriedtofu",
+      "Ramen",
+      "Scrambledeggs",
+      "Spicedhotchocolate",
+      "Spicytunaavocadowraps",
+      "Tomatochutney",
+      "Zoodles"
+    ]
+  },
+  "experiments": {
+    "captaincook4d_task_graph": {
+      "results": {
+        "do_captaincook4d": {
+          "precision": 79.60661040511962,
+          "recall": 79.44525302493231,
+          "f1": 79.50371204599757,
+          "std_f1": 0.8365404470736124,
+          "worst_quartile_f1": 69.1472144413321,
+          "edge_density_ratio": 0.9794648792565459,
+          "path_coverage": 0.2367890211640212,
+          "topological_distance": 0.05798065950026734
+        },
+        "do_captaincook4d_fixedtgml": {
+          "precision": 77.02162287840038,
+          "recall": 75.41206757302463,
+          "f1": 76.19455158678745,
+          "std_f1": 0.14255332708916985,
+          "worst_quartile_f1": 68.90269151138716,
+          "edge_density_ratio": 0.9786954621029698,
+          "path_coverage": 0.12691054894179893,
+          "topological_distance": 0.09503715800310229
+        }
+      }
+    }
+  },
+  "method_artifacts": {
+    "do_captaincook4d": {
+      "artifact_type": "npz_prediction_directory",
+      "checkpoint_dir": "checkpoints/do_captaincook4d"
+    },
+    "do_captaincook4d_fixedtgml": {
+      "artifact_type": "npz_prediction_directory",
+      "checkpoint_dir": "checkpoints/do_captaincook4d_fixedtgml"
+    }
+  }
+}
