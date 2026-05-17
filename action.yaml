@@ -1,7 +1,7 @@
 # Submit a compute job by setting action to 'submit'.
 # Do NOT sleep, poll, or wait. The system reads this file
 # only after your turn ends.
-action: submit
+action: done
 gpus: 0
 test: false
-notes: "Rerun train/test split scoring after canonicalizing score methods to count_based/do and validating post-design outputs."
+notes: "Balanced fixed 12/12 CaptainCook4D split; 16 train metrics and 16 test metrics across count_based/do; do F1 76.53 train vs 76.19 test, count_based F1 61.43 train vs 61.40 test; no remaining validation caveats."
