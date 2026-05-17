@@ -33,7 +33,7 @@ import torch
 from data.loader import load_data
 from method.tgml import DirectOptimization
 
-data = load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')
+data = load_data(repo_data_path='/home/user/data/downloads/Differentiable-Task-Graph-Learning/data/captaincook4d')
 output_dir = "$OUTPUT_DIR"
 device = "$DEVICE"
 if device != 'cpu' and not torch.cuda.is_available():
@@ -152,7 +152,7 @@ import io
 sys.path.insert(0, '/home/user')
 from data.loader import load_data
 with contextlib.redirect_stdout(io.StringIO()):
-    data = load_data(repo_data_path='/home/user/method/repo/data/captaincook4d')
+    data = load_data(repo_data_path='/home/user/data/downloads/Differentiable-Task-Graph-Learning/data/captaincook4d')
 print(len(data))
 PY
 )"

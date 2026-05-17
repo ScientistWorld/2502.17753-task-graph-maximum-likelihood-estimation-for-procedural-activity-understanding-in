@@ -42,7 +42,7 @@ from data.loader import load_data
 import json
 
 # Load data
-repo_path = '/home/user/method/repo/data/captaincook4d'
+repo_path = '/home/user/data/downloads/Differentiable-Task-Graph-Learning/data/captaincook4d'
 data = load_data(repo_data_path=repo_path)
 print(f'Loaded {len(data)} scenarios')
 

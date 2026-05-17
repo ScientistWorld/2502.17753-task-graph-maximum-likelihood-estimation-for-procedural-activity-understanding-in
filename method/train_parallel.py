@@ -178,7 +178,7 @@ def train_scenario_cpu(scenario_data, beta, lr, max_epochs, seed, output_dir):
 def main():
     parser = argparse.ArgumentParser(description="Parallel DO training for CaptainCook4D")
     parser.add_argument("--repo_data_path", type=str,
-                        default="/home/user/method/repo/data/captaincook4d")
+                        default="/home/user/data/downloads/Differentiable-Task-Graph-Learning/data/captaincook4d")
     parser.add_argument("--output", type=str, default="checkpoints/do_captaincook4d")
     parser.add_argument("--beta", type=float, default=0.005)
     parser.add_argument("--lr", type=float, default=0.1)

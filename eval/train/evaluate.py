@@ -627,7 +627,7 @@ def main(argv: List[str]) -> None:
     checkpoint_dir = argv[2] if len(argv) > 2 else "checkpoints/"
     min_seeds = int(argv[3]) if len(argv) > 3 else 5
 
-    repo_path = "/home/user/method/repo/data/captaincook4d"
+    repo_path = "/home/user/data/downloads/Differentiable-Task-Graph-Learning/data/captaincook4d"
     data = select_slice(load_captaincook4d(repo_path))
     print(f"Loaded {len(data)} {SLICE_NAME} scenarios")
 

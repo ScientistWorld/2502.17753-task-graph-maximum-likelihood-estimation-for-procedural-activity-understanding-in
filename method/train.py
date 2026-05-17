@@ -197,7 +197,7 @@ def main():
                         choices=["captaincook4d", "synthetic"],
                         help="Dataset to use")
     parser.add_argument("--repo_data_path", type=str,
-                        default="/home/user/method/repo/data/captaincook4d",
+                        default="/home/user/data/downloads/Differentiable-Task-Graph-Learning/data/captaincook4d",
                         help="Path to repo data")
     parser.add_argument("--output", type=str, default="checkpoints/",
                         help="Output directory for checkpoints")
