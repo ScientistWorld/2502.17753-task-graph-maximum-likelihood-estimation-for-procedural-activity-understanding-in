@@ -527,6 +527,9 @@ def evaluate_all_scenarios(
     all_density = [result["edge_density_ratio"] for result in results.values()]
     all_path_cov = [result["path_coverage"] for result in results.values()]
     all_topo_dist = [result["topological_distance"] for result in results.values()]
+    sorted_f1 = sorted(all_f1)
+    worst_quartile_count = max(1, int(np.ceil(len(sorted_f1) * 0.25)))
+    worst_quartile_f1 = float(np.mean(sorted_f1[:worst_quartile_count]))
     if method == "do" and len(seed_f1_totals) > 1:
         seed_means = [float(np.mean(seed_scores)) for _, seed_scores in sorted(seed_f1_totals.items())]
         std_f1 = float(np.std(seed_means))
@@ -541,6 +544,7 @@ def evaluate_all_scenarios(
             "std_precision": float(np.std(all_precision)),
             "std_recall": float(np.std(all_recall)),
             "std_f1": std_f1,
+            "worst_quartile_f1": worst_quartile_f1,
             "edge_density_ratio": float(np.mean(all_density)),
             "path_coverage": float(np.mean(all_path_cov)),
             "topological_distance": float(np.mean(all_topo_dist)),
@@ -593,6 +597,7 @@ def write_scores_json(
         "recall": aggregate["mean_recall"],
         "f1": aggregate["mean_f1"],
         "std_f1": aggregate["std_f1"],
+        "worst_quartile_f1": aggregate["worst_quartile_f1"],
         "edge_density_ratio": aggregate["edge_density_ratio"],
         "path_coverage": aggregate["path_coverage"],
         "topological_distance": aggregate["topological_distance"],

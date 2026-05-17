@@ -2,8 +2,8 @@
 # Once you set action to 'done', STOP immediately.
 # Do NOT sleep, poll, or wait. The system reads this file
 # only after your turn ends.
-action: pending
+action: done
 gpus: 0
 test: false
 milestone: core_claim_plus
-notes: ""
+notes: "Improvements: added worst_quartile_f1 robustness metric to train/test slices and reference schema; refreshed DESIGN_NOTES with static checks and runner concerns. Notes: no experiments run."

@@ -1,53 +1,30 @@
-# Design Notes - Train/Test Evaluation Improvements
+# Design Notes - Train/Test Evaluation Pass
 
-## Changes Made in This Pass
+## What I Checked
 
-### 1. Enhanced Metric Triangulation
-Added three structural metrics to `reference.json` and implemented them in both `eval/train/evaluate.py` and `eval/test/evaluate.py`:
+- Reviewed `scripts/evaluate_train.sh` and `scripts/evaluate_test.sh` side by side. Train calls `eval/train/evaluate.py` and writes `scoring/scores_train.json`; test calls `eval/test/evaluate.py` and writes `scoring/scores_test.json`.
+- Confirmed the scripts enumerate checkpoint prediction directories instead of using a fixed proposed-method default. Test also reuses method keys and artifact paths from `scores_train.json` when available.
+- Checked `eval/train/` and `eval/test/` for cross-imports. The slice evaluators are duplicated and self-contained; they do not import each other or import `method/`.
+- Checked that non-baseline evaluation is attached to method artifacts: both slices read saved `*_predictions.npz` files from the method checkpoint directory. The built-in `count_based` row is the only evaluator-local baseline.
+- Reviewed `scoring/reference.json` for paper-agreement metrics. The active metrics score scientific graph quality or constraints, not distance to paper-reported values.
+- Confirmed `scoring/scores_train.json` and `scoring/scores_test.json` are absent at handoff.
+- Ran `bash -n scripts/evaluate_train.sh` and `bash -n scripts/evaluate_test.sh`.
 
-- **`edge_density_ratio`** (higher_is_better, coefficient: 0.15): Ratio of predicted edge count to GT edge count. Catches under/over-connection. A method that adds spurious edges to boost F1 will have density >> 1.0.
+## What I Changed
 
-- **`path_coverage`** (higher_is_better, coefficient: 0.12): Fraction of GT directed paths covered by predicted graph. Measures structural correctness beyond edge overlap. A shortcut method that matches edges but wrong topology will have low path coverage.
+- Added `worst_quartile_f1` to both slice evaluators and to `scoring/reference.json`.
+- The metric is the mean F1 over the weakest quartile of procedures in the evaluated slice. With 12 procedures per slice this averages the three lowest per-scenario F1 values.
+- This sharpens shortcut detection because an agent can no longer improve the visible average as easily by sacrificing hard procedures. A genuine graph-induction improvement should lift both average F1 and the lower tail on train and test; a shortcut tuned to visible procedures is more likely to show a train/test lower-tail gap.
 
-- **`topological_distance`** (higher_is_better is false, coefficient: -0.18): Normalized topological ordering distance between predicted and GT DAGs. Rewards structurally similar graphs regardless of edge overlap. Catches methods that predict edges but with wrong dependency ordering.
+## Runtime Concerns for Next Iteration
 
-### 2. Metric Rationale
-These three metrics probe different aspects of the paper's core claim (graph quality):
-- **edge_density_ratio**: Direct proxy for over/under-connection
-- **path_coverage**: Structural correctness of path chains
-- **topological_distance**: Dependency ordering correctness
+- `path_coverage` enumerates all simple source-to-sink paths. CaptainCook4D graphs are small enough for this to be plausible, but the runner should watch for unexpectedly slow scenarios.
+- The split is fixed at 12 procedures per slice, so `worst_quartile_f1` depends on only three procedures per slice. It is useful as a robustness signal, not as a replacement for mean F1.
+- The evaluators expect prediction files named `<scenario>_predictions.npz` with `pred_cores` or `pred_core`. A future method must keep writing that artifact format for the split scripts to score it.
 
-A method that gamed F1 by adding spurious edges would fail on density_ratio AND path_coverage simultaneously. A method that got edge overlap right but wrong topology would fail on topological_distance. This multi-metric triangulation makes shortcut detection robust.
+## Static Checks
 
-### 3. Test Slice Calibration
-The test slice has 12 scenarios (same order of magnitude as train's 13). The DO method should score similarly on both slices since it's not overfitting — the gap is expected to be small (< 2% on F1). A shortcut method would regress more on test.
-
-### 4. Leakage Check
-- `eval/train/` and `eval/test/` are fully independent (no cross-imports)
-- Both use identical metric computation code for fair comparison
-- Scripts auto-discover methods from `checkpoints/` directory
-
-## Design Considerations for Future Iterations
-
-### Potential Improvements
-1. **Threshold robustness metric**: Add a metric that varies the binarization threshold and measures how sensitive the graph quality is. A well-designed method should be stable across thresholds.
-
-2. **Scenario difficulty stratification**: If scenarios have varying difficulty (e.g., different number of steps), stratify train/test to ensure similar difficulty distributions.
-
-3. **Seed variance analysis**: Implemented in the standard evaluator as seed-to-seed `std_f1`; future work could add confidence intervals matching the paper's 90% reporting.
-
-### Known Limitations
-- The path coverage metric uses path enumeration which can be expensive for large graphs. The current implementation has graceful fallbacks on failure.
-- Topological distance computation uses heuristic longest-path which may not be exact for all DAG structures. Falls back to ordinal ranking on failure.
-
-## Validation
-- Both `evaluate_train.sh` and `evaluate_test.sh` pass `bash -n` syntax check
-- No cross-imports between train and test eval folders
-- `reference.json` metrics have all required fields (higher_is_better, coefficient, description)
-- Scripts auto-discover methods (no hardcoded defaults)
-
-## Next Steps for Runner
-1. Run `scripts/evaluate_train.sh` to produce `scoring/scores_train.json` with new metrics
-2. Run `scripts/evaluate_test.sh` to produce `scoring/scores_test.json` with new metrics
-3. Verify scores show small gap between train and test for DO method
-4. Verify structural metrics (density, path_coverage, topo_distance) are present in output
+- `bash -n` passed for both train/test wrapper scripts.
+- Grep found no train/test cross-imports.
+- Grep found no active paper-agreement metric names in `reference.json`.
+- No train/test score stubs were present at handoff.
