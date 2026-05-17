@@ -4,4 +4,5 @@
 action: done
 gpus: 0
 test: false
-notes: "Balanced fixed 12/12 CaptainCook4D split; 16 train metrics and 16 test metrics across count_based/do; do F1 76.53 train vs 76.19 test, count_based F1 61.43 train vs 61.40 test; no remaining validation caveats."
+milestone: core_claim_plus
+notes: "Core claim supported on full 24-procedure CaptainCook4D rerun: actual TGML DO method F1 76.36 beats count_based F1 61.41 with complete saved predictions; split evaluation also passes with do F1 76.53 train vs 76.19 test."
