@@ -33,7 +33,7 @@ The paper introduces **Task Graph Maximum Likelihood (TGML)**, a novel different
 ## Run it
 
 ```bash
-pip install git+https://github.com/zlab-princeton/scientist_world_cli
+pip install sciworld
 sw research 2502.17753 --mode innovate --agent claude-code
 sw evaluate 2502.17753
 ```
