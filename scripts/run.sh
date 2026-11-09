@@ -1,7 +1,7 @@
 #!/bin/bash
-# Job: install the noisy-demonstration experiment (noise level chosen on the public
-# split by a predeclared rule), reproduce the reference end to end (CPU) on both
-# experiments, run the hardening audit, regenerate the reference-only score files.
+# Job: reproduce the reference end to end (CPU) on both scored experiments
+# (CaptainCook4D and the noisy-demonstration benchmark in data/noisy_demos), run the
+# hardening audit, regenerate the reference-only score files.
 set -euo pipefail
 cd /home/user
 source /home/user/scripts/common_env.sh
@@ -11,9 +11,6 @@ python3 -c "import sys, numpy, networkx, torch; print(sys.version); print('numpy
 
 PREV="$(mktemp -d)"
 cp checkpoints/do/*_predictions.npz "$PREV"/ 2>/dev/null || true
-
-echo "=== $(date) === noisy-demonstration benchmark: choose noise level on the public split ==="
-python3 notes/hardening/select_noise_level.py
 
 echo "=== $(date) === reference: DO + TGML + SA early stopping, 5 seeds, both experiments ==="
 rm -rf checkpoints/do
@@ -25,13 +22,15 @@ prev = sys.argv[1]
 same, diff = 0, []
 for path in sorted(glob.glob(os.path.join(prev, "*_predictions.npz"))):
     name = os.path.basename(path)
+    if name.startswith("noisy"):
+        continue  # the noisy benchmark was regenerated (enlarged)
     a = np.load(path)["pred_cores"]
     b = np.load(os.path.join("checkpoints/do", name))["pred_cores"]
     if a.shape == b.shape and np.array_equal(a, b):
         same += 1
     else:
         diff.append(name)
-print(f"CaptainCook4D reference vs previous job: {same} identical, differing: {diff}")
+print(f"reference vs previous job (same procedures): {same} identical, differing: {diff}")
 PY
 bash scripts/evaluate_train.sh
 bash scripts/evaluate_test.sh

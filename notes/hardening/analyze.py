@@ -31,7 +31,7 @@ def main() -> None:
     test = load(R / "test_combined.json")
     train = load(R / "train_combined.json")
     details = load(R / "test_combined_details.json")["per_procedure"]
-    case_files = sorted(glob.glob(str(R / "sc_*.test.json")))
+    case_files = sorted(glob.glob(str(R / "case_*.test.json")))
 
     out = {"experiments": {}, "combined": {}}
     combined = {}
@@ -44,11 +44,16 @@ def main() -> None:
         status = dict(test["method_status"][exp])
         diagnostics = dict(test["diagnostics"][exp])
         for path in case_files:
-            case = os.path.basename(path)[: -len(".test.json")]
+            case = os.path.basename(path)[len("case_"): -len(".test.json")]
             data = load(path)
             rows[case] = data["experiments"][exp]["results"][case]
             status[case] = data["method_status"][exp][case]
             diagnostics[case] = data["diagnostics"][exp].get(case, {})
+            case_details = Path(path[: -len(".test.json")] + ".details.json")
+            if case_details.is_file():
+                extra = load(case_details)["per_procedure"][exp]
+                if case in extra:
+                    details[exp][case] = extra[case]
             ref_row = data["experiments"][exp]["results"][REFERENCE]
             assert all(abs(ref_row[m] - rows[REFERENCE][m]) < 1e-9 for m in metrics), (exp, case)
         train_rows = train["experiments"][exp]["results"]

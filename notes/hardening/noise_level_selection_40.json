@@ -1,0 +1,24 @@
+{
+  "rule": "Choose the noise level of the noisy-demonstration experiment (public split only).\n\nPredeclared rule: candidate levels p in {0.20, 0.10, 0.05} are tried from the\nhardest down; the scored level is the first one at which the paper's reference\n(DO, paper protocol, 5 seeds) beats the evaluator's Count-Based baseline by at\nleast 5 F1 points on the 40 PUBLIC (train) procedures. The experiment should be\nas hard as possible (headroom where the paper's method falls short) while the\npaper's claim over its baseline still holds. No held-out graph is read.\nThe chosen level is installed with eval/test/build_noisy_benchmark.py finalize.",
+  "levels": {
+    "p020": {
+      "reference_do_f1_train": 48.50387125523811,
+      "count_based_f1_train": 60.92637583012655,
+      "margin": -12.422504574888443,
+      "procedures_with_beta_0.5": 17
+    },
+    "p010": {
+      "reference_do_f1_train": 55.38220073628499,
+      "count_based_f1_train": 63.55114775820747,
+      "margin": -8.168947021922477,
+      "procedures_with_beta_0.5": 8
+    },
+    "p005": {
+      "reference_do_f1_train": 69.63747890651867,
+      "count_based_f1_train": 61.309364022311,
+      "margin": 8.328114884207665,
+      "procedures_with_beta_0.5": 0
+    }
+  },
+  "chosen": "p005"
+}

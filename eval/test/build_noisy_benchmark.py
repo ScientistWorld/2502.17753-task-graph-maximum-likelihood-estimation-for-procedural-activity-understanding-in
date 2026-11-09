@@ -16,6 +16,12 @@ random other step, deleted, or preceded by an inserted random step (uniform over
 the three); repetitions are then removed keeping the first occurrence (paper
 Section III-C1).
 
+The scored level, p = 0.05, was chosen by notes/hardening/select_noise_level.py
+(predeclared rule on the public split: hardest level at which the paper's
+reference beats Count-Based by >= 5 F1; see notes/hardening/noise_level_selection_40.json,
+run on a first 40-procedure draw); the benchmark was then enlarged to 100 public +
+100 held-out procedures at that level.
+
 Commands:
   python3 eval/test/build_noisy_benchmark.py candidates
       writes eval/test/noisy_candidates/p{005,010,020}.json (train + test splits,
@@ -37,7 +43,7 @@ WORKSPACE = HERE.parents[1]
 CANDIDATE_DIR = HERE / "noisy_candidates"
 SECRET_SEED = 0x6B1E3F0A9C2D47E58813D2A4F0B7C9E1
 LEVELS = {"p005": 0.05, "p010": 0.10, "p020": 0.20}
-N_PER_SPLIT = 40
+N_PER_SPLIT = 100
 GENERATOR = {"steps": [7, 25], "demonstrations": [4, 10], "p_extra_precondition": 0.28,
              "p_root_step": 0.06, "recency_decay": 0.4, "max_source_to_sink_paths": 2000}
 
@@ -148,10 +154,9 @@ def build_split(rng, prefix, p):
 def candidates():
     CANDIDATE_DIR.mkdir(parents=True, exist_ok=True)
     for name, p in LEVELS.items():
-        rng = random.Random(f"{SECRET_SEED:x}-{name}")
         blob = {"noise_rate": p, "generator": GENERATOR,
-                "train": build_split(rng, "noisytrain", p),
-                "test": build_split(rng, "noisytest", p)}
+                "train": build_split(random.Random(f"{SECRET_SEED:x}-{name}-train"), "noisytrain", p),
+                "test": build_split(random.Random(f"{SECRET_SEED:x}-{name}-test"), "noisytest", p)}
         with open(CANDIDATE_DIR / f"{name}.json", "w") as f:
             json.dump(blob, f)
         print(name, "written")

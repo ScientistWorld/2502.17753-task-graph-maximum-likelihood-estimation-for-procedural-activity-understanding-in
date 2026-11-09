@@ -1,7 +1,7 @@
 """Hidden-test evaluator for task-graph generation. Two scored experiments:
 
   captaincook4d_task_graph         12 held-out CaptainCook4D procedures
-  noisy_demonstrations_task_graph  40 held-out procedures whose demonstrations are
+  noisy_demonstrations_task_graph  100 held-out procedures whose demonstrations are
                                    perturbed with the paper's insert/delete/replace
                                    noise model (data/noisy_demos/test_inputs.json)
 
@@ -49,7 +49,7 @@ EXPERIMENT_FILES = {
     "captaincook4d_task_graph": Path(__file__).resolve().parent / "captaincook4d_test.json",
     "noisy_demonstrations_task_graph": Path(__file__).resolve().parent / "noisy_demos_test.json",
 }
-EXPECTED_PROCEDURES = {"captaincook4d_task_graph": 12, "noisy_demonstrations_task_graph": 40}
+EXPECTED_PROCEDURES = {"captaincook4d_task_graph": 12, "noisy_demonstrations_task_graph": 100}
 DEFAULT_PREDICTIONS_ROOT = WORKSPACE / "checkpoints"
 DEFAULT_OUTPUT = WORKSPACE / "scoring" / "scores_test.json"
 

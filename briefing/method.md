@@ -28,8 +28,12 @@ where $\beta$ is a hyperparameter. The first term reinforces edges from the curr
 
 The DO model directly optimizes the adjacency matrix via gradient descent:
 - Parameters: a scoring matrix $A \in \mathbb{R}^{(n+2)\times(n+2)}$
-- The adjacency matrix is $Z = \text{softmax}(A)$, with masking to enforce DAG constraints (masking diagonal, START row, END column, and adding START→END if needed)
-- Trained with Adam optimizer (lr=0.1), $\beta=0.005$, max 1000 epochs, early stopping on Sequence Accuracy score
+- The adjacency matrix is $Z = \text{softmax}(A)$, with masking to enforce DAG constraints (masking diagonal, START row, END column)
+- Trained with Adam optimizer (lr=0.1), $\beta=0.005$, max 1000 epochs. $\beta$ is raised to 0.5 for a procedure when none of its sequences contains every key-step (Appendix A-C).
+- Early stopping on the weakly supervised Sequence Accuracy (SA, Appendix A-B). After every epoch, $Z$ is binarised at $1/n$, completed with START/END edges and transitively reduced. If the result is a DAG, SA measures how many of each step's predicted predecessors appear before it in the training sequences. Once SA > 0.95, training halts after 25 epochs without SA improvement (a repeated SA of 1.0 counts as no improvement), and the state at the halting epoch is the output.
+- One model per procedure; results are averaged over 5 runs (seeds).
+
+In this gym the reference implementation is `method/train.py` (`bash scripts/method.sh` writes `checkpoints/do/`, 5 seeds × all procedures of both experiments, CPU, about 15 minutes).
 
 ### 3. Task Graph Transformer (TGT) Model
 

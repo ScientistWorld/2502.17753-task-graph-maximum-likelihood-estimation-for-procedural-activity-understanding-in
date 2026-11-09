@@ -64,11 +64,37 @@ run_case() {
     rm -rf "checkpoints/$name"
     cp -r "$H/runs/$name" "checkpoints/$name"
     STAGED=("$name")
-    bash scripts/evaluate_test.sh > "$R/$name.test.log" 2>&1
-    cp scoring/scores_test.json "$R/$name.test.json"
+    bash scripts/evaluate_test.sh > "$R/case_$name.test.log" 2>&1
+    cp scoring/scores_test.json "$R/case_$name.test.json"
+    python3 eval/test/evaluate.py --output "$BACKUP/case_rerun.json" --details-output "$R/case_$name.details.json" > /dev/null
     rm -rf "checkpoints/$name"
     STAGED=()
 }
+
+echo "=== [hardening] stage C: beta chosen per experiment on the public split (model selection on train only) ==="
+python3 - <<'PY'
+import json
+import shutil
+from pathlib import Path
+R = Path("notes/hardening/results")
+runs = Path("notes/hardening/runs")
+train = json.load(open(R / "train_combined.json"))["experiments"]
+candidates = ["do", "do_beta_0p05", "do_beta_0p5"]
+out = runs / "do_beta_selected_on_public_split"
+shutil.rmtree(out, ignore_errors=True)
+out.mkdir(parents=True)
+choice = {}
+for exp, block in train.items():
+    best = max(candidates, key=lambda c: block["results"][c]["f1"])
+    choice[exp] = {"chosen": best, "train_f1": {c: block["results"][c]["f1"] for c in candidates}}
+    src = Path("checkpoints/do") if best == "do" else runs / best
+    for f in src.glob("*_predictions.npz"):
+        if f.name.startswith("noisy") == (exp == "noisy_demonstrations_task_graph"):
+            shutil.copy(f, out / f.name)
+json.dump(choice, open(R / "beta_selected_on_public_split.json", "w"), indent=2)
+print("beta chosen on the public split:", {k: v["chosen"] for k, v in choice.items()})
+PY
+run_case do_beta_selected_on_public_split
 
 echo "=== [hardening] stage B: sc_rewrite_ground_truth (public held-out graph files rewritten to the boundary star) ==="
 python3 - "$GT_DIR" <<'PY'

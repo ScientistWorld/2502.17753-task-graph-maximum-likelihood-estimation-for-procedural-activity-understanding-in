@@ -12,9 +12,12 @@ Writes notes/hardening/runs/<variant>/<procedure>_predictions.npz (5 trials each
   do_no_early_stopping      reference seeds, 1000 epochs, final state (previous reference)
   do_seed_ensemble          mean Z of the 5 reference seeds, repeated 5x
   do_seed_ensemble20        mean Z of all 20 seeds, repeated 5x
-  do_beta_0p005 / do_beta_0p05 / do_beta_0p5
+  do_beta_0p05 / do_beta_0p5
                             reference protocol with a fixed beta for every procedure
                             (the paper's beta ablation, Fig. 7)
+  do_beta_selected_by_sa    per procedure and seed, the beta in {paper rule, 0.05, 0.5}
+                            whose run ends with the highest Sequence Accuracy (the
+                            paper's own beta-selection protocol on Ego-Exo4D, App. A-C)
   always_before_hasse       transitive reduction of the "always observed before"
                             relation of the demonstrations (no learning), 5x
   precedence_vote_hasse     same with a majority vote: p precedes d in >= 80% of the
@@ -41,7 +44,7 @@ from method.train import DEFAULT_DATA, DEFAULT_SEEDS, procedure_key, train_do  #
 RUNS = ROOT / "notes" / "hardening" / "runs"
 RESULTS = ROOT / "notes" / "hardening" / "results"
 REFERENCE_DIR = ROOT / "checkpoints" / "do"
-BETA_VARIANTS = {"do_beta_0p005": 0.005, "do_beta_0p05": 0.05, "do_beta_0p5": 0.5}
+BETA_VARIANTS = {"do_beta_0p05": 0.05, "do_beta_0p5": 0.5}
 SEED_SETS = {
     "do_rerun_seedset_b": [1, 2, 3, 4, 5],
     "do_rerun_seedset_c": [6, 7, 8, 9, 10],
@@ -100,9 +103,16 @@ def main() -> None:
         determinism[key] = bool(all(np.array_equal(saved[i], run["pred_core"]) for i, run in enumerate(ref_runs)))
 
         extra = {name: [train_do(sd, seed=seed) for seed in seeds] for name, seeds in SEED_SETS.items()}
-        for name, beta in BETA_VARIANTS.items():
-            save(name, key, [train_do(sd, seed=seed, beta=beta)["pred_core"] for seed in DEFAULT_SEEDS],
-                 DEFAULT_SEEDS)
+        beta_runs = {name: [train_do(sd, seed=seed, beta=beta) for seed in DEFAULT_SEEDS]
+                     for name, beta in BETA_VARIANTS.items()}
+        for name, runs in beta_runs.items():
+            save(name, key, [r["pred_core"] for r in runs], DEFAULT_SEEDS)
+        candidates = [ref_runs] + [beta_runs[name] for name in BETA_VARIANTS]
+        selected = []
+        for i in range(len(DEFAULT_SEEDS)):
+            best = max(range(len(candidates)), key=lambda c: (candidates[c][i]["final_sequence_accuracy"], -c))
+            selected.append(candidates[best][i])
+        save("do_beta_selected_by_sa", key, [r["pred_core"] for r in selected], DEFAULT_SEEDS)
         save("do_no_early_stopping", key,
              [train_do(sd, seed=seed, early_stopping=False)["pred_core"] for seed in DEFAULT_SEEDS], DEFAULT_SEEDS)
 
@@ -122,6 +132,9 @@ def main() -> None:
                                              "final_sequence_accuracy", "fast_sa_consistent")} for r in ref_runs],
             **{name: [{k: r[k] for k in ("seed", "stop_epoch", "final_sequence_accuracy")} for r in runs]
                for name, runs in extra.items()},
+            **{name: [{k: r[k] for k in ("seed", "beta", "stop_epoch", "final_sequence_accuracy")} for r in runs]
+               for name, runs in beta_runs.items()},
+            "do_beta_selected_by_sa": [r["beta"] for r in selected],
         }
         print(f"{sd.scenario_name}: beta {ref_runs[0]['beta']}, reference stop epochs "
               f"{[r['stop_epoch'] for r in ref_runs]}, deterministic={determinism[key]}, "

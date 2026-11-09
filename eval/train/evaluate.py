@@ -1,7 +1,7 @@
 """Public (train/dev) evaluator for task-graph generation. Two experiments:
 
   captaincook4d_task_graph         12 public CaptainCook4D procedures
-  noisy_demonstrations_task_graph  40 public procedures whose demonstrations are
+  noisy_demonstrations_task_graph  100 public procedures whose demonstrations are
                                    perturbed with the paper's insert/delete/replace
                                    noise model (data/noisy_demos/train.json)
 

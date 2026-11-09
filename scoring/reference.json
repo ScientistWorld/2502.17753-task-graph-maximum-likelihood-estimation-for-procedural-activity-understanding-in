@@ -95,7 +95,7 @@
       "_note": "Paper numbers are averages over all 24 CaptainCook4D procedures; the gym reports the same metrics on two fixed 12-procedure halves (public / held-out). No setup was scaled down."
     },
     "noisy_demonstrations_task_graph": {
-      "description": "Task graph generation from noisy demonstrations (where the paper's method falls short): procedure graphs calibrated to CaptainCook4D (7-25 key-steps), 4-10 demonstrations each, every key-step perturbed with probability p by the paper's insert/delete/replace noise model (Section IV-F3); p is fixed in data/noisy_demos/. 40 public procedures (scores_train.json) and 40 held-out procedures (hidden test). Same prediction contract, post-processing and metrics as CaptainCook4D. Primary metric: F1.",
+      "description": "Task graph generation from noisy demonstrations (where the paper's method falls short): procedure graphs calibrated to CaptainCook4D (7-25 key-steps, ~1.23 edges per node), 4-10 demonstrations each, every key-step perturbed with probability p = 0.05 by the paper's insert/delete/replace noise model (Section IV-F3) and de-duplicated. 100 public procedures (scores_train.json) and 100 held-out procedures (hidden test). Same prediction contract, post-processing and metrics as CaptainCook4D. Primary metric: F1.",
       "weight": 0.3,
       "primary_metric": "f1",
       "metrics": {
@@ -117,7 +117,7 @@
         "worst_quartile_f1": {
           "higher_is_better": true,
           "coefficient": 0.35,
-          "description": "Mean F1 over the weakest quarter of procedures (10 of 40): rewards methods that do not trade hard procedures for easy ones."
+          "description": "Mean F1 over the weakest quarter of procedures (25 of 100): rewards methods that do not trade hard procedures for easy ones."
         },
         "edge_density_ratio": {
           "higher_is_better": true,
