@@ -25,7 +25,7 @@ import numpy as np
 ROOT = Path("/home/user")
 sys.path.insert(0, str(ROOT))
 
-from data.loader import load_data  # noqa: E402
+from data.loader import load_data, load_noisy_demos  # noqa: E402
 from method.train import DEFAULT_DATA, procedure_key  # noqa: E402
 
 RUNS = ROOT / "notes" / "hardening" / "runs"
@@ -34,6 +34,7 @@ PUBLIC_GRAPH_DIRS = [
     Path(DEFAULT_DATA) / "ground_truth_task_graphs",
     ROOT / "method" / "repo" / "data" / "captaincook4d" / "ground_truth_task_graphs",
 ]
+PUBLIC_NOISY_FILES = [ROOT / "data" / "noisy_demos" / "train.json", ROOT / "data" / "noisy_demos" / "test_inputs.json"]
 PARTIAL_KEYS = {"spicedhotchocolate", "tomatomozzarellasalad"}  # smallest held-out / public procedure
 
 
@@ -47,6 +48,11 @@ def save(case: str, key: str, cores, seeds=None) -> None:
 
 
 def public_edges(key: str):
+    for path in PUBLIC_NOISY_FILES:
+        if path.is_file():
+            entry = json.loads(path.read_text())["procedures"].get(key, {})
+            if entry.get("edges"):
+                return entry["edges"]
     for graph_dir in PUBLIC_GRAPH_DIRS:
         path = graph_dir / f"{key}.json"
         if path.is_file():
@@ -58,7 +64,7 @@ def public_edges(key: str):
 
 def main() -> None:
     report = {}
-    for sd in load_data(repo_data_path=DEFAULT_DATA):
+    for sd in load_data(repo_data_path=DEFAULT_DATA) + load_noisy_demos("all"):
         key = procedure_key(sd)
         n = sd.gt_node_count
         ref = np.load(REFERENCE_DIR / f"{key}_predictions.npz")["pred_cores"]

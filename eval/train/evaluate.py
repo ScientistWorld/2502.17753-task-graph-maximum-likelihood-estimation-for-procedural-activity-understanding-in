@@ -1,19 +1,24 @@
-"""Public (train/dev) evaluator: CaptainCook4D task-graph generation, 12 public procedures.
+"""Public (train/dev) evaluator for task-graph generation. Two experiments:
+
+  captaincook4d_task_graph         12 public CaptainCook4D procedures
+  noisy_demonstrations_task_graph  40 public procedures whose demonstrations are
+                                   perturbed with the paper's insert/delete/replace
+                                   noise model (data/noisy_demos/train.json)
 
 Self-contained in eval/train/ (it shares no code with the hidden test). Ground
-truth and demonstrations of the 12 public procedures are read from the
-downloaded CaptainCook4D data (scripts/download.sh). The hidden test applies
-exactly the same contract and metrics to 12 held-out procedures.
+truth and demonstrations of the public procedures are read from data/ (CaptainCook4D
+via scripts/download.sh; the noisy benchmark from data/noisy_demos/). The hidden
+test applies exactly the same contract and metrics to held-out procedures.
 
 Every directory under the predictions root (default: checkpoints/) that holds at
 least one ``*_predictions.npz`` file is scored as one method, keyed by the
-directory name. A method must provide, for each of the 12 public procedures,
+directory name. A method must provide, for each procedure of an experiment,
 ``<procedure>_predictions.npz`` with an array ``pred_cores`` of shape
 (5, n, n): five independent trials of a weighted adjacency matrix with finite
 values in [0, 1], indexed by the procedure's node ids (entry [i, j] scores
 "node j is a precondition of node i"). Any missing procedure, wrong shape,
-non-finite or out-of-range value marks the whole method as failed; a failed
-method receives the floor value of every scored metric.
+non-finite or out-of-range value marks the method as failed on that experiment;
+a failed method receives the floor value of every scored metric.
 
 Each trial is binarised at the fixed threshold 1/n and post-processed exactly as
 in the paper (boundary START/END completion, transitive reduction, removal of
@@ -21,7 +26,7 @@ the lowest-scored edge of every cycle), then compared with the ground truth.
 
 Usage (no arguments scores every method on disk):
     python3 eval/train/evaluate.py [--predictions-root DIR] [--output FILE]
-                                  [--details-output FILE]
+                                   [--details-output FILE]
 """
 
 from __future__ import annotations
@@ -41,6 +46,7 @@ import numpy as np
 
 WORKSPACE = Path(__file__).resolve().parents[2]
 DATA_DIR = WORKSPACE / "data" / "downloads" / "Differentiable-Task-Graph-Learning" / "data" / "captaincook4d"
+NOISY_FILE = WORKSPACE / "data" / "noisy_demos" / "train.json"
 DEFAULT_PREDICTIONS_ROOT = WORKSPACE / "checkpoints"
 DEFAULT_OUTPUT = WORKSPACE / "scoring" / "scores_train.json"
 
@@ -61,7 +67,6 @@ SCENARIO_KEYS = (
     "sautedmushrooms",
     "tomatomozzarellasalad",
 )
-EXPERIMENT = "captaincook4d_task_graph"
 N_TRIALS = 5
 BASELINE_KEY = "count_based"
 PREDICTION_SUFFIX = "_predictions.npz"
@@ -99,7 +104,7 @@ class Procedure:
     sequences: List[List[int]]
 
 
-def load_procedures() -> List[Procedure]:
+def load_captaincook4d_procedures() -> List[Procedure]:
     with open(DATA_DIR / "task_graph_generation_annotations.json") as f:
         annotations = json.load(f)
     videos = annotations["annotations"]
@@ -134,6 +139,27 @@ def load_procedures() -> List[Procedure]:
         procedures.append(Procedure(key=key, name=key.replace("_", " ").title(), n=n,
                                     gt_adj=gt_adj, sequences=sequences))
     return procedures
+
+
+def load_noisy_procedures() -> List[Procedure]:
+    with open(NOISY_FILE) as f:
+        blob = json.load(f)
+    procedures: List[Procedure] = []
+    for key in sorted(blob["procedures"]):
+        entry = blob["procedures"][key]
+        n = int(entry["n_nodes"])
+        gt_adj = np.zeros((n, n), dtype=np.float32)
+        for a, b in entry["edges"]:
+            gt_adj[int(b), int(a)] = 1.0
+        sequences = [[0, 1] + [int(v) + 1 for v in demo] + [n, n + 1] for demo in entry["demonstrations"]]
+        procedures.append(Procedure(key=key, name=key, n=n, gt_adj=gt_adj, sequences=sequences))
+    return procedures
+
+
+EXPERIMENT_LOADERS = {
+    "captaincook4d_task_graph": load_captaincook4d_procedures,
+    "noisy_demonstrations_task_graph": load_noisy_procedures,
+}
 
 
 # --------------------------------------------------------------------------
@@ -477,48 +503,59 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser.add_argument("--details-output", type=Path, default=None)
     args = parser.parse_args(argv)
 
-    procedures = load_procedures()
-    print(f"Loaded {len(procedures)} public {SLICE_NAME} procedures")
-
-    results: Dict[str, Dict[str, float]] = {}
+    method_dirs = discover_methods(args.predictions_root)
+    experiments: Dict[str, Dict] = {}
     status: Dict[str, Dict] = {}
     diagnostics: Dict[str, Dict] = {}
     details: Dict[str, Dict] = {}
+    manifest: Dict[str, Dict] = {}
 
-    for method_dir in discover_methods(args.predictions_root):
-        key = method_key(method_dir)
-        try:
-            scored = score_method(method_dir, procedures)
-            results[key] = scored["scores"]
-            status[key] = {"status": "ok", "artifact_dir": relative(method_dir)}
-            diagnostics[key] = scored["diagnostics"]
-            details[key] = scored["per_procedure"]
-            print(f"  {key}: F1={scored['scores']['f1']:.2f}")
-        except Exception as exc:  # contract violation (InvalidSubmission) or unscorable artifact
-            reason = str(exc) if isinstance(exc, InvalidSubmission) else f"unscorable: {type(exc).__name__}: {exc}"
-            results[key] = dict(FAILED_SCORES)
-            status[key] = {"status": "failed", "reason": reason, "artifact_dir": relative(method_dir)}
-            print(f"  {key}: FAILED ({reason})")
+    for experiment, loader in EXPERIMENT_LOADERS.items():
+        procedures = loader()
+        print(f"[{experiment}] {len(procedures)} public {SLICE_NAME} procedures")
+        results: Dict[str, Dict[str, float]] = {}
+        exp_status: Dict[str, Dict] = {}
+        exp_diag: Dict[str, Dict] = {}
+        exp_details: Dict[str, Dict] = {}
+        for method_dir in method_dirs:
+            key = method_key(method_dir)
+            try:
+                scored = score_method(method_dir, procedures)
+                results[key] = scored["scores"]
+                exp_status[key] = {"status": "ok", "artifact_dir": relative(method_dir)}
+                exp_diag[key] = scored["diagnostics"]
+                exp_details[key] = scored["per_procedure"]
+                print(f"  {key}: F1={scored['scores']['f1']:.2f}")
+            except Exception as exc:  # contract violation (InvalidSubmission) or unscorable artifact
+                reason = str(exc) if isinstance(exc, InvalidSubmission) else f"unscorable: {type(exc).__name__}: {exc}"
+                results[key] = dict(FAILED_SCORES)
+                exp_status[key] = {"status": "failed", "reason": reason, "artifact_dir": relative(method_dir)}
+                print(f"  {key}: FAILED ({reason})")
 
-    baseline = score_baseline(procedures)
-    results[BASELINE_KEY] = baseline["scores"]
-    status[BASELINE_KEY] = {"status": "ok", "artifact_dir": "built-in (eval/train)"}
-    diagnostics[BASELINE_KEY] = baseline["diagnostics"]
-    details[BASELINE_KEY] = baseline["per_procedure"]
-    print(f"  {BASELINE_KEY}: F1={baseline['scores']['f1']:.2f}")
+        baseline = score_baseline(procedures)
+        results[BASELINE_KEY] = baseline["scores"]
+        exp_status[BASELINE_KEY] = {"status": "ok", "artifact_dir": "built-in (eval/train)"}
+        exp_diag[BASELINE_KEY] = baseline["diagnostics"]
+        exp_details[BASELINE_KEY] = baseline["per_procedure"]
+        print(f"  {BASELINE_KEY}: F1={baseline['scores']['f1']:.2f}")
+
+        experiments[experiment] = {"results": results}
+        status[experiment] = exp_status
+        diagnostics[experiment] = exp_diag
+        details[experiment] = exp_details
+        manifest[experiment] = {"scenario_count": len(procedures),
+                                "scenarios": sorted(proc.name for proc in procedures)}
 
     output = {
         "slice": SLICE_NAME,
         "slice_manifest": {
             "slice": SLICE_NAME,
-            "dataset": EXPERIMENT,
-            "split_rule": "balanced fixed 12/12 split over CaptainCook4D procedures by GT node and edge counts",
-            "scenario_count": len(procedures),
-            "scenarios": sorted(proc.name for proc in procedures),
+            "split_rule": "fixed public/held-out split; CaptainCook4D balanced 12/12 by GT node and edge counts",
             "trials_per_procedure": N_TRIALS,
             "predictions_root": relative(args.predictions_root),
+            "experiments": manifest,
         },
-        "experiments": {EXPERIMENT: {"results": results}},
+        "experiments": experiments,
         "method_status": status,
         "diagnostics": diagnostics,
     }

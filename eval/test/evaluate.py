@@ -1,19 +1,24 @@
-"""Hidden-test evaluator: CaptainCook4D task-graph generation, 12 held-out procedures.
+"""Hidden-test evaluator for task-graph generation. Two scored experiments:
+
+  captaincook4d_task_graph         12 held-out CaptainCook4D procedures
+  noisy_demonstrations_task_graph  40 held-out procedures whose demonstrations are
+                                   perturbed with the paper's insert/delete/replace
+                                   noise model (data/noisy_demos/test_inputs.json)
 
 Self-contained in eval/test/. The ground-truth graphs and the demonstration
 sequences used by the built-in Count-Based baseline are read only from
-eval/test/captaincook4d_test.json; nothing a method writes is trusted except its
-raw prediction matrices.
+eval/test/captaincook4d_test.json and eval/test/noisy_demos_test.json; nothing a
+method writes is trusted except its raw prediction matrices.
 
 Every directory under the predictions root (default: checkpoints/) that holds at
 least one ``*_predictions.npz`` file is scored as one method, keyed by the
-directory name. A method must provide, for each of the 12 held-out procedures,
-``<procedure>_predictions.npz`` with an array ``pred_cores`` of shape
+directory name. A method must provide, for each held-out procedure of an
+experiment, ``<procedure>_predictions.npz`` with an array ``pred_cores`` of shape
 (5, n, n): five independent trials of a weighted adjacency matrix with finite
 values in [0, 1], indexed by the procedure's node ids (entry [i, j] scores
 "node j is a precondition of node i"). Any missing procedure, wrong shape,
-non-finite or out-of-range value marks the whole method as failed; a failed
-method receives the floor value of every scored metric.
+non-finite or out-of-range value marks the method as failed on that experiment;
+a failed method receives the floor value of every scored metric.
 
 Each trial is binarised at the fixed threshold 1/n and post-processed exactly as
 in the paper (boundary START/END completion, transitive reduction, removal of
@@ -40,12 +45,15 @@ import numpy as np
 
 
 WORKSPACE = Path(__file__).resolve().parents[2]
-DATA_FILE = Path(__file__).resolve().parent / "captaincook4d_test.json"
+EXPERIMENT_FILES = {
+    "captaincook4d_task_graph": Path(__file__).resolve().parent / "captaincook4d_test.json",
+    "noisy_demonstrations_task_graph": Path(__file__).resolve().parent / "noisy_demos_test.json",
+}
+EXPECTED_PROCEDURES = {"captaincook4d_task_graph": 12, "noisy_demonstrations_task_graph": 40}
 DEFAULT_PREDICTIONS_ROOT = WORKSPACE / "checkpoints"
 DEFAULT_OUTPUT = WORKSPACE / "scoring" / "scores_test.json"
 
 SLICE_NAME = "test"
-EXPERIMENT = "captaincook4d_task_graph"
 N_TRIALS = 5
 BASELINE_KEY = "count_based"
 PREDICTION_SUFFIX = "_predictions.npz"
@@ -83,8 +91,8 @@ class Procedure:
     sequences: List[List[int]]
 
 
-def load_procedures() -> List[Procedure]:
-    with open(DATA_FILE) as f:
+def load_procedures(experiment: str) -> List[Procedure]:
+    with open(EXPERIMENT_FILES[experiment]) as f:
         blob = json.load(f)
     procedures: List[Procedure] = []
     for key in sorted(blob["procedures"]):
@@ -97,8 +105,9 @@ def load_procedures() -> List[Procedure]:
             Procedure(key=key, name=entry["name"], n=n, gt_adj=gt_adj,
                       sequences=[list(map(int, s)) for s in entry["sequences"]])
         )
-    if len(procedures) != 12:
-        raise RuntimeError(f"expected 12 held-out procedures, found {len(procedures)}")
+    if len(procedures) != EXPECTED_PROCEDURES[experiment]:
+        raise RuntimeError(f"{experiment}: expected {EXPECTED_PROCEDURES[experiment]} held-out procedures, "
+                           f"found {len(procedures)}")
     return procedures
 
 
@@ -443,48 +452,59 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser.add_argument("--details-output", type=Path, default=None)
     args = parser.parse_args(argv)
 
-    procedures = load_procedures()
-    print(f"Loaded {len(procedures)} held-out {SLICE_NAME} procedures")
-
-    results: Dict[str, Dict[str, float]] = {}
+    method_dirs = discover_methods(args.predictions_root)
+    experiments: Dict[str, Dict] = {}
     status: Dict[str, Dict] = {}
     diagnostics: Dict[str, Dict] = {}
     details: Dict[str, Dict] = {}
+    manifest: Dict[str, Dict] = {}
 
-    for method_dir in discover_methods(args.predictions_root):
-        key = method_key(method_dir)
-        try:
-            scored = score_method(method_dir, procedures)
-            results[key] = scored["scores"]
-            status[key] = {"status": "ok", "artifact_dir": relative(method_dir)}
-            diagnostics[key] = scored["diagnostics"]
-            details[key] = scored["per_procedure"]
-            print(f"  {key}: F1={scored['scores']['f1']:.2f}")
-        except Exception as exc:  # contract violation (InvalidSubmission) or unscorable artifact
-            reason = str(exc) if isinstance(exc, InvalidSubmission) else f"unscorable: {type(exc).__name__}: {exc}"
-            results[key] = dict(FAILED_SCORES)
-            status[key] = {"status": "failed", "reason": reason, "artifact_dir": relative(method_dir)}
-            print(f"  {key}: FAILED ({reason})")
+    for experiment in EXPERIMENT_FILES:
+        procedures = load_procedures(experiment)
+        print(f"[{experiment}] {len(procedures)} held-out {SLICE_NAME} procedures")
+        results: Dict[str, Dict[str, float]] = {}
+        exp_status: Dict[str, Dict] = {}
+        exp_diag: Dict[str, Dict] = {}
+        exp_details: Dict[str, Dict] = {}
+        for method_dir in method_dirs:
+            key = method_key(method_dir)
+            try:
+                scored = score_method(method_dir, procedures)
+                results[key] = scored["scores"]
+                exp_status[key] = {"status": "ok", "artifact_dir": relative(method_dir)}
+                exp_diag[key] = scored["diagnostics"]
+                exp_details[key] = scored["per_procedure"]
+                print(f"  {key}: F1={scored['scores']['f1']:.2f}")
+            except Exception as exc:  # contract violation (InvalidSubmission) or unscorable artifact
+                reason = str(exc) if isinstance(exc, InvalidSubmission) else f"unscorable: {type(exc).__name__}: {exc}"
+                results[key] = dict(FAILED_SCORES)
+                exp_status[key] = {"status": "failed", "reason": reason, "artifact_dir": relative(method_dir)}
+                print(f"  {key}: FAILED ({reason})")
 
-    baseline = score_baseline(procedures)
-    results[BASELINE_KEY] = baseline["scores"]
-    status[BASELINE_KEY] = {"status": "ok", "artifact_dir": "built-in (eval/test)"}
-    diagnostics[BASELINE_KEY] = baseline["diagnostics"]
-    details[BASELINE_KEY] = baseline["per_procedure"]
-    print(f"  {BASELINE_KEY}: F1={baseline['scores']['f1']:.2f}")
+        baseline = score_baseline(procedures)
+        results[BASELINE_KEY] = baseline["scores"]
+        exp_status[BASELINE_KEY] = {"status": "ok", "artifact_dir": "built-in (eval/test)"}
+        exp_diag[BASELINE_KEY] = baseline["diagnostics"]
+        exp_details[BASELINE_KEY] = baseline["per_procedure"]
+        print(f"  {BASELINE_KEY}: F1={baseline['scores']['f1']:.2f}")
+
+        experiments[experiment] = {"results": results}
+        status[experiment] = exp_status
+        diagnostics[experiment] = exp_diag
+        details[experiment] = exp_details
+        manifest[experiment] = {"scenario_count": len(procedures),
+                                "scenarios": sorted(proc.name for proc in procedures)}
 
     output = {
         "slice": SLICE_NAME,
         "slice_manifest": {
             "slice": SLICE_NAME,
-            "dataset": EXPERIMENT,
-            "split_rule": "balanced fixed 12/12 split over CaptainCook4D procedures by GT node and edge counts",
-            "scenario_count": len(procedures),
-            "scenarios": sorted(proc.name for proc in procedures),
+            "split_rule": "fixed public/held-out split; CaptainCook4D balanced 12/12 by GT node and edge counts",
             "trials_per_procedure": N_TRIALS,
             "predictions_root": relative(args.predictions_root),
+            "experiments": manifest,
         },
-        "experiments": {EXPERIMENT: {"results": results}},
+        "experiments": experiments,
         "method_status": status,
         "diagnostics": diagnostics,
     }

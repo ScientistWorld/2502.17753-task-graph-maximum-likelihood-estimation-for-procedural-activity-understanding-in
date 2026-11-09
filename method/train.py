@@ -12,7 +12,13 @@ code (task-graph-learning/DO/train_with_gt.py):
     is computed. Once SA > 0.95, training halts after 25 consecutive epochs
     without SA improvement (a repeated SA of 1.0 counts as no improvement). The
     model state at the halting epoch is the output.
+  * beta = 0.005, raised to 0.5 for a procedure none of whose demonstrations
+    contains every key-step (paper Appendix A-C: "we found it advantageous to
+    increase it to 0.50 in cases where sequences do not include all
+    taxonomy-defined steps"); never triggered on CaptainCook4D.
 Ground-truth graphs are never read: only the demonstrations and the node list.
+Datasets: CaptainCook4D (24 procedures) and the noisy-demonstration benchmark
+(data/noisy_demos, public and held-out procedures).
 
 Output: <output>/<procedure>_predictions.npz with ``pred_cores`` (n_seeds, n, n),
 the START..END block of Z for every seed, plus ``seeds``; and
@@ -36,7 +42,7 @@ import torch
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from data.loader import TaskGraphData, load_data
+from data.loader import TaskGraphData, load_data, load_noisy_demos
 from method.tgml import (
     DirectOptimization,
     build_tgml_events,
@@ -85,6 +91,58 @@ def released_sequence_accuracy(pred_core: np.ndarray, n_gt: int, sa_sequences: L
     return sequences_accuracy(sa_sequences, extract_predecessors(graph))
 
 
+def sequence_accuracy_context(sa_sequences: List[List[int]], n_gt: int):
+    """Precompute, per demonstration, which nodes precede each position."""
+    context = []
+    for seq in sa_sequences:
+        before = np.zeros((len(seq), n_gt), dtype=bool)
+        for t in range(1, len(seq)):
+            before[t] = before[t - 1]
+            before[t, seq[t - 1]] = True
+        context.append((np.asarray(seq, dtype=np.int64), before))
+    return context
+
+
+def fast_released_sequence_accuracy(pred_core: np.ndarray, n_gt: int, context) -> float:
+    """Vectorised ``released_sequence_accuracy`` (same graph semantics, same
+    summation order). For a DAG the sequential redundant-edge deletion of the
+    released code equals the unique transitive reduction; a cyclic graph scores 0."""
+    adj = pred_core >= (1.0 / n_gt)
+    id_start, id_end = 0, n_gt - 1
+    nodes = np.arange(n_gt)
+    boundary = (nodes != id_start) & (nodes != id_end)
+    adj[id_end, np.nonzero(~adj.any(axis=0) & boundary)[0]] = True
+    adj[np.nonzero(~adj.any(axis=1) & boundary)[0], id_start] = True
+    np.fill_diagonal(adj, False)  # self-loops are always deleted as redundant
+    reach = adj.copy()
+    for k in range(n_gt):
+        reach |= np.outer(reach[:, k], reach[k, :])
+    if reach.diagonal().any():
+        return 0.0
+    reduced = adj & ~((adj.astype(np.int64) @ reach.astype(np.int64)) > 0)
+    accuracy = 0
+    for seq, before in context:
+        preds = reduced[seq]
+        sizes = preds.sum(axis=1)
+        counts = (preds & before).sum(axis=1)
+        correct = 0
+        for t in range(len(seq)):
+            if t == 0:
+                if sizes[0] == 0:
+                    correct += 1
+            elif sizes[t] > 0:
+                correct += counts[t] / sizes[t]
+        accuracy += correct / len(seq)
+    return float(accuracy / len(context)) if context else 0.0
+
+
+def paper_beta(scenario_data: TaskGraphData) -> float:
+    """beta = 0.005, or 0.5 when no demonstration contains every key-step."""
+    steps = set(range(2, scenario_data.gt_node_count))  # matrix indices of key-steps
+    complete = any(steps <= set(seq) for seq in scenario_data.sequences)
+    return 0.005 if complete else 0.5
+
+
 def _padded_sequences(sequences: List[List[int]]) -> torch.Tensor:
     max_len = max(len(seq) for seq in sequences)
     y = np.zeros((len(sequences), max_len), dtype=np.int64)
@@ -93,9 +151,12 @@ def _padded_sequences(sequences: List[List[int]]) -> torch.Tensor:
     return torch.tensor(y, dtype=torch.long)
 
 
+SA_CROSSCHECK_EPOCHS = (0, 1, 5, 20, 60, 150, 400)
+
+
 def train_do(
     scenario_data: TaskGraphData,
-    beta: float = 0.005,
+    beta: Optional[float] = None,
     lr: float = 0.1,
     max_epochs: int = 1000,
     seed: int = 42,
@@ -112,6 +173,8 @@ def train_do(
     """
     np.random.seed(seed)
     torch.manual_seed(seed)
+    if beta is None:
+        beta = paper_beta(scenario_data)
 
     n_gt = scenario_data.gt_node_count
     n_matrix = n_gt + 2
@@ -124,6 +187,8 @@ def train_do(
     events = build_tgml_events(sequences, n_matrix)
     # SA uses the demonstrations as node-id sequences with START and END.
     sa_sequences = [[step - 1 for step in seq[1:-1]] for seq in sequences]
+    sa_context = sequence_accuracy_context(sa_sequences, n_gt)
+    use_fast_sa = True
 
     if verify_loss:
         with torch.no_grad():
@@ -157,7 +222,17 @@ def train_do(
             first_core = core.copy()
 
         if early_stopping:
-            sa = released_sequence_accuracy(core, n_gt, sa_sequences)
+            if use_fast_sa:
+                sa = fast_released_sequence_accuracy(core, n_gt, sa_context)
+                if epoch in SA_CROSSCHECK_EPOCHS:
+                    slow = released_sequence_accuracy(core, n_gt, sa_sequences)
+                    if slow != sa:
+                        print(f"    WARNING: fast SA {sa!r} != released SA {slow!r} "
+                              f"({scenario_data.scenario_name}, seed {seed}, epoch {epoch}); using released SA")
+                        use_fast_sa = False
+                        sa = slow
+            else:
+                sa = released_sequence_accuracy(core, n_gt, sa_sequences)
             last_sa = sa
             if sa > sa_threshold:
                 if sa == 1.0 and sa == best_sa:
@@ -188,6 +263,8 @@ def train_do(
         "final_sequence_accuracy": float(last_sa),
         "final_loss": loss_value,
         "seed": int(seed),
+        "beta": float(beta),
+        "fast_sa_consistent": bool(use_fast_sa),
     }
 
 
@@ -199,7 +276,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Train the DO model (TGML loss) on CaptainCook4D")
     parser.add_argument("--repo_data_path", type=str, default=DEFAULT_DATA)
     parser.add_argument("--output", type=str, default="checkpoints/do")
-    parser.add_argument("--beta", type=float, default=0.005)
+    parser.add_argument("--beta", type=float, default=None,
+                        help="Fixed beta; default: the paper's rule (0.005, or 0.5 without complete demonstrations).")
+    parser.add_argument("--datasets", nargs="+", default=["captaincook4d", "noisy_demos"],
+                        choices=["captaincook4d", "noisy_demos"])
     parser.add_argument("--lr", type=float, default=0.1)
     parser.add_argument("--max_epochs", type=int, default=1000)
     parser.add_argument("--patience", type=int, default=25)
@@ -212,12 +292,16 @@ def main() -> None:
     args = parser.parse_args()
 
     torch.set_num_threads(1)
-    data = load_data(repo_data_path=args.repo_data_path)
+    data = []
+    if "captaincook4d" in args.datasets:
+        data += load_data(repo_data_path=args.repo_data_path)
+    if "noisy_demos" in args.datasets:
+        data += load_noisy_demos("all")
     if args.procedures:
         wanted = {p.lower() for p in args.procedures}
         data = [d for d in data if procedure_key(d) in wanted]
     os.makedirs(args.output, exist_ok=True)
-    print(f"Training DO on {len(data)} procedures, seeds={args.seeds}, beta={args.beta}, "
+    print(f"Training DO on {len(data)} procedures, seeds={args.seeds}, beta={args.beta or 'paper rule'}, "
           f"early_stopping={not args.no_early_stopping}")
 
     for scenario_data in data:
@@ -235,11 +319,12 @@ def main() -> None:
         )
         with open(os.path.join(args.output, f"{key}_training.json"), "w") as f:
             json.dump({"procedure": scenario_data.scenario_name,
-                       "runs": [{k: r[k] for k in ("seed", "stop_epoch", "best_epoch", "best_sequence_accuracy",
-                                                   "final_sequence_accuracy", "final_loss")} for r in runs]},
+                       "runs": [{k: r[k] for k in ("seed", "beta", "stop_epoch", "best_epoch", "best_sequence_accuracy",
+                                                   "final_sequence_accuracy", "final_loss", "fast_sa_consistent")}
+                                for r in runs]},
                       f, indent=2)
-        print(f"  {scenario_data.scenario_name}: stop epochs {[r['stop_epoch'] for r in runs]}, "
-              f"SA {[round(r['final_sequence_accuracy'], 3) for r in runs]}")
+        print(f"  {scenario_data.scenario_name}: beta {runs[0]['beta']}, stop epochs {[r['stop_epoch'] for r in runs]}, "
+              f"SA {[round(r['final_sequence_accuracy'], 3) for r in runs]}", flush=True)
     print(f"Saved predictions to {args.output}")
 
 

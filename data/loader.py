@@ -260,3 +260,44 @@ def load_data(repo_data_path: str = None, use_synthetic: bool = False) -> List[T
     else:
         print(f"Loading CaptainCook4D from {repo_data_path}")
         return load_captaincook4d(repo_data_path)
+
+
+NOISY_DEMOS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "noisy_demos")
+
+
+def load_noisy_demos(split: str = "all", data_dir: str = NOISY_DEMOS_DIR) -> List[TaskGraphData]:
+    """
+    Load the noisy-demonstration benchmark (second scored experiment).
+
+    split: "train" (public procedures with graphs), "test" (held-out procedures,
+    demonstrations only) or "all". Node 0 = START, n-1 = END, steps 1..n-2;
+    demonstrations are converted to the same matrix indices as CaptainCook4D:
+    [beta=0, START=1, step+1 ..., END=n, gamma=n+1].
+    """
+    files = {"train": "train.json", "test": "test_inputs.json"}
+    wanted = ["train", "test"] if split == "all" else [split]
+    results = []
+    for part in wanted:
+        path = os.path.join(data_dir, files[part])
+        if not os.path.exists(path):
+            continue
+        with open(path) as f:
+            blob = json.load(f)
+        for key in sorted(blob["procedures"]):
+            entry = blob["procedures"][key]
+            n = int(entry["n_nodes"])
+            sequences = [[0, 1] + [int(s) + 1 for s in demo] + [n, n + 1] for demo in entry["demonstrations"]]
+            gt_adj = np.zeros((n, n), dtype=np.float32)
+            edges = entry.get("edges")
+            for a, b in edges or []:
+                gt_adj[int(b), int(a)] = 1.0
+            results.append(TaskGraphData(
+                scenario_name=key,
+                num_steps=n - 2,
+                sequences=sequences,
+                gt_adj_matrix=gt_adj,
+                step_names={i: ("START" if i == 0 else "END" if i == n - 1 else f"step_{i}") for i in range(n)},
+                gt_node_count=n,
+                has_ground_truth=edges is not None,
+            ))
+    return results

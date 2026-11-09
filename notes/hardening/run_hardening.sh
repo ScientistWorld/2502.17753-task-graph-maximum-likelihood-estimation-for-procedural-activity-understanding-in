@@ -12,11 +12,14 @@ source /home/user/scripts/common_env.sh
 H=notes/hardening
 R=$H/results
 GT_DIR=data/downloads/Differentiable-Task-Graph-Learning/data/captaincook4d/ground_truth_task_graphs
+NOISY_DIR=data/noisy_demos
 BACKUP="$(mktemp -d)"
 MUTATION_CASES=" sc_rewrite_ground_truth sc_partial_coverage sc_forge_scores "
-mkdir -p "$R"
+rm -rf "$H/runs" "$R"
+mkdir -p "$R" "$H/runs"
 
 cp -r "$GT_DIR" "$BACKUP/gt"
+cp -r "$NOISY_DIR" "$BACKUP/noisy"
 cp scoring/scores_train.json "$BACKUP/scores_train.json"
 cp scoring/scores_test.json "$BACKUP/scores_test.json"
 STAGED=()
@@ -25,6 +28,7 @@ restore() {
         [ -n "$name" ] && rm -rf "checkpoints/$name"
     done
     rm -rf "$GT_DIR" && cp -r "$BACKUP/gt" "$GT_DIR"
+    rm -rf "$NOISY_DIR" && cp -r "$BACKUP/noisy" "$NOISY_DIR"
     cp "$BACKUP/scores_train.json" scoring/scores_train.json
     cp "$BACKUP/scores_test.json" scoring/scores_test.json
 }
@@ -66,7 +70,7 @@ run_case() {
     STAGED=()
 }
 
-echo "=== [hardening] stage B: sc_rewrite_ground_truth (public held-out graphs rewritten to the boundary star) ==="
+echo "=== [hardening] stage B: sc_rewrite_ground_truth (public held-out graph files rewritten to the boundary star) ==="
 python3 - "$GT_DIR" <<'PY'
 import json, os, sys
 graph_dir = sys.argv[1]
@@ -83,9 +87,17 @@ for name in sorted(os.listdir(graph_dir)):
     graph.pop("edges_withheld", None)
     json.dump(graph, open(path, "w"))
 print("rewrote", len(os.listdir(graph_dir)), "public graph files")
+path = "data/noisy_demos/test_inputs.json"
+blob = json.load(open(path))
+for key, entry in blob["procedures"].items():
+    n = entry["n_nodes"]
+    entry["edges"] = [[v, n - 1] for v in range(1, n - 1)] + [[0, v] for v in range(1, n - 1)]
+json.dump(blob, open(path, "w"))
+print("added boundary-star edges to", len(blob["procedures"]), "public noisy test procedures")
 PY
 run_case sc_rewrite_ground_truth
 rm -rf "$GT_DIR" && cp -r "$BACKUP/gt" "$GT_DIR"
+rm -rf "$NOISY_DIR" && cp -r "$BACKUP/noisy" "$NOISY_DIR"
 
 echo "=== [hardening] stage B: sc_partial_coverage (+ registry key captaincook4d_partial_compare) ==="
 python3 - <<'PY'

@@ -1,6 +1,7 @@
 #!/bin/bash
-# Job: reproduce the reference end to end (CPU), run the hardening audit, then
-# regenerate the reference-only score files.
+# Job: install the noisy-demonstration experiment (noise level chosen on the public
+# split by a predeclared rule), reproduce the reference end to end (CPU) on both
+# experiments, run the hardening audit, regenerate the reference-only score files.
 set -euo pipefail
 cd /home/user
 source /home/user/scripts/common_env.sh
@@ -8,9 +9,30 @@ source /home/user/scripts/common_env.sh
 echo "=== $(date) === environment ==="
 python3 -c "import sys, numpy, networkx, torch; print(sys.version); print('numpy', numpy.__version__); print('networkx', networkx.__version__, networkx.__file__); print('torch', torch.__version__)"
 
-echo "=== $(date) === reference: DO + TGML + SA early stopping, 5 seeds, 24 procedures ==="
+PREV="$(mktemp -d)"
+cp checkpoints/do/*_predictions.npz "$PREV"/ 2>/dev/null || true
+
+echo "=== $(date) === noisy-demonstration benchmark: choose noise level on the public split ==="
+python3 notes/hardening/select_noise_level.py
+
+echo "=== $(date) === reference: DO + TGML + SA early stopping, 5 seeds, both experiments ==="
 rm -rf checkpoints/do
 bash scripts/method.sh
+python3 - "$PREV" <<'PY'
+import glob, os, sys
+import numpy as np
+prev = sys.argv[1]
+same, diff = 0, []
+for path in sorted(glob.glob(os.path.join(prev, "*_predictions.npz"))):
+    name = os.path.basename(path)
+    a = np.load(path)["pred_cores"]
+    b = np.load(os.path.join("checkpoints/do", name))["pred_cores"]
+    if a.shape == b.shape and np.array_equal(a, b):
+        same += 1
+    else:
+        diff.append(name)
+print(f"CaptainCook4D reference vs previous job: {same} identical, differing: {diff}")
+PY
 bash scripts/evaluate_train.sh
 bash scripts/evaluate_test.sh
 

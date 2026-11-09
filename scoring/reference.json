@@ -2,31 +2,149 @@
   "experiments": {
     "captaincook4d_task_graph": {
       "description": "Task graph generation on CaptainCook4D: one predicted prerequisite graph per procedure from its demonstrations, scored on directed edges against the ground-truth graph. The gym scores 12 public procedures (scores_train.json / scores.json) and 12 held-out procedures (hidden test, scores_test.json); five trials per procedure, metrics averaged over trials and then over procedures. Primary metric: F1.",
-      "weight": 1.0,
+      "weight": 0.7,
       "primary_metric": "f1",
       "metrics": {
-        "precision": {"higher_is_better": true, "coefficient": 0.25, "description": "Edge-level precision (%) on directed prerequisite edges after post-processing."},
-        "recall": {"higher_is_better": true, "coefficient": 0.25, "description": "Edge-level recall (%) on directed prerequisite edges after post-processing."},
-        "f1": {"higher_is_better": true, "coefficient": 1.0, "description": "Edge-level F1 (%) on directed prerequisite edges, the paper's primary benchmark metric."},
-        "worst_quartile_f1": {"higher_is_better": true, "coefficient": 0.35, "description": "Mean F1 over the weakest quarter of procedures (3 of 12): rewards methods that do not trade hard procedures for easy ones."},
-        "edge_density_ratio": {"higher_is_better": true, "coefficient": 0.15, "description": "min(|E_pred|, |E_gt|) / max(|E_pred|, |E_gt|): penalises over- and under-connected graphs."},
-        "path_coverage": {"higher_is_better": true, "coefficient": 0.12, "description": "Fraction of ground-truth source-to-sink paths whose every edge is predicted."},
-        "topological_distance": {"higher_is_better": false, "coefficient": 0.18, "description": "Fraction of ordered node pairs whose reachability (precedence) differs between predicted and ground-truth graph; lower is better."}
+        "precision": {
+          "higher_is_better": true,
+          "coefficient": 0.25,
+          "description": "Edge-level precision (%) on directed prerequisite edges after post-processing."
+        },
+        "recall": {
+          "higher_is_better": true,
+          "coefficient": 0.25,
+          "description": "Edge-level recall (%) on directed prerequisite edges after post-processing."
+        },
+        "f1": {
+          "higher_is_better": true,
+          "coefficient": 1.0,
+          "description": "Edge-level F1 (%) on directed prerequisite edges, the paper's primary benchmark metric."
+        },
+        "worst_quartile_f1": {
+          "higher_is_better": true,
+          "coefficient": 0.35,
+          "description": "Mean F1 over the weakest quarter of procedures (3 of 12): rewards methods that do not trade hard procedures for easy ones."
+        },
+        "edge_density_ratio": {
+          "higher_is_better": true,
+          "coefficient": 0.15,
+          "description": "min(|E_pred|, |E_gt|) / max(|E_pred|, |E_gt|): penalises over- and under-connected graphs."
+        },
+        "path_coverage": {
+          "higher_is_better": true,
+          "coefficient": 0.12,
+          "description": "Fraction of ground-truth source-to-sink paths whose every edge is predicted."
+        },
+        "topological_distance": {
+          "higher_is_better": false,
+          "coefficient": 0.18,
+          "description": "Fraction of ordered node pairs whose reachability (precedence) differs between predicted and ground-truth graph; lower is better."
+        }
       },
       "results": {
-        "msgi": {"type": "baseline", "precision": 11.3, "recall": 13.3, "f1": 12.2},
-        "llama3": {"type": "baseline", "precision": 53.0, "recall": 57.4, "f1": 54.9},
-        "count_based": {"type": "baseline", "precision": 66.0, "recall": 55.4, "f1": 60.2},
-        "msg2": {"type": "baseline", "precision": 73.3, "recall": 73.6, "f1": 73.3},
-        "tgt_text": {"type": "proposed", "precision": 79.9, "recall": 81.9, "f1": 80.8},
-        "do": {"type": "proposed", "precision": 86.4, "recall": 89.7, "f1": 87.8}
+        "msgi": {
+          "type": "baseline",
+          "precision": 11.3,
+          "recall": 13.3,
+          "f1": 12.2
+        },
+        "llama3": {
+          "type": "baseline",
+          "precision": 53.0,
+          "recall": 57.4,
+          "f1": 54.9
+        },
+        "count_based": {
+          "type": "baseline",
+          "precision": 66.0,
+          "recall": 55.4,
+          "f1": 60.2
+        },
+        "msg2": {
+          "type": "baseline",
+          "precision": 73.3,
+          "recall": 73.6,
+          "f1": 73.3
+        },
+        "tgt_text": {
+          "type": "proposed",
+          "precision": 79.9,
+          "recall": 81.9,
+          "f1": 80.8
+        },
+        "do": {
+          "type": "proposed",
+          "precision": 86.4,
+          "recall": 89.7,
+          "f1": 87.8
+        }
       },
       "_paper_ci90_half_width": {
         "note": "Paper Table I reports 90% confidence-interval half-widths over 5 runs (all 24 procedures); they were previously stored as std_f1, which is no longer a scored metric.",
-        "tgt_text": {"precision": 8.8, "recall": 6.9, "f1": 8.0},
-        "do": {"precision": 1.5, "recall": 1.5, "f1": 1.5}
+        "tgt_text": {
+          "precision": 8.8,
+          "recall": 6.9,
+          "f1": 8.0
+        },
+        "do": {
+          "precision": 1.5,
+          "recall": 1.5,
+          "f1": 1.5
+        }
       },
       "_note": "Paper numbers are averages over all 24 CaptainCook4D procedures; the gym reports the same metrics on two fixed 12-procedure halves (public / held-out). No setup was scaled down."
+    },
+    "noisy_demonstrations_task_graph": {
+      "description": "Task graph generation from noisy demonstrations (where the paper's method falls short): procedure graphs calibrated to CaptainCook4D (7-25 key-steps), 4-10 demonstrations each, every key-step perturbed with probability p by the paper's insert/delete/replace noise model (Section IV-F3); p is fixed in data/noisy_demos/. 40 public procedures (scores_train.json) and 40 held-out procedures (hidden test). Same prediction contract, post-processing and metrics as CaptainCook4D. Primary metric: F1.",
+      "weight": 0.3,
+      "primary_metric": "f1",
+      "metrics": {
+        "precision": {
+          "higher_is_better": true,
+          "coefficient": 0.25,
+          "description": "Edge-level precision (%) on directed prerequisite edges after post-processing."
+        },
+        "recall": {
+          "higher_is_better": true,
+          "coefficient": 0.25,
+          "description": "Edge-level recall (%) on directed prerequisite edges after post-processing."
+        },
+        "f1": {
+          "higher_is_better": true,
+          "coefficient": 1.0,
+          "description": "Edge-level F1 (%) on directed prerequisite edges, the paper's primary benchmark metric."
+        },
+        "worst_quartile_f1": {
+          "higher_is_better": true,
+          "coefficient": 0.35,
+          "description": "Mean F1 over the weakest quarter of procedures (10 of 40): rewards methods that do not trade hard procedures for easy ones."
+        },
+        "edge_density_ratio": {
+          "higher_is_better": true,
+          "coefficient": 0.15,
+          "description": "min(|E_pred|, |E_gt|) / max(|E_pred|, |E_gt|): penalises over- and under-connected graphs."
+        },
+        "path_coverage": {
+          "higher_is_better": true,
+          "coefficient": 0.12,
+          "description": "Fraction of ground-truth source-to-sink paths whose every edge is predicted."
+        },
+        "topological_distance": {
+          "higher_is_better": false,
+          "coefficient": 0.18,
+          "description": "Fraction of ordered node pairs whose reachability (precedence) differs between predicted and ground-truth graph; lower is better."
+        }
+      },
+      "results": {
+        "count_based": {
+          "type": "baseline"
+        },
+        "do": {
+          "type": "proposed",
+          "f1": 0.0
+        }
+      },
+      "_note": "The paper reports no task-graph numbers for noisy demonstrations; results.do is the reference measured in this gym (held-out procedures), not a paper number."
     }
   }
 }
