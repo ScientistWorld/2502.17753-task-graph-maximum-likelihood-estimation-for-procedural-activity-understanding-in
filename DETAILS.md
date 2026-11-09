@@ -21,26 +21,29 @@ The paper addresses the problem of automatically learning task graphs — Direct
 
 ## Research Question
 
-The task is to infer a **task graph** for a procedural activity from repeated demonstrations of that activity. A task graph is a directed acyclic graph whose nodes are procedure steps and whose edges represent prerequisite relationships between steps.
+Infer a **task graph** for a procedural activity from repeated demonstrations of that activity. A task graph is a directed acyclic graph whose nodes are the procedure's key-steps (plus placeholder START and END nodes) and whose edges are prerequisite relations: an edge says that one key-step must be completed before another can be performed.
 
-The available supervision is weak: for each procedure, the learner sees only action sequences collected from multiple demonstrations. It must recover the hidden prerequisite structure without being trained directly on graph labels.
+The supervision is weak: for each procedure the learner sees only demonstrations, i.e. sequences of key-steps in the order in which people performed them. It must recover the prerequisite structure without being trained on graph labels.
 
 ## Why It Matters
 
-Task graphs provide an explicit, human-readable representation of procedures that captures the partial ordering of steps. They can support downstream video understanding tasks such as:
-- Detecting procedural mistakes (a step performed out of order)
-- Predicting missing or future steps
-- Recognizing key-steps in video
+Task graphs are an explicit, human-readable representation of the partial order of a procedure. They support downstream video-understanding tasks such as detecting procedural mistakes, predicting missing or upcoming steps, and checking whether a procedure was executed correctly.
 
-The challenge is that real procedures permit multiple valid orders, so a good system must recover dependency structure rather than memorize one dominant sequence.
+The difficulty is that procedures allow many valid orders and that a handful of demonstrations shows only some of them. Steps can co-occur in a fixed order in every demonstration by coincidence, without one being a prerequisite of the other. Real demonstrations are also noisy: a step can be missed, inserted where it does not belong, or recognised as the wrong step.
+
+## Settings
+
+1. **CaptainCook4D**: 24 cooking procedures (7-25 key-steps each) with 1-13 demonstrations each and a ground-truth graph per procedure. 12 procedures have public graphs; the other 12 are held out.
+2. **Noisy demonstrations**: procedures whose graphs have the size and shape of CaptainCook4D graphs. Each has 4-10 demonstrations in which every key-step was, with probability 0.05, replaced by another step, deleted, or preceded by an inserted random step (repeated steps are then dropped, keeping the first occurrence). 100 procedures have public graphs; 100 are held out.
 
 ## Success Criteria
 
 A successful solution should:
-1. **Recover accurate task graphs** from action sequences, measured by agreement with held-out ground-truth prerequisite edges.
-2. **Handle procedures with multiple valid execution orders**, not just one fixed sequence.
-3. **Generalize across procedures within a benchmark**, since evaluation averages performance over many different recipes/tasks.
-4. **Preserve the weak-supervision setting**, where action sequences are available for learning but graph annotations are reserved for evaluation.
+1. recover accurate graphs from demonstrations, measured against held-out ground-truth prerequisite edges;
+2. handle procedures with many valid execution orders and only a few demonstrations;
+3. stay accurate when demonstrations are noisy;
+4. work on every procedure, not only on the easy ones;
+5. preserve the weak-supervision setting: demonstrations are the learning signal, graph annotations are for evaluation.
 
 ---
 
@@ -74,8 +77,12 @@ where $\beta$ is a hyperparameter. The first term reinforces edges from the curr
 
 The DO model directly optimizes the adjacency matrix via gradient descent:
 - Parameters: a scoring matrix $A \in \mathbb{R}^{(n+2)\times(n+2)}$
-- The adjacency matrix is $Z = \text{softmax}(A)$, with masking to enforce DAG constraints (masking diagonal, START row, END column, and adding START→END if needed)
-- Trained with Adam optimizer (lr=0.1), $\beta=0.005$, max 1000 epochs, early stopping on Sequence Accuracy score
+- The adjacency matrix is $Z = \text{softmax}(A)$, with masking to enforce DAG constraints (masking diagonal, START row, END column)
+- Trained with Adam optimizer (lr=0.1), $\beta=0.005$, max 1000 epochs. $\beta$ is raised to 0.5 for a procedure when none of its sequences contains every key-step (Appendix A-C).
+- Early stopping on the weakly supervised Sequence Accuracy (SA, Appendix A-B). After every epoch, $Z$ is binarised at $1/n$, completed with START/END edges and transitively reduced. If the result is a DAG, SA measures how many of each step's predicted predecessors appear before it in the training sequences. Once SA > 0.95, training halts after 25 epochs without SA improvement (a repeated SA of 1.0 counts as no improvement), and the state at the halting epoch is the output.
+- One model per procedure; results are averaged over 5 runs (seeds).
+
+In this gym the reference implementation is `method/train.py` (`bash scripts/method.sh` writes `checkpoints/do/`, 5 seeds × all procedures of both experiments, CPU, about 15 minutes).
 
 ### 3. Task Graph Transformer (TGT) Model
 
@@ -103,32 +110,68 @@ After training, the continuous adjacency matrix is binarized (threshold = $1/n$)
 
 # Evaluation
 
+## What is scored
+
+Two experiments, each a set of procedures with one ground-truth prerequisite graph per procedure:
+
+| Experiment | Public procedures (dev) | Held-out procedures (hidden test) | Weight |
+|---|---:|---:|---:|
+| `captaincook4d_task_graph` | 12 | 12 | 0.7 |
+| `noisy_demonstrations_task_graph` | 100 | 100 | 0.3 |
+
+Demonstrations of every procedure, including the held-out ones, are available to the learner. Ground-truth graphs are available only for the public procedures; held-out graphs never leave the hidden evaluator.
+
+- CaptainCook4D data: `data/downloads/Differentiable-Task-Graph-Learning/data/captaincook4d/` (fetched by `scripts/download.sh`). For held-out procedures the graph files contain only the node list (`steps`); `edges` are withheld.
+- Noisy-demonstration data: `data/noisy_demos/train.json` (public procedures, with `edges`) and `data/noisy_demos/test_inputs.json` (held-out procedures, demonstrations only).
+- `data/loader.py` loads both (`load_data`, `load_noisy_demos`).
+
+Node ids: 0 = START, n-1 = END, key-steps 1..n-2. A JSON edge `[a, b]` means "a is a precondition of b".
+
+## Prediction contract
+
+A method is a directory `checkpoints/<method_name>/`. For every procedure it predicts, it writes `<procedure>_predictions.npz`. CaptainCook4D procedure names are lowercase, e.g. `coffee`; noisy procedures are `noisytrain_00`... and `noisytest_00`.... The file contains
+
+- `pred_cores`: float array of shape **(5, n, n)**. These are five independent trials (e.g. five seeds); a deterministic method repeats its matrix five times. Entry `[i, j]` scores "node j is a precondition of node i" and must be **finite and in [0, 1]**.
+
+Every directory under `checkpoints/` that contains at least one `*_predictions.npz` is scored as a method, keyed by its directory name. For each experiment, a method must cover **every** procedure of that experiment. A missing file, wrong shape, non-finite or out-of-range value marks the method as **failed** on that experiment, and a failed method receives the floor of every metric. Seed ids, score files, registries or any other numbers a method writes are never read.
+
+## Post-processing (fixed by the evaluator)
+
+Each trial is converted into a binary DAG exactly as in the reference protocol:
+1. binarise at the fixed threshold `1/n`;
+2. connect END to every node without dependents and every node without preconditions to START;
+3. transitive reduction;
+4. while a cycle remains, delete its lowest-scored edge.
+
 ## Metrics
 
-Task graph generation is evaluated by comparing a predicted binary prerequisite graph against a ground-truth prerequisite graph for the same procedure.
+All metrics are computed per trial, averaged over the five trials, then averaged over the procedures of an experiment.
 
-Given the predicted adjacency set $\hat{\mathcal{A}}$ and ground truth adjacency set $\mathcal{A}$:
-- **Precision** = $|\hat{\mathcal{A}} \cap \mathcal{A}| / |\hat{\mathcal{A}}|$ — fraction of predicted edges that are correct
-- **Recall** = $|\hat{\mathcal{A}} \cap \mathcal{A}| / |\mathcal{A}|$ — fraction of ground truth edges that are recovered
-- **F1** = $2 \times (\text{Precision} \times \text{Recall}) / (\text{Precision} + \text{Recall})$ — harmonic mean of precision and recall
+| Metric | Direction | Coefficient | Meaning |
+|---|---|---:|---|
+| `f1` | higher | 1.0 | F1 (%) of predicted directed edges vs ground-truth edges (primary) |
+| `precision` | higher | 0.25 | edge precision (%) |
+| `recall` | higher | 0.25 | edge recall (%) |
+| `worst_quartile_f1` | higher | 0.35 | mean F1 over the weakest quarter of procedures |
+| `edge_density_ratio` | higher | 0.15 | min(#pred, #gt edges) / max(#pred, #gt edges) |
+| `path_coverage` | higher | 0.12 | fraction of ground-truth START-END paths whose every edge is predicted |
+| `topological_distance` | lower | 0.18 | fraction of ordered node pairs whose precedence (reachability) differs |
 
-All metrics are reported on directed edges. Higher is better for precision, recall, and F1.
+The evaluator also scores its own Count-Based baseline (key `count_based`) from the same demonstrations.
 
-## Benchmark Scope
+**Ranking.** For each experiment and metric, the improvement over the reference is taken in the metric's better direction. It is multiplied by the coefficient's magnitude and divided by the metric's spread across ranked attempts. These terms are summed over metrics and weighted by the experiment weight.
 
-The paper reports graph-generation results on three datasets, with CaptainCook4D as the main benchmark. This workspace is currently packaged around the CaptainCook4D experiment because it is the paper's clearest central-claim setting and is the one reproduced here.
+## Scripts
 
-## Evaluation Protocol
+- `bash scripts/evaluate.sh`: public procedures, writes `scoring/scores.json`.
+- `bash scripts/evaluate_train.sh`: public procedures, writes `scoring/scores_train.json` (same numbers).
+- `bash scripts/evaluate_test.sh`: hidden test on held-out procedures, writes `scoring/scores_test.json`.
 
-1. **Dataset**: CaptainCook4D contains 24 cooking procedures. Each procedure has multiple annotated action sequences and one ground-truth task graph.
-2. **Per-procedure prediction**: Produce one predicted graph per procedure from that procedure's action sequences.
-3. **Weak supervision**: Graph annotations are not part of the learning signal for the comparable setting; they are used only for evaluation.
-4. **Graph cleanup before scoring**: Convert the raw graph output into a binary DAG-compatible prediction, then compare its edges against the ground-truth graph.
-5. **Dataset score**: Compute precision, recall, and F1 for each procedure, then report the mean across procedures.
+None of them needs arguments, and none retrains anything.
 
-## Reference Scale
+## Reference scale
 
-On CaptainCook4D, the strongest prior baseline in the paper reaches about 73 F1, while the paper's best reported result reaches about 88 F1. Reproduced scores should stay on that difficulty scale; near-perfect performance would be suspicious for this benchmark.
+On CaptainCook4D the strongest prior method reported for this benchmark reaches about 73 F1 and the best reported result about 88 F1 (all 24 procedures). The Count-Based baseline is around 61 F1. Near-perfect scores would be suspicious on this benchmark.
 
 ---
 
@@ -2299,6 +2342,55 @@ On CaptainCook4D, the strongest prior baseline in the paper reaches about 73 F1,
 - Final verification kept the milestone at `core_claim_plus`.
 - Fixed no-argument `scripts/evaluate.sh` so it works as a standalone reusable evaluator for existing result rows or complete prediction directories.
 - Re-ran `bash scripts/evaluate.sh` and `python3 validate.py --compare --post-design`; all checks passed.
+
+</details>
+
+### Iteration 11: claude-opus-5-5 (hardener)
+- **Milestone**: `core_claim_plus` | **Status**: done
+- **Working time**: 45m | **GPU**: 0.0h
+- **Jobs**: 4 total (3 completed, 1 failed)
+
+<details>
+<summary>Progress Log</summary>
+
+### [2026-05-17 17:28] - core_claim
+- Verified that the implementation is the paper's TGML Direct Optimization algorithm.
+- Completed a full 24-procedure CaptainCook4D rerun with 5 DO seeds per procedure.
+- Reproduced the core claim: DO F1 76.36 beats Count-Based F1 61.41 on the full benchmark.
+
+### [2026-05-17 18:05] - core_claim_plus
+- Added and refreshed train/test split score files as additional fixed evaluation settings.
+- Corrected evaluator thresholding to the official `1/n_gt` rule and refreshed all score files.
+- Added constraint and structural metrics to the main `scores.json`.
+
+### [2026-05-17 18:06] - core_claim_plus
+- Continuation audit restored `core_claim_plus`: method code implements TGML Direct Optimization, not a surrogate.
+- Re-ran standalone full, train-slice, and test-slice evaluation scripts; all completed successfully.
+- Re-ran `python3 validate.py --compare`; all scoring and structure checks passed.
+
+### [2026-05-17 18:22] - core_claim_plus
+- Added an opt-in DO sequence-selection mode matching the paper's weakly supervised sequence-accuracy early-stopping signal.
+- Prepared a fresh CaptainCook4D rerun in `checkpoints/do_captaincook4d_seqselect/` to test whether this closes the remaining gap to the paper's reported DO result.
+
+### [2026-05-17 18:30] - core_claim_plus
+- Completed final gym verification.
+- Confirmed method-agnostic briefing/evaluation files, eval-method separation, download portability, and train/test scoring checks.
+- Fixed the main score file to include `worst_quartile_f1`, matching the nonzero metric in `reference.json`.
+
+### [2026-05-17 18:35] - core_claim_plus
+- Added paper-faithful cycle cleanup by removing the lowest-score edge from detected cycles during postprocessing.
+- Kept evaluation method-agnostic while preserving arbitrary future method names in `scores.json`.
+- Refreshed full, train, and test score files locally; validation passed with `python3 validate.py --compare --post-design`.
+
+### [2026-05-17 18:43] - core_claim_plus
+- Final verification kept the milestone at `core_claim_plus`.
+- Fixed no-argument `scripts/evaluate.sh` so it works as a standalone reusable evaluator for existing result rows or complete prediction directories.
+- Re-ran `bash scripts/evaluate.sh` and `python3 validate.py --compare --post-design`; all checks passed.
+
+### [2026-11-09] - core_claim_plus (hardening, final iteration)
+- Reference now includes the paper's Sequence-Accuracy early stopping (Appendix A-B/A-C, released code): CaptainCook4D held-out P/R/F1 87.26 / 89.85 / 88.35 (paper 86.4 / 89.7 / 87.8); Count-Based 61.40 (paper 60.2).
+- Held-out ground truth moved to `eval/test/`; hidden evaluator rewritten (every `checkpoints/*` method, strict artifact validation, failed runs at the floor); all `REDTEAM.md` shortcuts closed (see `HARDENING.md`).
+- Added the weighted `noisy_demonstrations_task_graph` experiment (paper's insert/delete/replace noise model, hidden graphs) for headroom; reference 68.05 F1, better variants up to 81.16.
 
 </details>
 

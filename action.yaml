@@ -1,6 +1,4 @@
 # Once you set action to 'submit' or 'done', STOP immediately.
-action: submit
-gpus: 0
-test: false
+action: done
 milestone: core_claim_plus
-notes: "Hardening job 3 (CPU, ~2.5h): retrain DO reference on CaptainCook4D + enlarged noisy benchmark (100 public / 100 held-out, p=0.05), audit variants (reruns, beta ablation and SA/public-split beta selection, ensembles, heuristics) and shortcuts through the no-arg hidden test, regenerate reference-only scores."
+notes: "Hardened: reference adds paper's SA early stopping (CC4D held-out F1 88.35 vs paper 87.8); held-out graphs only in eval/test; strict method-agnostic evaluator closes all redteam shortcuts; added weighted noisy-demonstration experiment where better variants beat the reference by 9-13 F1 (see HARDENING.md)."
