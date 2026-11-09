@@ -14,6 +14,14 @@ changed score, data, and baseline file, including on ordinary exceptions. This
 models the fresh hidden-evaluation job: all effects are disk artifacts, and no
 background process or altered Python environment is used.
 
+Runtime prerequisite: the original vendored NetworkX 3.4.2 is missing
+`algorithms/core.py` (excluded by the repository's `core.*` ignore rule).
+The first stock job therefore failed before training. `with_prerequisite.sh`
+temporarily restores exactly the upstream file, verified byte-for-byte against
+the installed distribution's RECORD hash, and removes it on exit. This repair
+is uniform across all runs and is never used as a scoring shortcut. No search
+path, dependency version, evaluator code, or evaluator environment is changed.
+
 `train_variants.py` implements exactly the existing TGML model and loss using
 batched event masks. Every dataset procedure has a loss/gradient comparison
 against `method/tgml.py`, and one complete 1000-step scalar-loop run checks

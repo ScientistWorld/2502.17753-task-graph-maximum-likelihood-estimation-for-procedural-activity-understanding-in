@@ -2,4 +2,4 @@
 set -euo pipefail
 cd /home/user
 source scripts/common_env.sh
-python3 -m redteam.execute_case better_more_training
+bash redteam/with_prerequisite.sh python3 -m redteam.execute_case better_more_training
