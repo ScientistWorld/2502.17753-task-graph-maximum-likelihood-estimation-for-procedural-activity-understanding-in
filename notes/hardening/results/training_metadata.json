@@ -1,0 +1,3270 @@
+{
+  "determinism_vs_checkpoints_do": {
+    "blenderbananapancakes": true,
+    "breakfastburritos": true,
+    "broccolistirfry": true,
+    "buttercorncup": true,
+    "capresebruschetta": true,
+    "cheesepimiento": true,
+    "coffee": true,
+    "cucumberraita": true,
+    "dressedupmeatballs": true,
+    "herbomeletwithfriedtomatoes": true,
+    "microwaveeggsandwich": true,
+    "microwavefrenchtoast": true,
+    "microwavemugpizza": true,
+    "mugcake": true,
+    "panfriedtofu": true,
+    "pinwheels": true,
+    "ramen": true,
+    "sautedmushrooms": true,
+    "scrambledeggs": true,
+    "spicedhotchocolate": true,
+    "spicytunaavocadowraps": true,
+    "tomatochutney": true,
+    "tomatomozzarellasalad": true,
+    "zoodles": true
+  },
+  "runs": {
+    "blenderbananapancakes": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 78,
+          "best_epoch": 53,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 82,
+          "best_epoch": 57,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 84,
+          "best_epoch": 59,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 81,
+          "best_epoch": 56,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 75,
+          "best_epoch": 50,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 85,
+          "best_epoch": 60,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 90,
+          "best_epoch": 65,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 93,
+          "best_epoch": 68,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 82,
+          "best_epoch": 57,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 79,
+          "best_epoch": 54,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 84,
+          "best_epoch": 59,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 79,
+          "best_epoch": 54,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 81,
+          "best_epoch": 56,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 84,
+          "best_epoch": 59,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 78,
+          "best_epoch": 53,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 85,
+          "best_epoch": 60,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 82,
+          "best_epoch": 57,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 82,
+          "best_epoch": 57,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 81,
+          "best_epoch": 56,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 75,
+          "best_epoch": 50,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "breakfastburritos": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 87,
+          "best_epoch": 62,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 82,
+          "best_epoch": 57,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 90,
+          "best_epoch": 65,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 79,
+          "best_epoch": 54,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 87,
+          "best_epoch": 62,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 92,
+          "best_epoch": 67,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 90,
+          "best_epoch": 65,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 78,
+          "best_epoch": 53,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 84,
+          "best_epoch": 59,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 86,
+          "best_epoch": 61,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 80,
+          "best_epoch": 55,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 88,
+          "best_epoch": 63,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 83,
+          "best_epoch": 58,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 85,
+          "best_epoch": 60,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 94,
+          "best_epoch": 69,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 90,
+          "best_epoch": 65,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 91,
+          "best_epoch": 66,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 87,
+          "best_epoch": 62,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 93,
+          "best_epoch": 68,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 83,
+          "best_epoch": 58,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "broccolistirfry": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 148,
+          "best_epoch": 123,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 153,
+          "best_epoch": 128,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 150,
+          "best_epoch": 125,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 146,
+          "best_epoch": 121,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 153,
+          "best_epoch": 128,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 157,
+          "best_epoch": 132,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 155,
+          "best_epoch": 130,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 161,
+          "best_epoch": 136,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 151,
+          "best_epoch": 126,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 159,
+          "best_epoch": 134,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 146,
+          "best_epoch": 121,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 153,
+          "best_epoch": 128,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 156,
+          "best_epoch": 131,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 154,
+          "best_epoch": 129,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 159,
+          "best_epoch": 134,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 160,
+          "best_epoch": 135,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 163,
+          "best_epoch": 138,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 141,
+          "best_epoch": 116,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 163,
+          "best_epoch": 138,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 161,
+          "best_epoch": 136,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "buttercorncup": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 39,
+          "best_epoch": 14,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 41,
+          "best_epoch": 16,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 41,
+          "best_epoch": 16,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 46,
+          "best_epoch": 21,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 41,
+          "best_epoch": 16,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 37,
+          "best_epoch": 12,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 46,
+          "best_epoch": 21,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 52,
+          "best_epoch": 27,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 40,
+          "best_epoch": 15,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 41,
+          "best_epoch": 16,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 46,
+          "best_epoch": 21,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 40,
+          "best_epoch": 15,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 45,
+          "best_epoch": 20,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 42,
+          "best_epoch": 17,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 38,
+          "best_epoch": 13,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 37,
+          "best_epoch": 12,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 50,
+          "best_epoch": 25,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 44,
+          "best_epoch": 19,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 46,
+          "best_epoch": 21,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 46,
+          "best_epoch": 21,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "capresebruschetta": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 74,
+          "best_epoch": 49,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 72,
+          "best_epoch": 47,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 72,
+          "best_epoch": 47,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 77,
+          "best_epoch": 52,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 81,
+          "best_epoch": 56,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 77,
+          "best_epoch": 52,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 76,
+          "best_epoch": 51,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 72,
+          "best_epoch": 47,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 73,
+          "best_epoch": 48,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 72,
+          "best_epoch": 47,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 76,
+          "best_epoch": 51,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 76,
+          "best_epoch": 51,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 73,
+          "best_epoch": 48,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 76,
+          "best_epoch": 51,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 77,
+          "best_epoch": 52,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 76,
+          "best_epoch": 51,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 79,
+          "best_epoch": 54,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 72,
+          "best_epoch": 47,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 78,
+          "best_epoch": 53,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 74,
+          "best_epoch": 49,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "cheesepimiento": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 63,
+          "best_epoch": 38,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 64,
+          "best_epoch": 39,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 65,
+          "best_epoch": 40,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 57,
+          "best_epoch": 32,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 63,
+          "best_epoch": 38,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 63,
+          "best_epoch": 38,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 59,
+          "best_epoch": 34,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 68,
+          "best_epoch": 43,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 66,
+          "best_epoch": 41,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 66,
+          "best_epoch": 41,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 65,
+          "best_epoch": 40,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 64,
+          "best_epoch": 39,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 58,
+          "best_epoch": 33,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 58,
+          "best_epoch": 33,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 59,
+          "best_epoch": 34,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 61,
+          "best_epoch": 36,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 70,
+          "best_epoch": 45,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 63,
+          "best_epoch": 38,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 66,
+          "best_epoch": 41,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 67,
+          "best_epoch": 42,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "coffee": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 101,
+          "best_epoch": 76,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 94,
+          "best_epoch": 69,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 94,
+          "best_epoch": 69,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 98,
+          "best_epoch": 73,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 99,
+          "best_epoch": 74,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 91,
+          "best_epoch": 66,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 95,
+          "best_epoch": 70,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 98,
+          "best_epoch": 73,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 89,
+          "best_epoch": 64,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 92,
+          "best_epoch": 67,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 93,
+          "best_epoch": 68,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 84,
+          "best_epoch": 59,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 96,
+          "best_epoch": 71,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 95,
+          "best_epoch": 70,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 88,
+          "best_epoch": 63,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 88,
+          "best_epoch": 63,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 90,
+          "best_epoch": 65,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 91,
+          "best_epoch": 66,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 85,
+          "best_epoch": 60,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 92,
+          "best_epoch": 67,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "cucumberraita": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 79,
+          "best_epoch": 54,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 75,
+          "best_epoch": 50,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 76,
+          "best_epoch": 51,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 79,
+          "best_epoch": 54,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 78,
+          "best_epoch": 53,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 64,
+          "best_epoch": 39,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 75,
+          "best_epoch": 50,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 71,
+          "best_epoch": 46,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 70,
+          "best_epoch": 45,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 71,
+          "best_epoch": 46,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 78,
+          "best_epoch": 53,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 81,
+          "best_epoch": 56,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 75,
+          "best_epoch": 50,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 74,
+          "best_epoch": 49,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 76,
+          "best_epoch": 51,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 68,
+          "best_epoch": 43,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 69,
+          "best_epoch": 44,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 81,
+          "best_epoch": 56,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 79,
+          "best_epoch": 54,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 71,
+          "best_epoch": 46,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "dressedupmeatballs": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 82,
+          "best_epoch": 57,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 82,
+          "best_epoch": 57,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 83,
+          "best_epoch": 58,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 85,
+          "best_epoch": 60,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 91,
+          "best_epoch": 66,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 80,
+          "best_epoch": 55,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 90,
+          "best_epoch": 65,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 87,
+          "best_epoch": 62,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 83,
+          "best_epoch": 58,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 90,
+          "best_epoch": 65,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 89,
+          "best_epoch": 64,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 83,
+          "best_epoch": 58,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 82,
+          "best_epoch": 57,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 85,
+          "best_epoch": 60,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 91,
+          "best_epoch": 66,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 78,
+          "best_epoch": 53,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 86,
+          "best_epoch": 61,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 81,
+          "best_epoch": 56,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 92,
+          "best_epoch": 67,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 86,
+          "best_epoch": 61,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "herbomeletwithfriedtomatoes": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 91,
+          "best_epoch": 66,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 86,
+          "best_epoch": 61,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 80,
+          "best_epoch": 55,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 93,
+          "best_epoch": 68,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 100,
+          "best_epoch": 75,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 88,
+          "best_epoch": 63,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 98,
+          "best_epoch": 73,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 103,
+          "best_epoch": 78,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 91,
+          "best_epoch": 66,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 91,
+          "best_epoch": 66,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 97,
+          "best_epoch": 72,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 81,
+          "best_epoch": 56,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 101,
+          "best_epoch": 76,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 91,
+          "best_epoch": 66,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 94,
+          "best_epoch": 69,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 86,
+          "best_epoch": 61,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 88,
+          "best_epoch": 63,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 95,
+          "best_epoch": 70,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 88,
+          "best_epoch": 63,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 89,
+          "best_epoch": 64,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "microwaveeggsandwich": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 53,
+          "best_epoch": 28,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 53,
+          "best_epoch": 28,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 53,
+          "best_epoch": 28,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 56,
+          "best_epoch": 31,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 50,
+          "best_epoch": 25,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 53,
+          "best_epoch": 28,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 55,
+          "best_epoch": 30,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 57,
+          "best_epoch": 32,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 55,
+          "best_epoch": 30,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 56,
+          "best_epoch": 31,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 55,
+          "best_epoch": 30,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 53,
+          "best_epoch": 28,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 57,
+          "best_epoch": 32,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 57,
+          "best_epoch": 32,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 49,
+          "best_epoch": 24,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 55,
+          "best_epoch": 30,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 53,
+          "best_epoch": 28,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 56,
+          "best_epoch": 31,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 51,
+          "best_epoch": 26,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 55,
+          "best_epoch": 30,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "microwavefrenchtoast": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 63,
+          "best_epoch": 38,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 60,
+          "best_epoch": 35,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 62,
+          "best_epoch": 37,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 57,
+          "best_epoch": 32,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 63,
+          "best_epoch": 38,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 53,
+          "best_epoch": 28,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 60,
+          "best_epoch": 35,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 54,
+          "best_epoch": 29,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 57,
+          "best_epoch": 32,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 56,
+          "best_epoch": 31,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 65,
+          "best_epoch": 40,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 67,
+          "best_epoch": 42,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 62,
+          "best_epoch": 37,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 58,
+          "best_epoch": 33,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 58,
+          "best_epoch": 33,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 55,
+          "best_epoch": 30,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 54,
+          "best_epoch": 29,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 65,
+          "best_epoch": 40,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 65,
+          "best_epoch": 40,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 58,
+          "best_epoch": 33,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "microwavemugpizza": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 65,
+          "best_epoch": 40,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 59,
+          "best_epoch": 34,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 64,
+          "best_epoch": 39,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 58,
+          "best_epoch": 33,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 62,
+          "best_epoch": 37,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 62,
+          "best_epoch": 37,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 59,
+          "best_epoch": 34,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 63,
+          "best_epoch": 38,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 58,
+          "best_epoch": 33,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 60,
+          "best_epoch": 35,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 59,
+          "best_epoch": 34,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 65,
+          "best_epoch": 40,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 60,
+          "best_epoch": 35,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 60,
+          "best_epoch": 35,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 60,
+          "best_epoch": 35,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 62,
+          "best_epoch": 37,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 60,
+          "best_epoch": 35,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 63,
+          "best_epoch": 38,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 62,
+          "best_epoch": 37,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 58,
+          "best_epoch": 33,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "mugcake": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 81,
+          "best_epoch": 56,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 86,
+          "best_epoch": 61,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 80,
+          "best_epoch": 55,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 87,
+          "best_epoch": 62,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 86,
+          "best_epoch": 61,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 84,
+          "best_epoch": 59,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 82,
+          "best_epoch": 57,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 87,
+          "best_epoch": 62,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 85,
+          "best_epoch": 60,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 83,
+          "best_epoch": 58,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 83,
+          "best_epoch": 58,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 83,
+          "best_epoch": 58,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 79,
+          "best_epoch": 54,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 85,
+          "best_epoch": 60,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 82,
+          "best_epoch": 57,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 80,
+          "best_epoch": 55,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 86,
+          "best_epoch": 61,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 80,
+          "best_epoch": 55,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 84,
+          "best_epoch": 59,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 84,
+          "best_epoch": 59,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "panfriedtofu": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 80,
+          "best_epoch": 55,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 78,
+          "best_epoch": 53,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 84,
+          "best_epoch": 59,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 83,
+          "best_epoch": 58,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 83,
+          "best_epoch": 58,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 82,
+          "best_epoch": 57,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 78,
+          "best_epoch": 53,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 76,
+          "best_epoch": 51,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 90,
+          "best_epoch": 65,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 75,
+          "best_epoch": 50,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 71,
+          "best_epoch": 46,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 89,
+          "best_epoch": 64,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 82,
+          "best_epoch": 57,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 80,
+          "best_epoch": 55,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 77,
+          "best_epoch": 52,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 75,
+          "best_epoch": 50,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 73,
+          "best_epoch": 48,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 82,
+          "best_epoch": 57,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 75,
+          "best_epoch": 50,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 69,
+          "best_epoch": 44,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "pinwheels": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 38,
+          "best_epoch": 13,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 37,
+          "best_epoch": 12,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 38,
+          "best_epoch": 13,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 39,
+          "best_epoch": 14,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 37,
+          "best_epoch": 12,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 39,
+          "best_epoch": 14,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 40,
+          "best_epoch": 15,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 38,
+          "best_epoch": 13,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 41,
+          "best_epoch": 16,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 39,
+          "best_epoch": 14,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 37,
+          "best_epoch": 12,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 40,
+          "best_epoch": 15,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 39,
+          "best_epoch": 14,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 39,
+          "best_epoch": 14,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 37,
+          "best_epoch": 12,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 37,
+          "best_epoch": 12,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 40,
+          "best_epoch": 15,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 40,
+          "best_epoch": 15,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 37,
+          "best_epoch": 12,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 40,
+          "best_epoch": 15,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "ramen": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 106,
+          "best_epoch": 81,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 108,
+          "best_epoch": 83,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 112,
+          "best_epoch": 87,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 114,
+          "best_epoch": 89,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 105,
+          "best_epoch": 80,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 104,
+          "best_epoch": 79,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 113,
+          "best_epoch": 88,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 115,
+          "best_epoch": 90,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 104,
+          "best_epoch": 79,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 98,
+          "best_epoch": 73,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 114,
+          "best_epoch": 89,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 110,
+          "best_epoch": 85,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 109,
+          "best_epoch": 84,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 108,
+          "best_epoch": 83,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 100,
+          "best_epoch": 75,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 106,
+          "best_epoch": 81,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 113,
+          "best_epoch": 88,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 99,
+          "best_epoch": 74,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 105,
+          "best_epoch": 80,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 111,
+          "best_epoch": 86,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "sautedmushrooms": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 82,
+          "best_epoch": 57,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 81,
+          "best_epoch": 56,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 86,
+          "best_epoch": 61,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 80,
+          "best_epoch": 55,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 82,
+          "best_epoch": 57,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 78,
+          "best_epoch": 53,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 85,
+          "best_epoch": 60,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 84,
+          "best_epoch": 59,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 80,
+          "best_epoch": 55,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 84,
+          "best_epoch": 59,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 79,
+          "best_epoch": 54,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 83,
+          "best_epoch": 58,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 83,
+          "best_epoch": 58,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 83,
+          "best_epoch": 58,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 84,
+          "best_epoch": 59,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 83,
+          "best_epoch": 58,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 76,
+          "best_epoch": 51,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 83,
+          "best_epoch": 58,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 81,
+          "best_epoch": 56,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 84,
+          "best_epoch": 59,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "scrambledeggs": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 107,
+          "best_epoch": 82,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 106,
+          "best_epoch": 81,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 106,
+          "best_epoch": 81,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 102,
+          "best_epoch": 77,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 107,
+          "best_epoch": 82,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 105,
+          "best_epoch": 80,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 106,
+          "best_epoch": 81,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 107,
+          "best_epoch": 82,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 107,
+          "best_epoch": 82,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 107,
+          "best_epoch": 82,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 105,
+          "best_epoch": 80,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 105,
+          "best_epoch": 80,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 101,
+          "best_epoch": 76,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 100,
+          "best_epoch": 75,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 106,
+          "best_epoch": 81,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 103,
+          "best_epoch": 78,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 101,
+          "best_epoch": 76,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 105,
+          "best_epoch": 80,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 100,
+          "best_epoch": 75,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 100,
+          "best_epoch": 75,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "spicedhotchocolate": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 37,
+          "best_epoch": 12,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 37,
+          "best_epoch": 12,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 32,
+          "best_epoch": 7,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 37,
+          "best_epoch": 12,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 37,
+          "best_epoch": 12,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 33,
+          "best_epoch": 8,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 37,
+          "best_epoch": 12,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 35,
+          "best_epoch": 10,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 34,
+          "best_epoch": 9,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 33,
+          "best_epoch": 8,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 34,
+          "best_epoch": 9,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 35,
+          "best_epoch": 10,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 32,
+          "best_epoch": 7,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 36,
+          "best_epoch": 11,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 36,
+          "best_epoch": 11,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 34,
+          "best_epoch": 9,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 34,
+          "best_epoch": 9,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 35,
+          "best_epoch": 10,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 35,
+          "best_epoch": 10,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 34,
+          "best_epoch": 9,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "spicytunaavocadowraps": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 107,
+          "best_epoch": 82,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 106,
+          "best_epoch": 81,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 102,
+          "best_epoch": 77,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 100,
+          "best_epoch": 75,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 102,
+          "best_epoch": 77,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 108,
+          "best_epoch": 83,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 109,
+          "best_epoch": 84,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 109,
+          "best_epoch": 84,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 109,
+          "best_epoch": 84,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 112,
+          "best_epoch": 87,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 100,
+          "best_epoch": 75,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 110,
+          "best_epoch": 85,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 99,
+          "best_epoch": 74,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 91,
+          "best_epoch": 66,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 110,
+          "best_epoch": 85,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 96,
+          "best_epoch": 71,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 99,
+          "best_epoch": 74,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 103,
+          "best_epoch": 78,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 104,
+          "best_epoch": 79,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 106,
+          "best_epoch": 81,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "tomatochutney": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 72,
+          "best_epoch": 47,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 96,
+          "best_epoch": 71,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 92,
+          "best_epoch": 67,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 78,
+          "best_epoch": 53,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 90,
+          "best_epoch": 65,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 73,
+          "best_epoch": 48,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 96,
+          "best_epoch": 71,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 74,
+          "best_epoch": 49,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 85,
+          "best_epoch": 60,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 75,
+          "best_epoch": 50,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 84,
+          "best_epoch": 59,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 80,
+          "best_epoch": 55,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 76,
+          "best_epoch": 51,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 89,
+          "best_epoch": 64,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 73,
+          "best_epoch": 48,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 74,
+          "best_epoch": 49,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 74,
+          "best_epoch": 49,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 84,
+          "best_epoch": 59,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 89,
+          "best_epoch": 64,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 94,
+          "best_epoch": 69,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "tomatomozzarellasalad": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 39,
+          "best_epoch": 14,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 34,
+          "best_epoch": 9,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 35,
+          "best_epoch": 10,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 36,
+          "best_epoch": 11,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 36,
+          "best_epoch": 11,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 38,
+          "best_epoch": 13,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 35,
+          "best_epoch": 10,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 36,
+          "best_epoch": 11,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 33,
+          "best_epoch": 8,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 37,
+          "best_epoch": 12,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 34,
+          "best_epoch": 9,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 36,
+          "best_epoch": 11,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 34,
+          "best_epoch": 9,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 35,
+          "best_epoch": 10,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 33,
+          "best_epoch": 8,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 37,
+          "best_epoch": 12,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 34,
+          "best_epoch": 9,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 36,
+          "best_epoch": 11,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 35,
+          "best_epoch": 10,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 38,
+          "best_epoch": 13,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    },
+    "zoodles": {
+      "reference": [
+        {
+          "seed": 42,
+          "stop_epoch": 62,
+          "best_epoch": 37,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 1337,
+          "stop_epoch": 55,
+          "best_epoch": 30,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2024,
+          "stop_epoch": 64,
+          "best_epoch": 39,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2025,
+          "stop_epoch": 60,
+          "best_epoch": 35,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2026,
+          "stop_epoch": 64,
+          "best_epoch": 39,
+          "best_sequence_accuracy": 1.0,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_b": [
+        {
+          "seed": 1,
+          "stop_epoch": 64,
+          "best_epoch": 39,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 2,
+          "stop_epoch": 58,
+          "best_epoch": 33,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 3,
+          "stop_epoch": 60,
+          "best_epoch": 35,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 4,
+          "stop_epoch": 63,
+          "best_epoch": 38,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 5,
+          "stop_epoch": 65,
+          "best_epoch": 40,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_c": [
+        {
+          "seed": 6,
+          "stop_epoch": 63,
+          "best_epoch": 38,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 7,
+          "stop_epoch": 63,
+          "best_epoch": 38,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 8,
+          "stop_epoch": 63,
+          "best_epoch": 38,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 9,
+          "stop_epoch": 58,
+          "best_epoch": 33,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 10,
+          "stop_epoch": 63,
+          "best_epoch": 38,
+          "final_sequence_accuracy": 1.0
+        }
+      ],
+      "do_rerun_seedset_d": [
+        {
+          "seed": 11,
+          "stop_epoch": 64,
+          "best_epoch": 39,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 12,
+          "stop_epoch": 63,
+          "best_epoch": 38,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 13,
+          "stop_epoch": 64,
+          "best_epoch": 39,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 14,
+          "stop_epoch": 62,
+          "best_epoch": 37,
+          "final_sequence_accuracy": 1.0
+        },
+        {
+          "seed": 15,
+          "stop_epoch": 61,
+          "best_epoch": 36,
+          "final_sequence_accuracy": 1.0
+        }
+      ]
+    }
+  }
+}

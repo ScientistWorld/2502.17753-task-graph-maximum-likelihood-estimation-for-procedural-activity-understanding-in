@@ -1,0 +1,6 @@
+Loaded 12 held-out test procedures
+  do: F1=88.35
+  sc_rewrite_ground_truth: F1=17.24
+  count_based: F1=61.40
+Scores written to scoring/scores_test.json
+Test-slice evaluation complete.

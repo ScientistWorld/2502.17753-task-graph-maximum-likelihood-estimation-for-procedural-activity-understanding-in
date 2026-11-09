@@ -1,8 +1,6 @@
 # Once you set action to 'submit' or 'done', STOP immediately.
-# Do NOT sleep, poll, or wait for jobs. The system reads this file
-# only after your turn ends.
-action: pending
+action: submit
 gpus: 0
 test: false
 milestone: core_claim_plus
-notes: ""
+notes: "Hardening job (CPU): retrain DO reference with the paper's SA early stopping (5 seeds x 24 procedures), train audit variants (reruns, best-SA, one-step, ensembles, beta ablation, always-before Hasse), replay shortcuts through the no-arg hidden test, regenerate reference-only score files and analysis."

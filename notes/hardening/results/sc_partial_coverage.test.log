@@ -1,0 +1,6 @@
+Loaded 12 held-out test procedures
+  do: F1=88.35
+  sc_partial_coverage: FAILED (missing blenderbananapancakes_predictions.npz)
+  count_based: F1=61.40
+Scores written to scoring/scores_test.json
+Test-slice evaluation complete.

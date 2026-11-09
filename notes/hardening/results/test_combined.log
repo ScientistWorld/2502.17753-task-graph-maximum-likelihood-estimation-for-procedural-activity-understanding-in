@@ -1,0 +1,28 @@
+Loaded 12 held-out test procedures
+  always_before_hasse: F1=89.58
+  do: F1=88.35
+  do_best_sa_checkpoint: F1=88.21
+  do_beta_0p05: F1=84.81
+  do_beta_0p5: F1=73.45
+  do_no_early_stopping: F1=76.19
+  do_one_step: F1=9.40
+  do_rerun_seedset_b: F1=88.16
+  do_rerun_seedset_c: F1=88.25
+  do_rerun_seedset_d: F1=87.79
+  do_seed_ensemble: F1=88.19
+  do_seed_ensemble20: F1=88.19
+  sc_empty: FAILED (blenderbananapancakes_predictions.npz: pred_cores shape (0, 16, 16), required (5, 16, 16))
+  sc_inf: FAILED (blenderbananapancakes_predictions.npz: non-finite values)
+  sc_nan: FAILED (blenderbananapancakes_predictions.npz: non-finite values)
+  sc_neginf: FAILED (blenderbananapancakes_predictions.npz: non-finite values)
+  sc_ones: F1=6.06
+  sc_out_of_range: FAILED (blenderbananapancakes_predictions.npz: values outside [0, 1] (min 0, max 3.939))
+  sc_seed_ids: F1=88.35
+  sc_single_seed: FAILED (blenderbananapancakes_predictions.npz: pred_cores shape (1, 16, 16), required (5, 16, 16))
+  sc_single_seed_x5: F1=88.19
+  sc_visible_labels: F1=17.24
+  sc_wrong_shape: FAILED (blenderbananapancakes_predictions.npz: pred_cores shape (5, 15, 15), required (5, 16, 16))
+  sc_zero: F1=17.24
+  count_based: F1=61.40
+Scores written to scoring/scores_test.json
+Test-slice evaluation complete.

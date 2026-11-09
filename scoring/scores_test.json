@@ -18,42 +18,57 @@
       "Spicytunaavocadowraps",
       "Tomatochutney",
       "Zoodles"
-    ]
+    ],
+    "trials_per_procedure": 5,
+    "predictions_root": "checkpoints"
   },
   "experiments": {
     "captaincook4d_task_graph": {
       "results": {
+        "do": {
+          "precision": 87.25823485628104,
+          "recall": 89.84785911567779,
+          "f1": 88.35296375439403,
+          "worst_quartile_f1": 76.45607715111261,
+          "edge_density_ratio": 0.9532041517323777,
+          "path_coverage": 0.5824404761904761,
+          "topological_distance": 0.01610099280377918
+        },
         "count_based": {
           "precision": 67.3310162060162,
           "recall": 56.6290217142031,
           "f1": 61.398095459193094,
-          "std_f1": 0.0,
           "worst_quartile_f1": 48.26427682823432,
           "edge_density_ratio": 0.8379867841492051,
           "path_coverage": 0.016666666666666666,
           "topological_distance": 0.07261334819577854
-        },
-        "do": {
-          "precision": 77.02162287840038,
-          "recall": 75.41206757302463,
-          "f1": 76.19455158678745,
-          "std_f1": 0.14255332708916985,
-          "worst_quartile_f1": 68.90269151138716,
-          "edge_density_ratio": 0.9786954621029698,
-          "path_coverage": 0.12691054894179893,
-          "topological_distance": 0.09503715800310229
         }
       }
     }
   },
-  "method_artifacts": {
-    "count_based": {
-      "artifact_type": "built_in_count_baseline",
-      "checkpoint_dir": ""
-    },
+  "method_status": {
     "do": {
-      "artifact_type": "npz_prediction_directory",
-      "checkpoint_dir": "checkpoints/do_captaincook4d_fixedtgml"
+      "status": "ok",
+      "artifact_dir": "checkpoints/do"
+    },
+    "count_based": {
+      "status": "ok",
+      "artifact_dir": "built-in (eval/test)"
+    }
+  },
+  "diagnostics": {
+    "do": {
+      "trial_mean_f1": [
+        88.18806075615771,
+        88.43056516532879,
+        88.65102371912069,
+        87.72509779319473,
+        88.7700713381683
+      ],
+      "trial_std_f1": 0.37155056777078604
+    },
+    "count_based": {
+      "deterministic": true
     }
   }
 }

@@ -1,0 +1,1877 @@
+{
+  "per_procedure": {
+    "always_before_hasse": {
+      "Blenderbananapancakes": {
+        "precision": 89.47368421052632,
+        "recall": 89.47368421052632,
+        "f1": 89.47368421052632,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.8,
+        "topological_distance": 0.0125
+      },
+      "Breakfastburritos": {
+        "precision": 93.33333333333333,
+        "recall": 93.33333333333333,
+        "f1": 93.33333333333331,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.75,
+        "topological_distance": 0.00641025641025641
+      },
+      "Buttercorncup": {
+        "precision": 93.33333333333333,
+        "recall": 87.5,
+        "f1": 90.3225806451613,
+        "edge_density_ratio": 0.9375,
+        "path_coverage": 0.4,
+        "topological_distance": 0.04395604395604396
+      },
+      "Coffee": {
+        "precision": 83.33333333333334,
+        "recall": 100.0,
+        "f1": 90.9090909090909,
+        "edge_density_ratio": 0.8333333333333334,
+        "path_coverage": 1.0,
+        "topological_distance": 0.02287581699346405
+      },
+      "Cucumberraita": {
+        "precision": 88.88888888888889,
+        "recall": 88.88888888888889,
+        "f1": 88.88888888888889,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.7142857142857143,
+        "topological_distance": 0.019230769230769232
+      },
+      "Panfriedtofu": {
+        "precision": 75.0,
+        "recall": 78.26086956521739,
+        "f1": 76.59574468085107,
+        "edge_density_ratio": 0.9583333333333334,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      },
+      "Ramen": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Scrambledeggs": {
+        "precision": 91.17647058823529,
+        "recall": 91.17647058823529,
+        "f1": 91.1764705882353,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.625,
+        "topological_distance": 0.005
+      },
+      "Spicedhotchocolate": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 68.75,
+        "recall": 91.66666666666666,
+        "f1": 78.57142857142857,
+        "edge_density_ratio": 0.75,
+        "path_coverage": 0.6,
+        "topological_distance": 0.03216374269005848
+      },
+      "Tomatochutney": {
+        "precision": 95.65217391304348,
+        "recall": 95.65217391304348,
+        "f1": 95.65217391304347,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.5,
+        "topological_distance": 0.007142857142857143
+      },
+      "Zoodles": {
+        "precision": 82.35294117647058,
+        "recall": 77.77777777777779,
+        "f1": 80.0,
+        "edge_density_ratio": 0.9444444444444444,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      }
+    },
+    "do": {
+      "Blenderbananapancakes": {
+        "precision": 89.47368421052632,
+        "recall": 89.47368421052632,
+        "f1": 89.47368421052632,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.8,
+        "topological_distance": 0.011666666666666667
+      },
+      "Breakfastburritos": {
+        "precision": 93.33333333333333,
+        "recall": 93.33333333333333,
+        "f1": 93.33333333333331,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.75,
+        "topological_distance": 0.00641025641025641
+      },
+      "Buttercorncup": {
+        "precision": 93.33333333333333,
+        "recall": 87.5,
+        "f1": 90.3225806451613,
+        "edge_density_ratio": 0.9375,
+        "path_coverage": 0.4,
+        "topological_distance": 0.04395604395604396
+      },
+      "Coffee": {
+        "precision": 83.33333333333334,
+        "recall": 100.0,
+        "f1": 90.9090909090909,
+        "edge_density_ratio": 0.8333333333333334,
+        "path_coverage": 1.0,
+        "topological_distance": 0.02287581699346405
+      },
+      "Cucumberraita": {
+        "precision": 73.33333333333334,
+        "recall": 73.33333333333334,
+        "f1": 73.33333333333334,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.3142857142857143,
+        "topological_distance": 0.03717948717948718
+      },
+      "Panfriedtofu": {
+        "precision": 75.0,
+        "recall": 78.26086956521739,
+        "f1": 76.59574468085107,
+        "edge_density_ratio": 0.9583333333333334,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      },
+      "Ramen": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Scrambledeggs": {
+        "precision": 91.17647058823529,
+        "recall": 91.17647058823529,
+        "f1": 91.1764705882353,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.625,
+        "topological_distance": 0.005
+      },
+      "Spicedhotchocolate": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 70.11021505376343,
+        "recall": 91.66666666666666,
+        "f1": 79.43915343915343,
+        "edge_density_ratio": 0.7648387096774194,
+        "path_coverage": 0.6,
+        "topological_distance": 0.0304093567251462
+      },
+      "Tomatochutney": {
+        "precision": 95.65217391304348,
+        "recall": 95.65217391304348,
+        "f1": 95.65217391304347,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.5,
+        "topological_distance": 0.007142857142857143
+      },
+      "Zoodles": {
+        "precision": 82.35294117647058,
+        "recall": 77.77777777777779,
+        "f1": 80.0,
+        "edge_density_ratio": 0.9444444444444444,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      }
+    },
+    "do_best_sa_checkpoint": {
+      "Blenderbananapancakes": {
+        "precision": 89.47368421052632,
+        "recall": 89.47368421052632,
+        "f1": 89.47368421052632,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.8,
+        "topological_distance": 0.011666666666666667
+      },
+      "Breakfastburritos": {
+        "precision": 91.99999999999999,
+        "recall": 91.99999999999999,
+        "f1": 91.99999999999999,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.7,
+        "topological_distance": 0.007692307692307691
+      },
+      "Buttercorncup": {
+        "precision": 91.99999999999999,
+        "recall": 86.25,
+        "f1": 89.03225806451613,
+        "edge_density_ratio": 0.9375,
+        "path_coverage": 0.32,
+        "topological_distance": 0.04505494505494506
+      },
+      "Coffee": {
+        "precision": 83.33333333333334,
+        "recall": 100.0,
+        "f1": 90.9090909090909,
+        "edge_density_ratio": 0.8333333333333334,
+        "path_coverage": 1.0,
+        "topological_distance": 0.02287581699346405
+      },
+      "Cucumberraita": {
+        "precision": 80.0,
+        "recall": 80.0,
+        "f1": 80.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.48571428571428565,
+        "topological_distance": 0.029487179487179483
+      },
+      "Panfriedtofu": {
+        "precision": 75.0,
+        "recall": 78.26086956521739,
+        "f1": 76.59574468085107,
+        "edge_density_ratio": 0.9583333333333334,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      },
+      "Ramen": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Scrambledeggs": {
+        "precision": 91.17647058823529,
+        "recall": 91.17647058823529,
+        "f1": 91.1764705882353,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.625,
+        "topological_distance": 0.005
+      },
+      "Spicedhotchocolate": {
+        "precision": 96.0,
+        "recall": 96.0,
+        "f1": 96.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.8666666666666666,
+        "topological_distance": 0.005555555555555555
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 69.19354838709678,
+        "recall": 91.66666666666666,
+        "f1": 78.85714285714285,
+        "edge_density_ratio": 0.7548387096774194,
+        "path_coverage": 0.6,
+        "topological_distance": 0.031578947368421054
+      },
+      "Tomatochutney": {
+        "precision": 95.65217391304348,
+        "recall": 95.65217391304348,
+        "f1": 95.65217391304347,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.5,
+        "topological_distance": 0.007142857142857143
+      },
+      "Zoodles": {
+        "precision": 81.17647058823529,
+        "recall": 76.66666666666666,
+        "f1": 78.85714285714286,
+        "edge_density_ratio": 0.9444444444444444,
+        "path_coverage": 0.0,
+        "topological_distance": 0.015238095238095236
+      }
+    },
+    "do_beta_0p05": {
+      "Blenderbananapancakes": {
+        "precision": 89.47368421052632,
+        "recall": 89.47368421052632,
+        "f1": 89.47368421052632,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.8,
+        "topological_distance": 0.0125
+      },
+      "Breakfastburritos": {
+        "precision": 86.66666666666666,
+        "recall": 86.66666666666666,
+        "f1": 86.66666666666666,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.5,
+        "topological_distance": 0.044871794871794865
+      },
+      "Buttercorncup": {
+        "precision": 93.33333333333333,
+        "recall": 87.5,
+        "f1": 90.3225806451613,
+        "edge_density_ratio": 0.9375,
+        "path_coverage": 0.4,
+        "topological_distance": 0.04395604395604396
+      },
+      "Coffee": {
+        "precision": 90.0,
+        "recall": 90.0,
+        "f1": 90.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.5,
+        "topological_distance": 0.10457516339869281
+      },
+      "Cucumberraita": {
+        "precision": 66.66666666666666,
+        "recall": 66.66666666666666,
+        "f1": 66.66666666666666,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.14285714285714285,
+        "topological_distance": 0.04487179487179487
+      },
+      "Panfriedtofu": {
+        "precision": 74.16666666666667,
+        "recall": 77.3913043478261,
+        "f1": 75.74468085106383,
+        "edge_density_ratio": 0.9583333333333334,
+        "path_coverage": 0.0,
+        "topological_distance": 0.016666666666666666
+      },
+      "Ramen": {
+        "precision": 88.0,
+        "recall": 88.0,
+        "f1": 88.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.3555555555555555,
+        "topological_distance": 0.04338235294117647
+      },
+      "Scrambledeggs": {
+        "precision": 75.88235294117646,
+        "recall": 75.88235294117646,
+        "f1": 75.88235294117646,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.05625,
+        "topological_distance": 0.10699999999999998
+      },
+      "Spicedhotchocolate": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 77.16923076923077,
+        "recall": 81.66666666666667,
+        "f1": 79.34693877551021,
+        "edge_density_ratio": 0.9452307692307693,
+        "path_coverage": 0.34,
+        "topological_distance": 0.05789473684210526
+      },
+      "Tomatochutney": {
+        "precision": 95.65217391304348,
+        "recall": 95.65217391304348,
+        "f1": 95.65217391304347,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.5,
+        "topological_distance": 0.007142857142857143
+      },
+      "Zoodles": {
+        "precision": 82.35294117647058,
+        "recall": 77.77777777777779,
+        "f1": 80.0,
+        "edge_density_ratio": 0.9444444444444444,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      }
+    },
+    "do_beta_0p5": {
+      "Blenderbananapancakes": {
+        "precision": 77.77777777777779,
+        "recall": 73.68421052631578,
+        "f1": 75.67567567567569,
+        "edge_density_ratio": 0.9473684210526315,
+        "path_coverage": 0.2,
+        "topological_distance": 0.125
+      },
+      "Breakfastburritos": {
+        "precision": 71.42857142857143,
+        "recall": 66.66666666666666,
+        "f1": 68.96551724137932,
+        "edge_density_ratio": 0.9333333333333333,
+        "path_coverage": 0.0,
+        "topological_distance": 0.057692307692307696
+      },
+      "Buttercorncup": {
+        "precision": 80.0,
+        "recall": 75.0,
+        "f1": 77.41935483870968,
+        "edge_density_ratio": 0.9375,
+        "path_coverage": 0.0,
+        "topological_distance": 0.07142857142857142
+      },
+      "Coffee": {
+        "precision": 80.95238095238095,
+        "recall": 85.0,
+        "f1": 82.92682926829268,
+        "edge_density_ratio": 0.9523809523809523,
+        "path_coverage": 0.25,
+        "topological_distance": 0.11764705882352941
+      },
+      "Cucumberraita": {
+        "precision": 56.25,
+        "recall": 50.0,
+        "f1": 52.94117647058823,
+        "edge_density_ratio": 0.888888888888889,
+        "path_coverage": 0.0,
+        "topological_distance": 0.10897435897435899
+      },
+      "Panfriedtofu": {
+        "precision": 72.17391304347825,
+        "recall": 72.17391304347825,
+        "f1": 72.17391304347825,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.0,
+        "topological_distance": 0.08142857142857143
+      },
+      "Ramen": {
+        "precision": 75.78947368421052,
+        "recall": 75.0,
+        "f1": 75.38461538461539,
+        "edge_density_ratio": 0.99,
+        "path_coverage": 0.11111111111111112,
+        "topological_distance": 0.12573529411764706
+      },
+      "Scrambledeggs": {
+        "precision": 62.0,
+        "recall": 54.70588235294118,
+        "f1": 58.125,
+        "edge_density_ratio": 0.8823529411764707,
+        "path_coverage": 0.0,
+        "topological_distance": 0.1603333333333333
+      },
+      "Spicedhotchocolate": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 60.86956521739131,
+        "recall": 58.333333333333336,
+        "f1": 59.574468085106375,
+        "edge_density_ratio": 0.9583333333333334,
+        "path_coverage": 0.0,
+        "topological_distance": 0.15204678362573099
+      },
+      "Tomatochutney": {
+        "precision": 78.26086956521739,
+        "recall": 78.26086956521739,
+        "f1": 78.26086956521739,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.0,
+        "topological_distance": 0.07857142857142857
+      },
+      "Zoodles": {
+        "precision": 82.35294117647058,
+        "recall": 77.77777777777779,
+        "f1": 80.0,
+        "edge_density_ratio": 0.9444444444444444,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      }
+    },
+    "do_no_early_stopping": {
+      "Blenderbananapancakes": {
+        "precision": 83.33333333333334,
+        "recall": 78.94736842105263,
+        "f1": 81.08108108108108,
+        "edge_density_ratio": 0.9473684210526315,
+        "path_coverage": 0.4,
+        "topological_distance": 0.0875
+      },
+      "Breakfastburritos": {
+        "precision": 80.0,
+        "recall": 80.0,
+        "f1": 80.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.25,
+        "topological_distance": 0.07051282051282051
+      },
+      "Buttercorncup": {
+        "precision": 80.0,
+        "recall": 75.0,
+        "f1": 77.41935483870968,
+        "edge_density_ratio": 0.9375,
+        "path_coverage": 0.0,
+        "topological_distance": 0.07142857142857142
+      },
+      "Coffee": {
+        "precision": 85.0,
+        "recall": 85.0,
+        "f1": 85.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.25,
+        "topological_distance": 0.13071895424836602
+      },
+      "Cucumberraita": {
+        "precision": 70.58823529411765,
+        "recall": 66.66666666666666,
+        "f1": 68.57142857142857,
+        "edge_density_ratio": 0.9444444444444444,
+        "path_coverage": 0.14285714285714285,
+        "topological_distance": 0.04487179487179487
+      },
+      "Panfriedtofu": {
+        "precision": 69.56521739130434,
+        "recall": 69.56521739130434,
+        "f1": 69.56521739130434,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.0,
+        "topological_distance": 0.12142857142857141
+      },
+      "Ramen": {
+        "precision": 80.0,
+        "recall": 80.0,
+        "f1": 80.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.11111111111111112,
+        "topological_distance": 0.12132352941176469
+      },
+      "Scrambledeggs": {
+        "precision": 70.9090909090909,
+        "recall": 68.82352941176471,
+        "f1": 69.85074626865672,
+        "edge_density_ratio": 0.9705882352941175,
+        "path_coverage": 0.015625,
+        "topological_distance": 0.19466666666666668
+      },
+      "Spicedhotchocolate": {
+        "precision": 80.0,
+        "recall": 80.0,
+        "f1": 80.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.3333333333333333,
+        "topological_distance": 0.05555555555555556
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 71.66666666666667,
+        "recall": 71.66666666666667,
+        "f1": 71.66666666666667,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.02,
+        "topological_distance": 0.12339181286549708
+      },
+      "Tomatochutney": {
+        "precision": 82.6086956521739,
+        "recall": 82.6086956521739,
+        "f1": 82.6086956521739,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.0,
+        "topological_distance": 0.0761904761904762
+      },
+      "Zoodles": {
+        "precision": 70.58823529411765,
+        "recall": 66.66666666666666,
+        "f1": 68.57142857142857,
+        "edge_density_ratio": 0.9444444444444444,
+        "path_coverage": 0.0,
+        "topological_distance": 0.04285714285714286
+      }
+    },
+    "do_one_step": {
+      "Blenderbananapancakes": {
+        "precision": 4.861111111111112,
+        "recall": 4.2105263157894735,
+        "f1": 4.5096525096525095,
+        "edge_density_ratio": 0.8736842105263157,
+        "path_coverage": 0.0,
+        "topological_distance": 0.395
+      },
+      "Breakfastburritos": {
+        "precision": 9.87179487179487,
+        "recall": 8.0,
+        "f1": 8.835978835978835,
+        "edge_density_ratio": 0.8133333333333332,
+        "path_coverage": 0.0,
+        "topological_distance": 0.3730769230769231
+      },
+      "Buttercorncup": {
+        "precision": 11.345543345543344,
+        "recall": 10.0,
+        "f1": 10.604724203363213,
+        "edge_density_ratio": 0.8652777777777778,
+        "path_coverage": 0.0,
+        "topological_distance": 0.389010989010989
+      },
+      "Coffee": {
+        "precision": 10.771836007130124,
+        "recall": 10.0,
+        "f1": 10.3535189324663,
+        "edge_density_ratio": 0.9018181818181817,
+        "path_coverage": 0.0,
+        "topological_distance": 0.35620915032679745
+      },
+      "Cucumberraita": {
+        "precision": 15.695970695970695,
+        "recall": 11.11111111111111,
+        "f1": 12.997311827956988,
+        "edge_density_ratio": 0.7,
+        "path_coverage": 0.0,
+        "topological_distance": 0.33076923076923076
+      },
+      "Panfriedtofu": {
+        "precision": 7.35930735930736,
+        "recall": 6.956521739130435,
+        "f1": 7.1515151515151505,
+        "edge_density_ratio": 0.9478260869565217,
+        "path_coverage": 0.0,
+        "topological_distance": 0.4276190476190476
+      },
+      "Ramen": {
+        "precision": 12.07516339869281,
+        "recall": 10.0,
+        "f1": 10.934091986723567,
+        "edge_density_ratio": 0.8300000000000001,
+        "path_coverage": 0.0,
+        "topological_distance": 0.4235294117647059
+      },
+      "Scrambledeggs": {
+        "precision": 4.567032967032967,
+        "recall": 3.529411764705882,
+        "f1": 3.979588117368325,
+        "edge_density_ratio": 0.7764705882352941,
+        "path_coverage": 0.0,
+        "topological_distance": 0.4366666666666667
+      },
+      "Spicedhotchocolate": {
+        "precision": 7.5,
+        "recall": 6.0,
+        "f1": 6.666666666666666,
+        "edge_density_ratio": 0.8,
+        "path_coverage": 0.0,
+        "topological_distance": 0.36944444444444446
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 8.854418655333987,
+        "recall": 7.499999999999998,
+        "f1": 8.109926579001293,
+        "edge_density_ratio": 0.85,
+        "path_coverage": 0.0,
+        "topological_distance": 0.34444444444444444
+      },
+      "Tomatochutney": {
+        "precision": 14.34233013363448,
+        "recall": 13.91304347826087,
+        "f1": 14.114624505928854,
+        "edge_density_ratio": 0.9492173913043478,
+        "path_coverage": 0.0,
+        "topological_distance": 0.4019047619047619
+      },
+      "Zoodles": {
+        "precision": 15.876750700280112,
+        "recall": 13.333333333333332,
+        "f1": 14.482683982683984,
+        "edge_density_ratio": 0.8444444444444444,
+        "path_coverage": 0.0,
+        "topological_distance": 0.37714285714285717
+      }
+    },
+    "do_rerun_seedset_b": {
+      "Blenderbananapancakes": {
+        "precision": 89.47368421052632,
+        "recall": 89.47368421052632,
+        "f1": 89.47368421052632,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.8,
+        "topological_distance": 0.011666666666666667
+      },
+      "Breakfastburritos": {
+        "precision": 93.33333333333333,
+        "recall": 93.33333333333333,
+        "f1": 93.33333333333331,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.75,
+        "topological_distance": 0.00641025641025641
+      },
+      "Buttercorncup": {
+        "precision": 92.08333333333333,
+        "recall": 87.5,
+        "f1": 89.71774193548387,
+        "edge_density_ratio": 0.95,
+        "path_coverage": 0.4,
+        "topological_distance": 0.04395604395604396
+      },
+      "Coffee": {
+        "precision": 83.33333333333334,
+        "recall": 100.0,
+        "f1": 90.9090909090909,
+        "edge_density_ratio": 0.8333333333333334,
+        "path_coverage": 1.0,
+        "topological_distance": 0.02287581699346405
+      },
+      "Cucumberraita": {
+        "precision": 74.44444444444444,
+        "recall": 74.44444444444444,
+        "f1": 74.44444444444444,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.3428571428571428,
+        "topological_distance": 0.035897435897435895
+      },
+      "Panfriedtofu": {
+        "precision": 75.0,
+        "recall": 78.26086956521739,
+        "f1": 76.59574468085107,
+        "edge_density_ratio": 0.9583333333333334,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      },
+      "Ramen": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Scrambledeggs": {
+        "precision": 91.17647058823529,
+        "recall": 91.17647058823529,
+        "f1": 91.1764705882353,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.625,
+        "topological_distance": 0.005
+      },
+      "Spicedhotchocolate": {
+        "precision": 98.0,
+        "recall": 98.0,
+        "f1": 98.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.9333333333333332,
+        "topological_distance": 0.0027777777777777775
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 68.75,
+        "recall": 91.66666666666666,
+        "f1": 78.57142857142857,
+        "edge_density_ratio": 0.75,
+        "path_coverage": 0.6,
+        "topological_distance": 0.03216374269005848
+      },
+      "Tomatochutney": {
+        "precision": 95.65217391304348,
+        "recall": 95.65217391304348,
+        "f1": 95.65217391304347,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.5,
+        "topological_distance": 0.007142857142857143
+      },
+      "Zoodles": {
+        "precision": 82.35294117647058,
+        "recall": 77.77777777777779,
+        "f1": 80.0,
+        "edge_density_ratio": 0.9444444444444444,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      }
+    },
+    "do_rerun_seedset_c": {
+      "Blenderbananapancakes": {
+        "precision": 89.47368421052632,
+        "recall": 89.47368421052632,
+        "f1": 89.47368421052632,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.8,
+        "topological_distance": 0.011666666666666667
+      },
+      "Breakfastburritos": {
+        "precision": 93.33333333333333,
+        "recall": 93.33333333333333,
+        "f1": 93.33333333333331,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.75,
+        "topological_distance": 0.00641025641025641
+      },
+      "Buttercorncup": {
+        "precision": 93.33333333333333,
+        "recall": 87.5,
+        "f1": 90.3225806451613,
+        "edge_density_ratio": 0.9375,
+        "path_coverage": 0.4,
+        "topological_distance": 0.04395604395604396
+      },
+      "Coffee": {
+        "precision": 83.33333333333334,
+        "recall": 100.0,
+        "f1": 90.9090909090909,
+        "edge_density_ratio": 0.8333333333333334,
+        "path_coverage": 1.0,
+        "topological_distance": 0.02287581699346405
+      },
+      "Cucumberraita": {
+        "precision": 76.66666666666667,
+        "recall": 76.66666666666667,
+        "f1": 76.66666666666667,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.4,
+        "topological_distance": 0.03333333333333333
+      },
+      "Panfriedtofu": {
+        "precision": 75.0,
+        "recall": 78.26086956521739,
+        "f1": 76.59574468085107,
+        "edge_density_ratio": 0.9583333333333334,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      },
+      "Ramen": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Scrambledeggs": {
+        "precision": 91.17647058823529,
+        "recall": 91.17647058823529,
+        "f1": 91.1764705882353,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.625,
+        "topological_distance": 0.005
+      },
+      "Spicedhotchocolate": {
+        "precision": 96.0,
+        "recall": 96.0,
+        "f1": 96.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.8666666666666666,
+        "topological_distance": 0.005555555555555555
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 69.19354838709678,
+        "recall": 91.66666666666666,
+        "f1": 78.85714285714286,
+        "edge_density_ratio": 0.7548387096774194,
+        "path_coverage": 0.6,
+        "topological_distance": 0.031578947368421054
+      },
+      "Tomatochutney": {
+        "precision": 95.65217391304348,
+        "recall": 95.65217391304348,
+        "f1": 95.65217391304347,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.5,
+        "topological_distance": 0.007142857142857143
+      },
+      "Zoodles": {
+        "precision": 82.35294117647058,
+        "recall": 77.77777777777779,
+        "f1": 80.0,
+        "edge_density_ratio": 0.9444444444444444,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      }
+    },
+    "do_rerun_seedset_d": {
+      "Blenderbananapancakes": {
+        "precision": 89.47368421052632,
+        "recall": 89.47368421052632,
+        "f1": 89.47368421052632,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.8,
+        "topological_distance": 0.011666666666666667
+      },
+      "Breakfastburritos": {
+        "precision": 93.33333333333333,
+        "recall": 93.33333333333333,
+        "f1": 93.33333333333331,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.75,
+        "topological_distance": 0.008974358974358974
+      },
+      "Buttercorncup": {
+        "precision": 92.16666666666666,
+        "recall": 87.5,
+        "f1": 89.75806451612904,
+        "edge_density_ratio": 0.95,
+        "path_coverage": 0.48,
+        "topological_distance": 0.045054945054945054
+      },
+      "Coffee": {
+        "precision": 83.33333333333334,
+        "recall": 100.0,
+        "f1": 90.9090909090909,
+        "edge_density_ratio": 0.8333333333333334,
+        "path_coverage": 1.0,
+        "topological_distance": 0.02287581699346405
+      },
+      "Cucumberraita": {
+        "precision": 70.0,
+        "recall": 70.0,
+        "f1": 70.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.2285714285714285,
+        "topological_distance": 0.04102564102564103
+      },
+      "Panfriedtofu": {
+        "precision": 75.0,
+        "recall": 78.26086956521739,
+        "f1": 76.59574468085107,
+        "edge_density_ratio": 0.9583333333333334,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      },
+      "Ramen": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Scrambledeggs": {
+        "precision": 91.17647058823529,
+        "recall": 91.17647058823529,
+        "f1": 91.1764705882353,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.625,
+        "topological_distance": 0.005
+      },
+      "Spicedhotchocolate": {
+        "precision": 98.0,
+        "recall": 98.0,
+        "f1": 98.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.9333333333333332,
+        "topological_distance": 0.0027777777777777775
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 68.75,
+        "recall": 91.66666666666666,
+        "f1": 78.57142857142857,
+        "edge_density_ratio": 0.75,
+        "path_coverage": 0.6,
+        "topological_distance": 0.03216374269005848
+      },
+      "Tomatochutney": {
+        "precision": 95.65217391304348,
+        "recall": 95.65217391304348,
+        "f1": 95.65217391304347,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.5,
+        "topological_distance": 0.007142857142857143
+      },
+      "Zoodles": {
+        "precision": 82.35294117647058,
+        "recall": 77.77777777777779,
+        "f1": 80.0,
+        "edge_density_ratio": 0.9444444444444444,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      }
+    },
+    "do_seed_ensemble": {
+      "Blenderbananapancakes": {
+        "precision": 89.47368421052632,
+        "recall": 89.47368421052632,
+        "f1": 89.47368421052632,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.8,
+        "topological_distance": 0.0125
+      },
+      "Breakfastburritos": {
+        "precision": 93.33333333333333,
+        "recall": 93.33333333333333,
+        "f1": 93.33333333333331,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.75,
+        "topological_distance": 0.00641025641025641
+      },
+      "Buttercorncup": {
+        "precision": 93.33333333333333,
+        "recall": 87.5,
+        "f1": 90.3225806451613,
+        "edge_density_ratio": 0.9375,
+        "path_coverage": 0.4,
+        "topological_distance": 0.04395604395604396
+      },
+      "Coffee": {
+        "precision": 83.33333333333334,
+        "recall": 100.0,
+        "f1": 90.9090909090909,
+        "edge_density_ratio": 0.8333333333333334,
+        "path_coverage": 1.0,
+        "topological_distance": 0.02287581699346405
+      },
+      "Cucumberraita": {
+        "precision": 72.22222222222221,
+        "recall": 72.22222222222221,
+        "f1": 72.22222222222221,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.2857142857142857,
+        "topological_distance": 0.038461538461538464
+      },
+      "Panfriedtofu": {
+        "precision": 75.0,
+        "recall": 78.26086956521739,
+        "f1": 76.59574468085107,
+        "edge_density_ratio": 0.9583333333333334,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      },
+      "Ramen": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Scrambledeggs": {
+        "precision": 91.17647058823529,
+        "recall": 91.17647058823529,
+        "f1": 91.1764705882353,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.625,
+        "topological_distance": 0.005
+      },
+      "Spicedhotchocolate": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 68.75,
+        "recall": 91.66666666666666,
+        "f1": 78.57142857142857,
+        "edge_density_ratio": 0.75,
+        "path_coverage": 0.6,
+        "topological_distance": 0.03216374269005848
+      },
+      "Tomatochutney": {
+        "precision": 95.65217391304348,
+        "recall": 95.65217391304348,
+        "f1": 95.65217391304347,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.5,
+        "topological_distance": 0.007142857142857143
+      },
+      "Zoodles": {
+        "precision": 82.35294117647058,
+        "recall": 77.77777777777779,
+        "f1": 80.0,
+        "edge_density_ratio": 0.9444444444444444,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      }
+    },
+    "do_seed_ensemble20": {
+      "Blenderbananapancakes": {
+        "precision": 89.47368421052632,
+        "recall": 89.47368421052632,
+        "f1": 89.47368421052632,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.8,
+        "topological_distance": 0.0125
+      },
+      "Breakfastburritos": {
+        "precision": 93.33333333333333,
+        "recall": 93.33333333333333,
+        "f1": 93.33333333333331,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.75,
+        "topological_distance": 0.00641025641025641
+      },
+      "Buttercorncup": {
+        "precision": 93.33333333333333,
+        "recall": 87.5,
+        "f1": 90.3225806451613,
+        "edge_density_ratio": 0.9375,
+        "path_coverage": 0.4,
+        "topological_distance": 0.04395604395604396
+      },
+      "Coffee": {
+        "precision": 83.33333333333334,
+        "recall": 100.0,
+        "f1": 90.9090909090909,
+        "edge_density_ratio": 0.8333333333333334,
+        "path_coverage": 1.0,
+        "topological_distance": 0.02287581699346405
+      },
+      "Cucumberraita": {
+        "precision": 72.22222222222221,
+        "recall": 72.22222222222221,
+        "f1": 72.22222222222221,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.2857142857142857,
+        "topological_distance": 0.038461538461538464
+      },
+      "Panfriedtofu": {
+        "precision": 75.0,
+        "recall": 78.26086956521739,
+        "f1": 76.59574468085107,
+        "edge_density_ratio": 0.9583333333333334,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      },
+      "Ramen": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Scrambledeggs": {
+        "precision": 91.17647058823529,
+        "recall": 91.17647058823529,
+        "f1": 91.1764705882353,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.625,
+        "topological_distance": 0.005
+      },
+      "Spicedhotchocolate": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 68.75,
+        "recall": 91.66666666666666,
+        "f1": 78.57142857142857,
+        "edge_density_ratio": 0.75,
+        "path_coverage": 0.6,
+        "topological_distance": 0.03216374269005848
+      },
+      "Tomatochutney": {
+        "precision": 95.65217391304348,
+        "recall": 95.65217391304348,
+        "f1": 95.65217391304347,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.5,
+        "topological_distance": 0.007142857142857143
+      },
+      "Zoodles": {
+        "precision": 82.35294117647058,
+        "recall": 77.77777777777779,
+        "f1": 80.0,
+        "edge_density_ratio": 0.9444444444444444,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      }
+    },
+    "sc_ones": {
+      "Blenderbananapancakes": {
+        "precision": 6.666666666666667,
+        "recall": 5.263157894736842,
+        "f1": 5.88235294117647,
+        "edge_density_ratio": 0.7894736842105263,
+        "path_coverage": 0.0,
+        "topological_distance": 0.36666666666666664
+      },
+      "Breakfastburritos": {
+        "precision": 8.333333333333332,
+        "recall": 6.666666666666667,
+        "f1": 7.4074074074074066,
+        "edge_density_ratio": 0.8,
+        "path_coverage": 0.0,
+        "topological_distance": 0.358974358974359
+      },
+      "Buttercorncup": {
+        "precision": 7.692307692307692,
+        "recall": 6.25,
+        "f1": 6.896551724137931,
+        "edge_density_ratio": 0.8125,
+        "path_coverage": 0.0,
+        "topological_distance": 0.36813186813186816
+      },
+      "Coffee": {
+        "precision": 5.88235294117647,
+        "recall": 5.0,
+        "f1": 5.405405405405405,
+        "edge_density_ratio": 0.85,
+        "path_coverage": 0.0,
+        "topological_distance": 0.3235294117647059
+      },
+      "Cucumberraita": {
+        "precision": 8.333333333333332,
+        "recall": 5.555555555555555,
+        "f1": 6.666666666666666,
+        "edge_density_ratio": 0.6666666666666666,
+        "path_coverage": 0.0,
+        "topological_distance": 0.21153846153846154
+      },
+      "Panfriedtofu": {
+        "precision": 5.0,
+        "recall": 4.3478260869565215,
+        "f1": 4.651162790697675,
+        "edge_density_ratio": 0.8695652173913043,
+        "path_coverage": 0.0,
+        "topological_distance": 0.4333333333333334
+      },
+      "Ramen": {
+        "precision": 6.25,
+        "recall": 5.0,
+        "f1": 5.555555555555555,
+        "edge_density_ratio": 0.8,
+        "path_coverage": 0.0,
+        "topological_distance": 0.39705882352941174
+      },
+      "Scrambledeggs": {
+        "precision": 4.166666666666666,
+        "recall": 2.941176470588235,
+        "f1": 3.4482758620689653,
+        "edge_density_ratio": 0.7058823529411765,
+        "path_coverage": 0.0,
+        "topological_distance": 0.38666666666666666
+      },
+      "Spicedhotchocolate": {
+        "precision": 12.5,
+        "recall": 10.0,
+        "f1": 11.11111111111111,
+        "edge_density_ratio": 0.8,
+        "path_coverage": 0.0,
+        "topological_distance": 0.3472222222222222
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 5.555555555555555,
+        "recall": 4.166666666666666,
+        "f1": 4.761904761904762,
+        "edge_density_ratio": 0.75,
+        "path_coverage": 0.0,
+        "topological_distance": 0.2719298245614035
+      },
+      "Tomatochutney": {
+        "precision": 5.0,
+        "recall": 4.3478260869565215,
+        "f1": 4.651162790697675,
+        "edge_density_ratio": 0.8695652173913043,
+        "path_coverage": 0.0,
+        "topological_distance": 0.4333333333333334
+      },
+      "Zoodles": {
+        "precision": 7.1428571428571415,
+        "recall": 5.555555555555555,
+        "f1": 6.249999999999999,
+        "edge_density_ratio": 0.7777777777777778,
+        "path_coverage": 0.0,
+        "topological_distance": 0.4
+      }
+    },
+    "sc_seed_ids": {
+      "Blenderbananapancakes": {
+        "precision": 89.47368421052632,
+        "recall": 89.47368421052632,
+        "f1": 89.47368421052632,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.8,
+        "topological_distance": 0.011666666666666667
+      },
+      "Breakfastburritos": {
+        "precision": 93.33333333333333,
+        "recall": 93.33333333333333,
+        "f1": 93.33333333333331,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.75,
+        "topological_distance": 0.00641025641025641
+      },
+      "Buttercorncup": {
+        "precision": 93.33333333333333,
+        "recall": 87.5,
+        "f1": 90.3225806451613,
+        "edge_density_ratio": 0.9375,
+        "path_coverage": 0.4,
+        "topological_distance": 0.04395604395604396
+      },
+      "Coffee": {
+        "precision": 83.33333333333334,
+        "recall": 100.0,
+        "f1": 90.9090909090909,
+        "edge_density_ratio": 0.8333333333333334,
+        "path_coverage": 1.0,
+        "topological_distance": 0.02287581699346405
+      },
+      "Cucumberraita": {
+        "precision": 73.33333333333334,
+        "recall": 73.33333333333334,
+        "f1": 73.33333333333334,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.3142857142857143,
+        "topological_distance": 0.03717948717948718
+      },
+      "Panfriedtofu": {
+        "precision": 75.0,
+        "recall": 78.26086956521739,
+        "f1": 76.59574468085107,
+        "edge_density_ratio": 0.9583333333333334,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      },
+      "Ramen": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Scrambledeggs": {
+        "precision": 91.17647058823529,
+        "recall": 91.17647058823529,
+        "f1": 91.1764705882353,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.625,
+        "topological_distance": 0.005
+      },
+      "Spicedhotchocolate": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 70.11021505376343,
+        "recall": 91.66666666666666,
+        "f1": 79.43915343915343,
+        "edge_density_ratio": 0.7648387096774194,
+        "path_coverage": 0.6,
+        "topological_distance": 0.0304093567251462
+      },
+      "Tomatochutney": {
+        "precision": 95.65217391304348,
+        "recall": 95.65217391304348,
+        "f1": 95.65217391304347,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.5,
+        "topological_distance": 0.007142857142857143
+      },
+      "Zoodles": {
+        "precision": 82.35294117647058,
+        "recall": 77.77777777777779,
+        "f1": 80.0,
+        "edge_density_ratio": 0.9444444444444444,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      }
+    },
+    "sc_single_seed_x5": {
+      "Blenderbananapancakes": {
+        "precision": 89.47368421052632,
+        "recall": 89.47368421052632,
+        "f1": 89.47368421052632,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.8,
+        "topological_distance": 0.008333333333333333
+      },
+      "Breakfastburritos": {
+        "precision": 93.33333333333333,
+        "recall": 93.33333333333333,
+        "f1": 93.33333333333331,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.75,
+        "topological_distance": 0.00641025641025641
+      },
+      "Buttercorncup": {
+        "precision": 93.33333333333333,
+        "recall": 87.5,
+        "f1": 90.3225806451613,
+        "edge_density_ratio": 0.9375,
+        "path_coverage": 0.4,
+        "topological_distance": 0.04395604395604396
+      },
+      "Coffee": {
+        "precision": 83.33333333333334,
+        "recall": 100.0,
+        "f1": 90.9090909090909,
+        "edge_density_ratio": 0.8333333333333334,
+        "path_coverage": 1.0,
+        "topological_distance": 0.02287581699346405
+      },
+      "Cucumberraita": {
+        "precision": 72.22222222222221,
+        "recall": 72.22222222222221,
+        "f1": 72.22222222222221,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.2857142857142857,
+        "topological_distance": 0.038461538461538464
+      },
+      "Panfriedtofu": {
+        "precision": 75.0,
+        "recall": 78.26086956521739,
+        "f1": 76.59574468085107,
+        "edge_density_ratio": 0.9583333333333334,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      },
+      "Ramen": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Scrambledeggs": {
+        "precision": 91.17647058823529,
+        "recall": 91.17647058823529,
+        "f1": 91.1764705882353,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.625,
+        "topological_distance": 0.005
+      },
+      "Spicedhotchocolate": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 1.0,
+        "topological_distance": 0.0
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 68.75,
+        "recall": 91.66666666666666,
+        "f1": 78.57142857142857,
+        "edge_density_ratio": 0.75,
+        "path_coverage": 0.6,
+        "topological_distance": 0.03216374269005848
+      },
+      "Tomatochutney": {
+        "precision": 95.65217391304348,
+        "recall": 95.65217391304348,
+        "f1": 95.65217391304347,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.5,
+        "topological_distance": 0.007142857142857143
+      },
+      "Zoodles": {
+        "precision": 82.35294117647058,
+        "recall": 77.77777777777779,
+        "f1": 80.0,
+        "edge_density_ratio": 0.9444444444444444,
+        "path_coverage": 0.0,
+        "topological_distance": 0.014285714285714285
+      }
+    },
+    "sc_visible_labels": {
+      "Blenderbananapancakes": {
+        "precision": 21.428571428571427,
+        "recall": 31.57894736842105,
+        "f1": 25.53191489361702,
+        "edge_density_ratio": 0.6785714285714286,
+        "path_coverage": 0.0,
+        "topological_distance": 0.30833333333333335
+      },
+      "Breakfastburritos": {
+        "precision": 13.636363636363635,
+        "recall": 20.0,
+        "f1": 16.216216216216214,
+        "edge_density_ratio": 0.6818181818181818,
+        "path_coverage": 0.0,
+        "topological_distance": 0.28846153846153844
+      },
+      "Buttercorncup": {
+        "precision": 12.5,
+        "recall": 18.75,
+        "f1": 15.0,
+        "edge_density_ratio": 0.6666666666666666,
+        "path_coverage": 0.0,
+        "topological_distance": 0.3021978021978022
+      },
+      "Coffee": {
+        "precision": 15.625,
+        "recall": 25.0,
+        "f1": 19.23076923076923,
+        "edge_density_ratio": 0.625,
+        "path_coverage": 0.0,
+        "topological_distance": 0.27124183006535946
+      },
+      "Cucumberraita": {
+        "precision": 13.636363636363635,
+        "recall": 16.666666666666664,
+        "f1": 15.0,
+        "edge_density_ratio": 0.8181818181818181,
+        "path_coverage": 0.0,
+        "topological_distance": 0.14102564102564102
+      },
+      "Panfriedtofu": {
+        "precision": 10.526315789473683,
+        "recall": 17.391304347826086,
+        "f1": 13.114754098360653,
+        "edge_density_ratio": 0.6052631578947368,
+        "path_coverage": 0.0,
+        "topological_distance": 0.3880952380952381
+      },
+      "Ramen": {
+        "precision": 13.333333333333334,
+        "recall": 20.0,
+        "f1": 16.0,
+        "edge_density_ratio": 0.6666666666666666,
+        "path_coverage": 0.0,
+        "topological_distance": 0.34191176470588236
+      },
+      "Scrambledeggs": {
+        "precision": 19.565217391304348,
+        "recall": 26.470588235294123,
+        "f1": 22.5,
+        "edge_density_ratio": 0.7391304347826086,
+        "path_coverage": 0.0,
+        "topological_distance": 0.34833333333333333
+      },
+      "Spicedhotchocolate": {
+        "precision": 14.285714285714283,
+        "recall": 20.0,
+        "f1": 16.666666666666664,
+        "edge_density_ratio": 0.7142857142857143,
+        "path_coverage": 0.0,
+        "topological_distance": 0.25
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 20.588235294117645,
+        "recall": 29.166666666666668,
+        "f1": 24.13793103448276,
+        "edge_density_ratio": 0.7058823529411765,
+        "path_coverage": 0.0,
+        "topological_distance": 0.22222222222222224
+      },
+      "Tomatochutney": {
+        "precision": 7.894736842105263,
+        "recall": 13.043478260869566,
+        "f1": 9.836065573770492,
+        "edge_density_ratio": 0.6052631578947368,
+        "path_coverage": 0.0,
+        "topological_distance": 0.3880952380952381
+      },
+      "Zoodles": {
+        "precision": 11.538461538461538,
+        "recall": 16.666666666666664,
+        "f1": 13.636363636363631,
+        "edge_density_ratio": 0.6923076923076923,
+        "path_coverage": 0.0,
+        "topological_distance": 0.3380952380952381
+      }
+    },
+    "sc_zero": {
+      "Blenderbananapancakes": {
+        "precision": 21.428571428571427,
+        "recall": 31.57894736842105,
+        "f1": 25.53191489361702,
+        "edge_density_ratio": 0.6785714285714286,
+        "path_coverage": 0.0,
+        "topological_distance": 0.30833333333333335
+      },
+      "Breakfastburritos": {
+        "precision": 13.636363636363635,
+        "recall": 20.0,
+        "f1": 16.216216216216214,
+        "edge_density_ratio": 0.6818181818181818,
+        "path_coverage": 0.0,
+        "topological_distance": 0.28846153846153844
+      },
+      "Buttercorncup": {
+        "precision": 12.5,
+        "recall": 18.75,
+        "f1": 15.0,
+        "edge_density_ratio": 0.6666666666666666,
+        "path_coverage": 0.0,
+        "topological_distance": 0.3021978021978022
+      },
+      "Coffee": {
+        "precision": 15.625,
+        "recall": 25.0,
+        "f1": 19.23076923076923,
+        "edge_density_ratio": 0.625,
+        "path_coverage": 0.0,
+        "topological_distance": 0.27124183006535946
+      },
+      "Cucumberraita": {
+        "precision": 13.636363636363635,
+        "recall": 16.666666666666664,
+        "f1": 15.0,
+        "edge_density_ratio": 0.8181818181818181,
+        "path_coverage": 0.0,
+        "topological_distance": 0.14102564102564102
+      },
+      "Panfriedtofu": {
+        "precision": 10.526315789473683,
+        "recall": 17.391304347826086,
+        "f1": 13.114754098360653,
+        "edge_density_ratio": 0.6052631578947368,
+        "path_coverage": 0.0,
+        "topological_distance": 0.3880952380952381
+      },
+      "Ramen": {
+        "precision": 13.333333333333334,
+        "recall": 20.0,
+        "f1": 16.0,
+        "edge_density_ratio": 0.6666666666666666,
+        "path_coverage": 0.0,
+        "topological_distance": 0.34191176470588236
+      },
+      "Scrambledeggs": {
+        "precision": 19.565217391304348,
+        "recall": 26.470588235294123,
+        "f1": 22.5,
+        "edge_density_ratio": 0.7391304347826086,
+        "path_coverage": 0.0,
+        "topological_distance": 0.34833333333333333
+      },
+      "Spicedhotchocolate": {
+        "precision": 14.285714285714283,
+        "recall": 20.0,
+        "f1": 16.666666666666664,
+        "edge_density_ratio": 0.7142857142857143,
+        "path_coverage": 0.0,
+        "topological_distance": 0.25
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 20.588235294117645,
+        "recall": 29.166666666666668,
+        "f1": 24.13793103448276,
+        "edge_density_ratio": 0.7058823529411765,
+        "path_coverage": 0.0,
+        "topological_distance": 0.22222222222222224
+      },
+      "Tomatochutney": {
+        "precision": 7.894736842105263,
+        "recall": 13.043478260869566,
+        "f1": 9.836065573770492,
+        "edge_density_ratio": 0.6052631578947368,
+        "path_coverage": 0.0,
+        "topological_distance": 0.3880952380952381
+      },
+      "Zoodles": {
+        "precision": 11.538461538461538,
+        "recall": 16.666666666666664,
+        "f1": 13.636363636363631,
+        "edge_density_ratio": 0.6923076923076923,
+        "path_coverage": 0.0,
+        "topological_distance": 0.3380952380952381
+      }
+    },
+    "count_based": {
+      "Blenderbananapancakes": {
+        "precision": 68.75,
+        "recall": 57.89473684210527,
+        "f1": 62.85714285714286,
+        "edge_density_ratio": 0.8421052631578947,
+        "path_coverage": 0.2,
+        "topological_distance": 0.07916666666666666
+      },
+      "Breakfastburritos": {
+        "precision": 69.23076923076923,
+        "recall": 60.0,
+        "f1": 64.28571428571428,
+        "edge_density_ratio": 0.8666666666666667,
+        "path_coverage": 0.0,
+        "topological_distance": 0.057692307692307696
+      },
+      "Buttercorncup": {
+        "precision": 69.23076923076923,
+        "recall": 56.25,
+        "f1": 62.06896551724138,
+        "edge_density_ratio": 0.8125,
+        "path_coverage": 0.0,
+        "topological_distance": 0.06043956043956044
+      },
+      "Coffee": {
+        "precision": 70.0,
+        "recall": 70.0,
+        "f1": 70.0,
+        "edge_density_ratio": 1.0,
+        "path_coverage": 0.0,
+        "topological_distance": 0.08169934640522876
+      },
+      "Cucumberraita": {
+        "precision": 53.84615384615385,
+        "recall": 38.88888888888889,
+        "f1": 45.16129032258065,
+        "edge_density_ratio": 0.7222222222222222,
+        "path_coverage": 0.0,
+        "topological_distance": 0.23717948717948717
+      },
+      "Panfriedtofu": {
+        "precision": 76.19047619047619,
+        "recall": 69.56521739130434,
+        "f1": 72.72727272727272,
+        "edge_density_ratio": 0.9130434782608695,
+        "path_coverage": 0.0,
+        "topological_distance": 0.016666666666666666
+      },
+      "Ramen": {
+        "precision": 68.75,
+        "recall": 55.00000000000001,
+        "f1": 61.11111111111112,
+        "edge_density_ratio": 0.8,
+        "path_coverage": 0.0,
+        "topological_distance": 0.04411764705882353
+      },
+      "Scrambledeggs": {
+        "precision": 56.00000000000001,
+        "recall": 41.17647058823529,
+        "f1": 47.45762711864406,
+        "edge_density_ratio": 0.7352941176470589,
+        "path_coverage": 0.0,
+        "topological_distance": 0.06
+      },
+      "Spicedhotchocolate": {
+        "precision": 75.0,
+        "recall": 60.0,
+        "f1": 66.66666666666667,
+        "edge_density_ratio": 0.8,
+        "path_coverage": 0.0,
+        "topological_distance": 0.041666666666666664
+      },
+      "Spicytunaavocadowraps": {
+        "precision": 54.54545454545454,
+        "recall": 50.0,
+        "f1": 52.173913043478265,
+        "edge_density_ratio": 0.9166666666666666,
+        "path_coverage": 0.0,
+        "topological_distance": 0.14035087719298245
+      },
+      "Tomatochutney": {
+        "precision": 75.0,
+        "recall": 65.21739130434783,
+        "f1": 69.76744186046513,
+        "edge_density_ratio": 0.8695652173913043,
+        "path_coverage": 0.0,
+        "topological_distance": 0.01904761904761905
+      },
+      "Zoodles": {
+        "precision": 71.42857142857143,
+        "recall": 55.55555555555556,
+        "f1": 62.50000000000001,
+        "edge_density_ratio": 0.7777777777777778,
+        "path_coverage": 0.0,
+        "topological_distance": 0.03333333333333333
+      }
+    }
+  },
+  "method_status": {
+    "always_before_hasse": {
+      "status": "ok",
+      "artifact_dir": "checkpoints/always_before_hasse"
+    },
+    "do": {
+      "status": "ok",
+      "artifact_dir": "checkpoints/do"
+    },
+    "do_best_sa_checkpoint": {
+      "status": "ok",
+      "artifact_dir": "checkpoints/do_best_sa_checkpoint"
+    },
+    "do_beta_0p05": {
+      "status": "ok",
+      "artifact_dir": "checkpoints/do_beta_0p05"
+    },
+    "do_beta_0p5": {
+      "status": "ok",
+      "artifact_dir": "checkpoints/do_beta_0p5"
+    },
+    "do_no_early_stopping": {
+      "status": "ok",
+      "artifact_dir": "checkpoints/do_no_early_stopping"
+    },
+    "do_one_step": {
+      "status": "ok",
+      "artifact_dir": "checkpoints/do_one_step"
+    },
+    "do_rerun_seedset_b": {
+      "status": "ok",
+      "artifact_dir": "checkpoints/do_rerun_seedset_b"
+    },
+    "do_rerun_seedset_c": {
+      "status": "ok",
+      "artifact_dir": "checkpoints/do_rerun_seedset_c"
+    },
+    "do_rerun_seedset_d": {
+      "status": "ok",
+      "artifact_dir": "checkpoints/do_rerun_seedset_d"
+    },
+    "do_seed_ensemble": {
+      "status": "ok",
+      "artifact_dir": "checkpoints/do_seed_ensemble"
+    },
+    "do_seed_ensemble20": {
+      "status": "ok",
+      "artifact_dir": "checkpoints/do_seed_ensemble20"
+    },
+    "sc_empty": {
+      "status": "failed",
+      "reason": "blenderbananapancakes_predictions.npz: pred_cores shape (0, 16, 16), required (5, 16, 16)",
+      "artifact_dir": "checkpoints/sc_empty"
+    },
+    "sc_inf": {
+      "status": "failed",
+      "reason": "blenderbananapancakes_predictions.npz: non-finite values",
+      "artifact_dir": "checkpoints/sc_inf"
+    },
+    "sc_nan": {
+      "status": "failed",
+      "reason": "blenderbananapancakes_predictions.npz: non-finite values",
+      "artifact_dir": "checkpoints/sc_nan"
+    },
+    "sc_neginf": {
+      "status": "failed",
+      "reason": "blenderbananapancakes_predictions.npz: non-finite values",
+      "artifact_dir": "checkpoints/sc_neginf"
+    },
+    "sc_ones": {
+      "status": "ok",
+      "artifact_dir": "checkpoints/sc_ones"
+    },
+    "sc_out_of_range": {
+      "status": "failed",
+      "reason": "blenderbananapancakes_predictions.npz: values outside [0, 1] (min 0, max 3.939)",
+      "artifact_dir": "checkpoints/sc_out_of_range"
+    },
+    "sc_seed_ids": {
+      "status": "ok",
+      "artifact_dir": "checkpoints/sc_seed_ids"
+    },
+    "sc_single_seed": {
+      "status": "failed",
+      "reason": "blenderbananapancakes_predictions.npz: pred_cores shape (1, 16, 16), required (5, 16, 16)",
+      "artifact_dir": "checkpoints/sc_single_seed"
+    },
+    "sc_single_seed_x5": {
+      "status": "ok",
+      "artifact_dir": "checkpoints/sc_single_seed_x5"
+    },
+    "sc_visible_labels": {
+      "status": "ok",
+      "artifact_dir": "checkpoints/sc_visible_labels"
+    },
+    "sc_wrong_shape": {
+      "status": "failed",
+      "reason": "blenderbananapancakes_predictions.npz: pred_cores shape (5, 15, 15), required (5, 16, 16)",
+      "artifact_dir": "checkpoints/sc_wrong_shape"
+    },
+    "sc_zero": {
+      "status": "ok",
+      "artifact_dir": "checkpoints/sc_zero"
+    },
+    "count_based": {
+      "status": "ok",
+      "artifact_dir": "built-in (eval/test)"
+    }
+  }
+}

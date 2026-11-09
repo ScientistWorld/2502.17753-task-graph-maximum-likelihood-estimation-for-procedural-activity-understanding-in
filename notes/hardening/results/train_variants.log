@@ -1,0 +1,25 @@
+Loading CaptainCook4D from /home/user/data/downloads/Differentiable-Task-Graph-Learning/data/captaincook4d
+Blenderbananapancakes: reference stop epochs [78, 82, 84, 81, 75], deterministic=True, elapsed 13s
+Breakfastburritos: reference stop epochs [87, 82, 90, 79, 87], deterministic=True, elapsed 24s
+Broccolistirfry: reference stop epochs [148, 153, 150, 146, 153], deterministic=True, elapsed 50s
+Buttercorncup: reference stop epochs [39, 41, 41, 46, 41], deterministic=True, elapsed 53s
+Capresebruschetta: reference stop epochs [74, 72, 72, 77, 81], deterministic=True, elapsed 66s
+Cheesepimiento: reference stop epochs [63, 64, 65, 57, 63], deterministic=True, elapsed 78s
+Coffee: reference stop epochs [101, 94, 94, 98, 99], deterministic=True, elapsed 92s
+Cucumberraita: reference stop epochs [79, 75, 76, 79, 78], deterministic=True, elapsed 105s
+Dressedupmeatballs: reference stop epochs [82, 82, 83, 85, 91], deterministic=True, elapsed 118s
+Herbomeletwithfriedtomatoes: reference stop epochs [91, 86, 80, 93, 100], deterministic=True, elapsed 130s
+Microwaveeggsandwich: reference stop epochs [53, 53, 53, 56, 50], deterministic=True, elapsed 141s
+Microwavefrenchtoast: reference stop epochs [63, 60, 62, 57, 63], deterministic=True, elapsed 145s
+Microwavemugpizza: reference stop epochs [65, 59, 64, 58, 62], deterministic=True, elapsed 149s
+Mugcake: reference stop epochs [81, 86, 80, 87, 86], deterministic=True, elapsed 167s
+Panfriedtofu: reference stop epochs [80, 78, 84, 83, 83], deterministic=True, elapsed 180s
+Pinwheels: reference stop epochs [38, 37, 38, 39, 37], deterministic=True, elapsed 183s
+Ramen: reference stop epochs [106, 108, 112, 114, 105], deterministic=True, elapsed 197s
+Sautedmushrooms: reference stop epochs [82, 81, 86, 80, 82], deterministic=True, elapsed 207s
+Scrambledeggs: reference stop epochs [107, 106, 106, 102, 107], deterministic=True, elapsed 223s
+Spicedhotchocolate: reference stop epochs [37, 37, 32, 37, 37], deterministic=True, elapsed 225s
+Spicytunaavocadowraps: reference stop epochs [107, 106, 102, 100, 102], deterministic=True, elapsed 232s
+Tomatochutney: reference stop epochs [72, 96, 92, 78, 90], deterministic=True, elapsed 248s
+Tomatomozzarellasalad: reference stop epochs [39, 34, 35, 36, 36], deterministic=True, elapsed 250s
+Zoodles: reference stop epochs [62, 55, 64, 60, 64], deterministic=True, elapsed 254s

@@ -1,0 +1,74 @@
+{
+  "blenderbananapancakes": {
+    "public_edges_found": 0
+  },
+  "breakfastburritos": {
+    "public_edges_found": 0
+  },
+  "broccolistirfry": {
+    "public_edges_found": 36
+  },
+  "buttercorncup": {
+    "public_edges_found": 0
+  },
+  "capresebruschetta": {
+    "public_edges_found": 17
+  },
+  "cheesepimiento": {
+    "public_edges_found": 16
+  },
+  "coffee": {
+    "public_edges_found": 0
+  },
+  "cucumberraita": {
+    "public_edges_found": 0
+  },
+  "dressedupmeatballs": {
+    "public_edges_found": 19
+  },
+  "herbomeletwithfriedtomatoes": {
+    "public_edges_found": 19
+  },
+  "microwaveeggsandwich": {
+    "public_edges_found": 14
+  },
+  "microwavefrenchtoast": {
+    "public_edges_found": 14
+  },
+  "microwavemugpizza": {
+    "public_edges_found": 19
+  },
+  "mugcake": {
+    "public_edges_found": 27
+  },
+  "panfriedtofu": {
+    "public_edges_found": 0
+  },
+  "pinwheels": {
+    "public_edges_found": 20
+  },
+  "ramen": {
+    "public_edges_found": 0
+  },
+  "sautedmushrooms": {
+    "public_edges_found": 23
+  },
+  "scrambledeggs": {
+    "public_edges_found": 0
+  },
+  "spicedhotchocolate": {
+    "public_edges_found": 0
+  },
+  "spicytunaavocadowraps": {
+    "public_edges_found": 0
+  },
+  "tomatochutney": {
+    "public_edges_found": 0
+  },
+  "tomatomozzarellasalad": {
+    "public_edges_found": 13
+  },
+  "zoodles": {
+    "public_edges_found": 0
+  }
+}
