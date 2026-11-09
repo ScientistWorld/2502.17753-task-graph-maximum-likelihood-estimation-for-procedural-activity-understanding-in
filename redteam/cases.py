@@ -121,6 +121,16 @@ def prepare(name):
             saved = np.load(p)
             np.savez_compressed(folder / p.name, pred_cores=saved['pred_cores'],
                                 seeds=np.zeros(len(saved['pred_cores']), dtype=np.int64))
+    elif name == 'shortcut_single_seed':
+        # Shortcut: submit only the first predeclared rerun seed. A single
+        # trial is assigned zero instability, despite the nominal five-seed
+        # contract. Selection is fixed at seed 7, without test feedback.
+        for p in (OUT / 'reference_rerun/predictions').glob('*.npz'):
+            saved = np.load(p)
+            k = list(saved['seeds']).index(7)
+            np.savez_compressed(folder / p.name,
+                                pred_cores=saved['pred_cores'][k:k + 1],
+                                seeds=np.array([7], dtype=np.int64))
     elif name == 'shortcut_partial_compare':
         # Select by node count alone, separately for the visible train slice
         # and its complement. No test membership, labels, or metrics are used.

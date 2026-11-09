@@ -1,0 +1,154 @@
+[hive] This stdout log is managed by Hive.
+[hive] job_id: 53733734
+[hive] host: node
+[hive] node_id: 9d6ae85c44257ebfe79f2a3020323d5e0d4198429e73a4c0716e7c0e
+[hive] user: nexus/user (remote)
+[hive] resource: gpu-cpu
+[hive] gpus: 0
+[hive] cpus: 1
+[hive] workdir: /home/user
+[hive] timeout_sec: 21600
+[hive] started_at: 2026-11-09 01:33:45 EST
+[hive] command: apptainer exec --containall --cleanenv --env HF_HOME=/home/user/shared/hf_cache --env TRANSFORMERS_CACHE=/home/user/shared/hf_cache --env HF_DATASETS_CACHE=/home/user/shared/hf_cache/datasets --env TORCH_HOME=/home/user/shared/hf_cache/torch --bind /home/user/scratch/AgentWorkspaces/workspaces/2502.17753:/home/user --overlay /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/overlay.img:ro --bind /home/user/scratch/AgentWorkspaces/shared/datasets:/home/user/shared/datasets:ro --bind /home/user/scratch/AgentWorkspaces/shared/models:/home/user/shared/models:ro --bind /home/user/scratch/AgentWorkspaces/shared/hf_cache:/home/user/shared/hf_cache /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/container.sif bash -c 'cd /home/user && bash /home/user/scripts/run.sh'
+Blenderbananapancakes 7 seconds 12.7
+Blenderbananapancakes 19 seconds 14.3
+Blenderbananapancakes 31 seconds 16.6
+Breakfastburritos 7 seconds 19.1
+Breakfastburritos 19 seconds 21.4
+Breakfastburritos 31 seconds 23.3
+Broccolistirfry 7 seconds 26.0
+Broccolistirfry 19 seconds 30.5
+Broccolistirfry 31 seconds 33.5
+Buttercorncup 7 seconds 35.2
+Buttercorncup 19 seconds 36.8
+Buttercorncup 31 seconds 38.3
+Capresebruschetta 7 seconds 40.1
+Capresebruschetta 19 seconds 42.1
+Capresebruschetta 31 seconds 43.7
+Cheesepimiento 7 seconds 45.4
+Cheesepimiento 19 seconds 46.9
+Cheesepimiento 31 seconds 48.7
+Coffee 7 seconds 50.6
+Coffee 19 seconds 52.4
+Coffee 31 seconds 54.3
+Cucumberraita 7 seconds 56.1
+Cucumberraita 19 seconds 57.9
+Cucumberraita 31 seconds 60.5
+Dressedupmeatballs 7 seconds 62.7
+Dressedupmeatballs 19 seconds 65.4
+Dressedupmeatballs 31 seconds 67.4
+Herbomeletwithfriedtomatoes 7 seconds 70.6
+Herbomeletwithfriedtomatoes 19 seconds 73.4
+Herbomeletwithfriedtomatoes 31 seconds 75.6
+Microwaveeggsandwich 7 seconds 77.6
+Microwaveeggsandwich 19 seconds 79.4
+Microwaveeggsandwich 31 seconds 81.3
+Microwavefrenchtoast 7 seconds 84.0
+Microwavefrenchtoast 19 seconds 86.1
+Microwavefrenchtoast 31 seconds 89.2
+Microwavemugpizza 7 seconds 92.2
+Microwavemugpizza 19 seconds 94.2
+Microwavemugpizza 31 seconds 96.1
+Mugcake 7 seconds 98.9
+Mugcake 19 seconds 101.5
+Mugcake 31 seconds 103.9
+Panfriedtofu 7 seconds 106.4
+Panfriedtofu 19 seconds 108.5
+Panfriedtofu 31 seconds 111.1
+Pinwheels 7 seconds 113.0
+Pinwheels 19 seconds 114.6
+Pinwheels 31 seconds 116.3
+Ramen 7 seconds 119.2
+Ramen 19 seconds 121.2
+Ramen 31 seconds 124.4
+Sautedmushrooms 7 seconds 127.1
+Sautedmushrooms 19 seconds 129.7
+Sautedmushrooms 31 seconds 132.6
+Scrambledeggs 7 seconds 135.7
+Scrambledeggs 19 seconds 139.2
+Scrambledeggs 31 seconds 141.7
+Spicedhotchocolate 7 seconds 143.5
+Spicedhotchocolate 19 seconds 145.2
+Spicedhotchocolate 31 seconds 146.7
+Spicytunaavocadowraps 7 seconds 149.3
+Spicytunaavocadowraps 19 seconds 152.3
+Spicytunaavocadowraps 31 seconds 154.6
+Tomatochutney 7 seconds 157.3
+Tomatochutney 19 seconds 159.8
+Tomatochutney 31 seconds 162.3
+Tomatomozzarellasalad 7 seconds 164.4
+Tomatomozzarellasalad 19 seconds 166.2
+Tomatomozzarellasalad 31 seconds 168.3
+Zoodles 7 seconds 171.3
+Zoodles 19 seconds 174.7
+Zoodles 31 seconds 177.2
+{"case": "reference_saved", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/reference_saved/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 15.05812406539917}
+{"case": "reference_rerun", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/reference_rerun/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 10.319380044937134}
+{"case": "reference_seed_7", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/reference_seed_7/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 6.65929913520813}
+{"case": "reference_seed_19", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/reference_seed_19/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 6.714453220367432}
+{"case": "reference_seed_31", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/reference_seed_31/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 8.095453023910522}
+{"case": "better_more_training", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/better_more_training/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 4.107961416244507}
+{"case": "better_sequence_selection", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/better_sequence_selection/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 5.57513689994812}
+{"case": "weaker_one_epoch", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/weaker_one_epoch/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 9.795176267623901}
+{"case": "simple_baseline", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "count_based", "checkpoint_dir": "", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 10.44088363647461}
+brute_force {'scenario': 'Blenderbananapancakes', 'nodes': 16, 'candidate_bits': 91, 'space_size': '2475880078570760549798248448', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 1.0977262258529663, 'seconds': 0.5820262432098389}
+brute_force {'scenario': 'Breakfastburritos', 'nodes': 13, 'candidate_bits': 55, 'space_size': '36028797018963968', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 0.6611984372138977, 'seconds': 0.3364827632904053}
+brute_force {'scenario': 'Broccolistirfry', 'nodes': 27, 'candidate_bits': 300, 'space_size': '2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 2.9816529750823975, 'seconds': 0.596782922744751}
+brute_force {'scenario': 'Buttercorncup', 'nodes': 14, 'candidate_bits': 66, 'space_size': '73786976294838206464', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 0.3746310770511627, 'seconds': 0.07416725158691406}
+brute_force {'scenario': 'Capresebruschetta', 'nodes': 13, 'candidate_bits': 55, 'space_size': '36028797018963968', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 0.7110356092453003, 'seconds': 0.10662078857421875}
+brute_force {'scenario': 'Cheesepimiento', 'nodes': 13, 'candidate_bits': 55, 'space_size': '36028797018963968', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 0.5591917037963867, 'seconds': 0.09555697441101074}
+brute_force {'scenario': 'Coffee', 'nodes': 18, 'candidate_bits': 120, 'space_size': '1329227995784915872903807060280344576', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 1.3362903594970703, 'seconds': 0.23935389518737793}
+brute_force {'scenario': 'Cucumberraita', 'nodes': 13, 'candidate_bits': 55, 'space_size': '36028797018963968', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 0.9320558309555054, 'seconds': 0.13642621040344238}
+brute_force {'scenario': 'Dressedupmeatballs', 'nodes': 16, 'candidate_bits': 91, 'space_size': '2475880078570760549798248448', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 0.9272446632385254, 'seconds': 0.1436901092529297}
+brute_force {'scenario': 'Herbomeletwithfriedtomatoes', 'nodes': 17, 'candidate_bits': 105, 'space_size': '40564819207303340847894502572032', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 1.090254783630371, 'seconds': 0.2343895435333252}
+brute_force {'scenario': 'Microwaveeggsandwich', 'nodes': 14, 'candidate_bits': 66, 'space_size': '73786976294838206464', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 0.4450356960296631, 'seconds': 0.08948493003845215}
+brute_force {'scenario': 'Microwavefrenchtoast', 'nodes': 13, 'candidate_bits': 55, 'space_size': '36028797018963968', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 0.5495892763137817, 'seconds': 0.0979452133178711}
+brute_force {'scenario': 'Microwavemugpizza', 'nodes': 16, 'candidate_bits': 91, 'space_size': '2475880078570760549798248448', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 0.7293798923492432, 'seconds': 0.1222231388092041}
+brute_force {'scenario': 'Mugcake', 'nodes': 22, 'candidate_bits': 190, 'space_size': '1569275433846670190958947355801916604025588861116008628224', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 1.9081984758377075, 'seconds': 0.32503437995910645}
+brute_force {'scenario': 'Panfriedtofu', 'nodes': 21, 'candidate_bits': 171, 'space_size': '2993155353253689176481146537402947624255349848014848', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 0.8005662560462952, 'seconds': 0.15068626403808594}
+brute_force {'scenario': 'Pinwheels', 'nodes': 19, 'candidate_bits': 136, 'space_size': '87112285931760246646623899502532662132736', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 0.16849465668201447, 'seconds': 0.07391715049743652}
+brute_force {'scenario': 'Ramen', 'nodes': 17, 'candidate_bits': 105, 'space_size': '40564819207303340847894502572032', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 1.3386632204055786, 'seconds': 0.24484944343566895}
+brute_force {'scenario': 'Sautedmushrooms', 'nodes': 19, 'candidate_bits': 136, 'space_size': '87112285931760246646623899502532662132736', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 1.0022636651992798, 'seconds': 0.21135830879211426}
+brute_force {'scenario': 'Scrambledeggs', 'nodes': 25, 'candidate_bits': 253, 'space_size': '14474011154664524427946373126085988481658748083205070504932198000989141204992', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 1.5657894611358643, 'seconds': 0.4014160633087158}
+brute_force {'scenario': 'Spicedhotchocolate', 'nodes': 9, 'candidate_bits': 21, 'space_size': '2097152', 'enumerated': 2097152, 'exhaustive_in_fixed_order': True, 'best_tgml_objective': 0.04899434372782707, 'seconds': 4.573495864868164}
+brute_force {'scenario': 'Spicytunaavocadowraps', 'nodes': 19, 'candidate_bits': 136, 'space_size': '87112285931760246646623899502532662132736', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 1.5166308879852295, 'seconds': 0.21443915367126465}
+brute_force {'scenario': 'Tomatochutney', 'nodes': 21, 'candidate_bits': 171, 'space_size': '2993155353253689176481146537402947624255349848014848', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 1.0007022619247437, 'seconds': 0.1792435646057129}
+brute_force {'scenario': 'Tomatomozzarellasalad', 'nodes': 11, 'candidate_bits': 36, 'space_size': '68719476736', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 0.5767993927001953, 'seconds': 0.10351753234863281}
+brute_force {'scenario': 'Zoodles', 'nodes': 15, 'candidate_bits': 78, 'space_size': '302231454903657293676544', 'enumerated': 16384, 'exhaustive_in_fixed_order': False, 'best_tgml_objective': 0.4234793186187744, 'seconds': 0.08679771423339844}
+{"case": "brute_force", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/brute_force/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 19.982133388519287}
+{"case": "shortcut_visible_labels", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/shortcut_visible_labels/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 8.217308759689331}
+{"case": "shortcut_seed_ids", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/shortcut_seed_ids/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 4.3099470138549805}
+{"case": "shortcut_partial_compare", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "captaincook4d_partial_compare", "checkpoint_dir": "redteam/shortcut_partial_compare/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 3.3142313957214355}
+{"case": "shortcut_forge_scores", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/shortcut_forge_scores/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 3.78236722946167}
+{"case": "shortcut_rewrite_ground_truth", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/shortcut_rewrite_ground_truth/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 3.8840672969818115}
+{"case": "shortcut_replace_baseline", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/shortcut_replace_baseline/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 4.510392665863037}
+{"case": "shortcut_zero", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/shortcut_zero/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 4.121094226837158}
+{"case": "shortcut_ones", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/shortcut_ones/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 4.061215400695801}
+{"case": "shortcut_nan", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/shortcut_nan/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 4.027216196060181}
+{"case": "shortcut_infinity", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/shortcut_infinity/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 4.121096849441528}
+{"case": "shortcut_negative", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/shortcut_negative/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 3.634701728820801}
+{"case": "shortcut_empty", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/shortcut_empty/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 3.271552562713623}
+CASE, F1, STD_F1, RANK_DELTA, COVERAGE, DOMINATES
+better_more_training 75.098964 0.0 -0.036941 12 False
+better_sequence_selection 87.170911 0.446666 0.725317 12 False
+brute_force 30.178462 0.0 -3.133736 12 False
+reference_rerun 76.141345 0.163682 -0.015469 12 False
+reference_saved 76.194552 0.142553 0.0 12 False
+reference_seed_19 76.025605 0.0 0.042059 12 False
+reference_seed_31 76.025605 0.0 0.043747 12 False
+reference_seed_7 76.372827 0.0 0.067545 12 False
+shortcut_forge_scores 17.239223 0.0 -3.896254 12 False
+shortcut_infinity 6.057296 0.0 -4.437476 12 False
+shortcut_nan 6.057296 0.0 -4.437476 12 False
+shortcut_negative 17.239223 0.0 -3.896254 12 False
+shortcut_ones 6.057296 0.0 -4.437476 12 False
+shortcut_partial_compare 80.0 0.0 0.512712 1 True
+shortcut_replace_baseline 76.194552 0.142553 0.0 12 False
+shortcut_rewrite_ground_truth 100.0 0.0 1.97494 12 True
+shortcut_seed_ids 76.194552 0.0 0.057991 12 True
+shortcut_visible_labels 100.0 0.0 1.97494 12 True
+shortcut_zero 17.239223 0.0 -3.896254 12 False
+simple_baseline 61.398095 0.0 -1.012501 12 False
+weaker_one_epoch 10.916257 1.706032 -4.854318 12 False
+INVALID ['shortcut_empty']
+SEED F1 SPREAD 0.3472222222222143 RANK SPREAD 0.025486476544764332
