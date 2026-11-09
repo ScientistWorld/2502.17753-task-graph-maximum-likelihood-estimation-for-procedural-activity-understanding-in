@@ -1,16 +1,7 @@
 #!/bin/bash
-# Run the Count-Based baseline method.
-#
-# Usage:
-#   bash scripts/baseline.sh
-
-set -e
+# The Count-Based baseline is computed by the evaluators themselves (fixed by
+# eval/), so scoring anything also scores the baseline under the key "count_based".
+set -euo pipefail
 cd /home/user
 source /home/user/scripts/common_env.sh
-
-echo "Running Count-Based baseline on CaptainCook4D..."
-
-# Run evaluation with count-based
-bash scripts/evaluate.sh captaincook4d_count
-
-echo "Done."
+bash scripts/evaluate.sh

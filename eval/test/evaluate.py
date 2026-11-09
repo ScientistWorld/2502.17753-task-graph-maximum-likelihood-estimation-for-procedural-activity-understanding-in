@@ -1,149 +1,110 @@
-"""Held-out test-slice evaluator for CaptainCook4D task graph generation.
+"""Hidden-test evaluator: CaptainCook4D task-graph generation, 12 held-out procedures.
 
-This file is intentionally self-contained within eval/test/. It scores the
-same prediction artifacts as scripts/evaluate.sh, but only on the hidden test
-slice of CaptainCook4D scenarios.
+Self-contained in eval/test/. The ground-truth graphs and the demonstration
+sequences used by the built-in Count-Based baseline are read only from
+eval/test/captaincook4d_test.json; nothing a method writes is trusted except its
+raw prediction matrices.
+
+Every directory under the predictions root (default: checkpoints/) that holds at
+least one ``*_predictions.npz`` file is scored as one method, keyed by the
+directory name. A method must provide, for each of the 12 held-out procedures,
+``<procedure>_predictions.npz`` with an array ``pred_cores`` of shape
+(5, n, n): five independent trials of a weighted adjacency matrix with finite
+values in [0, 1], indexed by the procedure's node ids (entry [i, j] scores
+"node j is a precondition of node i"). Any missing procedure, wrong shape,
+non-finite or out-of-range value marks the whole method as failed; a failed
+method receives the floor value of every scored metric.
+
+Each trial is binarised at the fixed threshold 1/n and post-processed exactly as
+in the paper (boundary START/END completion, transitive reduction, removal of
+the lowest-scored edge of every cycle), then compared with the ground truth.
+
+Usage (no arguments scores every method on disk):
+    python3 eval/test/evaluate.py [--predictions-root DIR] [--output FILE]
+                                  [--details-output FILE]
 """
 
 from __future__ import annotations
 
+import argparse
 import copy
 import json
-import os
+import math
 import sys
 from dataclasses import dataclass
-from typing import Any, Dict, Iterable, List, Optional, Tuple
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
 import networkx as nx
 import numpy as np
 
 
+WORKSPACE = Path(__file__).resolve().parents[2]
+DATA_FILE = Path(__file__).resolve().parent / "captaincook4d_test.json"
+DEFAULT_PREDICTIONS_ROOT = WORKSPACE / "checkpoints"
+DEFAULT_OUTPUT = WORKSPACE / "scoring" / "scores_test.json"
+
 SLICE_NAME = "test"
-OUTPUT_PATH = "scoring/scores_test.json"
-SCENARIOS = {
-    # Held-out half of the 24 CaptainCook4D procedures. The split is balanced
-    # against eval/train/: 12 scenarios, 201 GT nodes, and 240 GT edges.
-    "Blenderbananapancakes",
-    "Breakfastburritos",
-    "Buttercorncup",
-    "Coffee",
-    "Cucumberraita",
-    "Panfriedtofu",
-    "Ramen",
-    "Scrambledeggs",
-    "Spicedhotchocolate",
-    "Spicytunaavocadowraps",
-    "Tomatochutney",
-    "Zoodles",
+EXPERIMENT = "captaincook4d_task_graph"
+N_TRIALS = 5
+BASELINE_KEY = "count_based"
+PREDICTION_SUFFIX = "_predictions.npz"
+METRIC_NAMES = (
+    "precision",
+    "recall",
+    "f1",
+    "worst_quartile_f1",
+    "edge_density_ratio",
+    "path_coverage",
+    "topological_distance",
+)
+# Floor of every scored metric: what a failed run receives.
+FAILED_SCORES = {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "worst_quartile_f1": 0.0,
+    "edge_density_ratio": 0.0,
+    "path_coverage": 0.0,
+    "topological_distance": 1.0,
 }
 
 
+class InvalidSubmission(Exception):
+    """Raised when a method's artifacts violate the prediction contract."""
+
+
 @dataclass
-class TaskGraphData:
-    scenario_name: str
-    num_steps: int
+class Procedure:
+    key: str
+    name: str
+    n: int
+    gt_adj: np.ndarray
     sequences: List[List[int]]
-    gt_adj_matrix: np.ndarray
-    step_names: Dict[int, str]
-    gt_node_count: int
 
 
-def load_captaincook4d(repo_data_path: str) -> List[TaskGraphData]:
-    annotations_path = os.path.join(repo_data_path, "task_graph_generation_annotations.json")
-    gt_graphs_path = os.path.join(repo_data_path, "ground_truth_task_graphs")
-
-    with open(annotations_path) as f:
-        annotations = json.load(f)
-
-    annotations_json = annotations["annotations"]
-    taxonomy_json = annotations["taxonomy"]
-    results: List[TaskGraphData] = []
-
-    gt_files = sorted(filename for filename in os.listdir(gt_graphs_path) if filename.endswith(".json"))
-    for gt_file in gt_files:
-        activity_name = gt_file.replace(".json", "")
-        with open(os.path.join(gt_graphs_path, gt_file)) as f:
-            task_graph_json = json.load(f)
-
-        graph = nx.DiGraph()
-        for node_str, label in task_graph_json["steps"].items():
-            graph.add_node(int(node_str), label=label)
-        for dst, src in task_graph_json["edges"]:
-            graph.add_edge(src, dst)
-
-        n_gt_nodes = len(graph.nodes)
-        n_matrix = n_gt_nodes + 2
-        step_names = {int(node_str): label for node_str, label in task_graph_json["steps"].items()}
-
-        taxonomy_scenario = taxonomy_json.get(activity_name, {})
-        description_to_tax_id = {
-            step_info["name"]: int(tax_id_str)
-            for tax_id_str, step_info in taxonomy_scenario.items()
-        }
-        id_to_node = {}
-        for node in graph.nodes:
-            label = graph.nodes[node]["label"]
-            if label in description_to_tax_id:
-                id_to_node[description_to_tax_id[label]] = node
-
-        train_sequences: List[List[int]] = []
-        for video_data in annotations_json.values():
-            if video_data["scenario"].lower().replace(" ", "") != activity_name:
-                continue
-            seq: List[int] = []
-            for segment in video_data["segments"]:
-                step_id = segment["step_id"]
-                if step_id not in seq:
-                    seq.append(step_id)
-            if seq and seq not in train_sequences:
-                train_sequences.append(seq)
-
-        if not train_sequences:
-            continue
-
-        converted_seqs: List[List[int]] = []
-        for seq in train_sequences:
-            converted = [0, 1]
-            for tax_id in seq:
-                gt_node = id_to_node.get(tax_id)
-                if gt_node is not None:
-                    converted.append(gt_node + 1)
-            converted.append(n_gt_nodes)
-            converted.append(n_matrix - 1)
-            converted_seqs.append(converted)
-
-        gt_adj = np.zeros((n_gt_nodes, n_gt_nodes), dtype=np.float32)
-        for dst, src in task_graph_json["edges"]:
-            if dst < n_gt_nodes and src < n_gt_nodes:
-                gt_adj[src, dst] = 1.0
-
-        results.append(
-            TaskGraphData(
-                scenario_name=activity_name.replace("_", " ").title(),
-                num_steps=n_gt_nodes - 2,
-                sequences=converted_seqs,
-                gt_adj_matrix=gt_adj,
-                step_names=step_names,
-                gt_node_count=n_gt_nodes,
-            )
+def load_procedures() -> List[Procedure]:
+    with open(DATA_FILE) as f:
+        blob = json.load(f)
+    procedures: List[Procedure] = []
+    for key in sorted(blob["procedures"]):
+        entry = blob["procedures"][key]
+        n = int(entry["n_nodes"])
+        gt_adj = np.zeros((n, n), dtype=np.float32)
+        for a, b in entry["edges"]:
+            gt_adj[int(b), int(a)] = 1.0
+        procedures.append(
+            Procedure(key=key, name=entry["name"], n=n, gt_adj=gt_adj,
+                      sequences=[list(map(int, s)) for s in entry["sequences"]])
         )
+    if len(procedures) != 12:
+        raise RuntimeError(f"expected 12 held-out procedures, found {len(procedures)}")
+    return procedures
 
-    return results
 
-
-def compute_precision_recall_f1(gt_adj: np.ndarray, pred_adj: np.ndarray) -> Tuple[float, float, float]:
-    gt_flat = gt_adj.astype(np.int32).flatten()
-    pred_flat = pred_adj.astype(np.int32).flatten()
-
-    tp = int(np.sum((gt_flat == 1) & (pred_flat == 1)))
-    fp = int(np.sum((gt_flat == 0) & (pred_flat == 1)))
-    fn = int(np.sum((gt_flat == 1) & (pred_flat == 0)))
-
-    precision = (tp / (tp + fp) * 100.0) if (tp + fp) else 0.0
-    recall = (tp / (tp + fn) * 100.0) if (tp + fn) else 0.0
-    f1 = 2.0 * precision * recall / (precision + recall) if (precision + recall) else 0.0
-    return precision, recall, f1
-
+# --------------------------------------------------------------------------
+# Graph post-processing (paper Section III-E) and metrics
+# --------------------------------------------------------------------------
 
 def delete_redundant_edges(graph: nx.DiGraph) -> None:
     graph_copy = copy.deepcopy(graph)
@@ -157,16 +118,13 @@ def delete_redundant_edges(graph: nx.DiGraph) -> None:
 
 def add_boundary_edges(graph: nx.DiGraph, id_start: int, id_end: int) -> None:
     in_degree_zeros = [
-        node
-        for node in graph.nodes
+        node for node in graph.nodes
         if graph.in_degree(node) == 0 and node != id_end and node != id_start
     ]
     for node in in_degree_zeros:
         graph.add_edge(id_end, node)
-
     out_degree_zeros = [
-        node
-        for node in graph.nodes
+        node for node in graph.nodes
         if graph.out_degree(node) == 0 and node != id_end and node != id_start
     ]
     for node in out_degree_zeros:
@@ -180,77 +138,39 @@ def delete_cycles(graph: nx.DiGraph, scores: np.ndarray) -> None:
         except nx.NetworkXNoCycle:
             break
         cycle_edges = [(edge[0], edge[1]) for edge in cycle]
-        edge_to_remove = min(
-            cycle_edges,
-            key=lambda edge: float(scores[edge[0], edge[1]]),
-        )
+        edge_to_remove = min(cycle_edges, key=lambda edge: float(scores[edge[0], edge[1]]))
         graph.remove_edge(*edge_to_remove)
 
 
-def post_process_pred_adj(pred_core: np.ndarray, n_gt: int) -> np.ndarray:
-    threshold = 1.0 / n_gt
+def post_process_pred_adj(pred_core: np.ndarray, n: int) -> np.ndarray:
+    threshold = 1.0 / n
     pred_binary = np.where(pred_core < threshold, 0, 1).astype(float)
     graph = nx.DiGraph(pred_binary)
-
-    add_boundary_edges(graph, id_start=0, id_end=n_gt - 1)
+    add_boundary_edges(graph, id_start=0, id_end=n - 1)
     delete_redundant_edges(graph)
     delete_cycles(graph, pred_core)
-
-    pred_adj = np.zeros((n_gt, n_gt), dtype=np.float32)
+    pred_adj = np.zeros((n, n), dtype=np.float32)
     for src, dst in graph.edges():
         pred_adj[src, dst] = 1.0
     return pred_adj
 
 
-def compute_topological_distance(gt_adj: np.ndarray, pred_adj: np.ndarray) -> float:
-    """
-    Compute a normalized partial-order distance between two DAGs.
-    Uses disagreement in transitive reachability, which captures wrong,
-    missing, or spurious precedence relations beyond direct edge overlap.
-    Lower is better; 0 = identical topological structure.
-    """
-    try:
-        gt_g = nx.DiGraph(gt_adj)
-        pred_g = nx.DiGraph(pred_adj)
-
-        if len(gt_g) <= 1:
-            return 0.0
-
-        if nx.is_directed_acyclic_graph(gt_g):
-            gt_closure = nx.transitive_closure_dag(gt_g)
-        else:
-            gt_closure = nx.transitive_closure(gt_g)
-
-        if nx.is_directed_acyclic_graph(pred_g):
-            pred_closure = nx.transitive_closure_dag(pred_g)
-        else:
-            pred_closure = nx.transitive_closure(pred_g)
-
-        nodes = sorted(set(gt_closure.nodes()) | set(pred_closure.nodes()))
-        pair_count = 0
-        disagreements = 0
-        for src in nodes:
-            for dst in nodes:
-                if src == dst:
-                    continue
-                pair_count += 1
-                gt_has_order = gt_closure.has_edge(src, dst)
-                pred_has_order = pred_closure.has_edge(src, dst)
-                if gt_has_order != pred_has_order:
-                    disagreements += 1
-
-        return float(disagreements / pair_count) if pair_count else 0.0
-    except Exception:
-        return 0.5
+def compute_precision_recall_f1(gt_adj: np.ndarray, pred_adj: np.ndarray) -> Tuple[float, float, float]:
+    gt_flat = gt_adj.astype(np.int32).flatten()
+    pred_flat = pred_adj.astype(np.int32).flatten()
+    tp = int(np.sum((gt_flat == 1) & (pred_flat == 1)))
+    fp = int(np.sum((gt_flat == 0) & (pred_flat == 1)))
+    fn = int(np.sum((gt_flat == 1) & (pred_flat == 0)))
+    precision = (tp / (tp + fp) * 100.0) if (tp + fp) else 0.0
+    recall = (tp / (tp + fn) * 100.0) if (tp + fn) else 0.0
+    f1 = 2.0 * precision * recall / (precision + recall) if (precision + recall) else 0.0
+    return precision, recall, f1
 
 
 def compute_edge_density_ratio(gt_adj: np.ndarray, pred_adj: np.ndarray) -> float:
-    """
-    Compute a symmetric density-match ratio in [0, 1].
-    1.0 = perfect density match; values decrease for under- or over-connection.
-    """
-    gt_edges = np.sum(gt_adj > 0)
-    pred_edges = np.sum(pred_adj > 0)
+    """min(|E_pred|, |E_gt|) / max(|E_pred|, |E_gt|); 1.0 = same number of edges."""
+    gt_edges = int(np.sum(gt_adj > 0))
+    pred_edges = int(np.sum(pred_adj > 0))
     if gt_edges == 0:
         return 1.0 if pred_edges == 0 else 0.0
     if pred_edges == 0:
@@ -259,58 +179,56 @@ def compute_edge_density_ratio(gt_adj: np.ndarray, pred_adj: np.ndarray) -> floa
 
 
 def compute_path_coverage(gt_adj: np.ndarray, pred_adj: np.ndarray) -> float:
-    """
-    Compute fraction of GT directed paths covered by predicted graph.
-    A path is a sequence of edges forming a chain in topological order.
-    Measures structural correctness beyond edge overlap.
-    """
-    try:
-        gt_g = nx.DiGraph(gt_adj)
-        pred_g = nx.DiGraph(pred_adj)
-
-        sources = [n for n in gt_g.nodes() if gt_g.in_degree(n) == 0]
-        sinks = [n for n in gt_g.nodes() if gt_g.out_degree(n) == 0]
-
-        if not sources or not sinks:
-            return 0.5
-
-        all_paths = []
-        for src in sources:
-            for sink in sinks:
-                try:
-                    for path in nx.all_simple_paths(gt_g, src, sink):
-                        all_paths.append(tuple(sorted(zip(path[:-1], path[1:]))))
-                except nx.NetworkXNoPath:
-                    continue
-                except nx.NetworkXError:
-                    continue
-
-        if not all_paths:
-            return 0.5
-
-        covered = 0
-        pred_edges = set(pred_g.edges())
-        for path_edges in all_paths:
-            if all(edge in pred_edges for edge in path_edges):
-                covered += 1
-
-        return covered / len(all_paths)
-    except Exception:
-        return 0.5
+    """Fraction of ground-truth source-to-sink paths whose every edge is predicted."""
+    gt_g = nx.DiGraph(gt_adj)
+    pred_edges = set(nx.DiGraph(pred_adj).edges())
+    sources = [node for node in gt_g.nodes() if gt_g.in_degree(node) == 0]
+    sinks = [node for node in gt_g.nodes() if gt_g.out_degree(node) == 0]
+    total = 0
+    covered = 0
+    for src in sources:
+        for sink in sinks:
+            if src == sink:
+                continue
+            for path in nx.all_simple_paths(gt_g, src, sink):
+                total += 1
+                if all(edge in pred_edges for edge in zip(path[:-1], path[1:])):
+                    covered += 1
+    return covered / total if total else 0.0
 
 
-def evaluate_from_adjacency(pred_core: np.ndarray, gt_adj: np.ndarray) -> Tuple[float, float, float, float, float, float]:
-    """
-    Evaluate a predicted adjacency matrix against ground truth.
-    Returns (precision, recall, f1, density, path_cov, topo_dist).
-    """
-    pred_adj = post_process_pred_adj(pred_core, gt_adj.shape[0])
+def compute_topological_distance(gt_adj: np.ndarray, pred_adj: np.ndarray) -> float:
+    """Fraction of ordered node pairs whose reachability differs (0 = same partial order)."""
+    gt_closure = nx.transitive_closure(nx.DiGraph(gt_adj), reflexive=False)
+    pred_closure = nx.transitive_closure(nx.DiGraph(pred_adj), reflexive=False)
+    nodes = sorted(set(gt_closure.nodes()) | set(pred_closure.nodes()))
+    pair_count = 0
+    disagreements = 0
+    for src in nodes:
+        for dst in nodes:
+            if src == dst:
+                continue
+            pair_count += 1
+            if gt_closure.has_edge(src, dst) != pred_closure.has_edge(src, dst):
+                disagreements += 1
+    return float(disagreements / pair_count) if pair_count else 0.0
+
+
+def graph_metrics(gt_adj: np.ndarray, pred_adj: np.ndarray) -> Dict[str, float]:
     precision, recall, f1 = compute_precision_recall_f1(gt_adj, pred_adj)
-    density = compute_edge_density_ratio(gt_adj, pred_adj)
-    path_cov = compute_path_coverage(gt_adj, pred_adj)
-    topo_dist = compute_topological_distance(gt_adj, pred_adj)
-    return precision, recall, f1, density, path_cov, topo_dist
+    return {
+        "precision": precision,
+        "recall": recall,
+        "f1": f1,
+        "edge_density_ratio": compute_edge_density_ratio(gt_adj, pred_adj),
+        "path_coverage": compute_path_coverage(gt_adj, pred_adj),
+        "topological_distance": compute_topological_distance(gt_adj, pred_adj),
+    }
 
+
+# --------------------------------------------------------------------------
+# Built-in Count-Based baseline (fixed by the evaluator)
+# --------------------------------------------------------------------------
 
 def strip_matrix_tokens(sequences: List[List[int]], n_gt: int) -> List[List[int]]:
     gt_sequences: List[List[int]] = []
@@ -326,7 +244,6 @@ def build_transition_matrix(sequences: List[List[int]], n_gt: int) -> np.ndarray
     for seq in sequences:
         for index in range(len(seq) - 1):
             transitions[seq[index], seq[index + 1]] += 1.0
-
     row_sums = transitions.sum(axis=1)
     for index in range(n_gt):
         if row_sums[index] > 0:
@@ -339,11 +256,8 @@ def sorted_preconditions(transitions: np.ndarray, step_id: int) -> Dict[int, flo
     column_sum = column.sum()
     if column_sum <= 0:
         return {}
-    scores = {
-        action: float(column[action] / column_sum)
-        for action in range(len(column))
-        if column[action] > 0
-    }
+    scores = {action: float(column[action] / column_sum)
+              for action in range(len(column)) if column[action] > 0}
     return dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
 
 
@@ -359,7 +273,6 @@ def remove_cycles_with_min_prob(graph: nx.DiGraph, transitions: np.ndarray) -> N
             if graph.has_edge(cycle[0], cycle[0]):
                 graph.remove_edge(cycle[0], cycle[0])
             continue
-
         min_prob = float("inf")
         min_edge = None
         for index in range(len(cycle)):
@@ -372,24 +285,13 @@ def remove_cycles_with_min_prob(graph: nx.DiGraph, transitions: np.ndarray) -> N
             graph.remove_edge(*min_edge)
 
 
-def count_based_with_threshold(
-    sequences: List[List[int]],
-    threshold: float = 0.5,
-    n_gt: Optional[int] = None,
-) -> np.ndarray:
-    del threshold
-    if not sequences:
-        return np.zeros((2, 2), dtype=np.float32)
-    if n_gt is None:
-        raise ValueError("count_based_with_threshold requires n_gt")
-
+def count_based_graph(sequences: List[List[int]], n_gt: int) -> np.ndarray:
     gt_sequences = strip_matrix_tokens(sequences, n_gt)
     transitions = build_transition_matrix(gt_sequences, n_gt)
 
     graph = nx.DiGraph()
     for action in range(n_gt):
         graph.add_node(action)
-
     for action in range(n_gt):
         preconditions = sorted_preconditions(transitions, action)
         if not preconditions:
@@ -409,7 +311,6 @@ def count_based_with_threshold(
                     graph.remove_edge(precondition, node)
                 else:
                     break
-
     for node in list(graph.nodes()):
         if graph.out_degree(node) == 0 and node != (n_gt - 1):
             for future in sorted_futures(transitions, node):
@@ -419,276 +320,186 @@ def count_based_with_threshold(
                 else:
                     break
 
-    in_degree_zeros = [
-        node for node in graph.nodes if graph.in_degree(node) == 0 and node not in (0, n_gt - 1)
-    ]
-    for node in in_degree_zeros:
+    for node in [n for n in graph.nodes if graph.in_degree(n) == 0 and n not in (0, n_gt - 1)]:
         graph.add_edge(0, node)
-
-    out_degree_zeros = [
-        node for node in graph.nodes if graph.out_degree(node) == 0 and node not in (0, n_gt - 1)
-    ]
-    for node in out_degree_zeros:
+    for node in [n for n in graph.nodes if graph.out_degree(n) == 0 and n not in (0, n_gt - 1)]:
         graph.add_edge(node, n_gt - 1)
 
     graph = graph.reverse(copy=True)
     delete_redundant_edges(graph)
-
     pred_adj = np.zeros((n_gt, n_gt), dtype=np.float32)
     for src, dst in graph.edges():
         pred_adj[src, dst] = 1.0
     return pred_adj
 
 
-def safe_prediction_name(scenario_name: str) -> str:
-    return scenario_name.lower().replace(" ", "_")
+# --------------------------------------------------------------------------
+# Method discovery, validation and aggregation
+# --------------------------------------------------------------------------
+
+def discover_methods(root: Path) -> List[Path]:
+    if not root.is_dir():
+        return []
+    return [d for d in sorted(root.iterdir())
+            if d.is_dir() and any(d.glob("*" + PREDICTION_SUFFIX))]
 
 
-def evaluate_count_based(
-    sequences: List[List[int]],
-    gt_adj: np.ndarray,
-    threshold: float = 0.5,
-) -> Tuple[float, float, float, float, float, float]:
-    n_gt = gt_adj.shape[0]
-    pred_adj = count_based_with_threshold(sequences, threshold=threshold, n_gt=n_gt)
-    if pred_adj.shape != gt_adj.shape:
-        pred_resized = np.zeros((n_gt, n_gt), dtype=np.float32)
-        min_n = min(pred_adj.shape[0], n_gt)
-        pred_resized[:min_n, :min_n] = pred_adj[:min_n, :min_n]
-        pred_adj = pred_resized
-    precision, recall, f1 = compute_precision_recall_f1(gt_adj, pred_adj)
-    density = compute_edge_density_ratio(gt_adj, pred_adj)
-    path_cov = compute_path_coverage(gt_adj, pred_adj)
-    topo_dist = compute_topological_distance(gt_adj, pred_adj)
-    return precision, recall, f1, density, path_cov, topo_dist
+def load_trials(path: Path, n: int) -> np.ndarray:
+    if not path.is_file():
+        raise InvalidSubmission(f"missing {path.name}")
+    try:
+        with np.load(path, allow_pickle=False) as archive:
+            if "pred_cores" not in archive.files:
+                raise InvalidSubmission(f"{path.name}: no 'pred_cores' array")
+            cores = np.array(archive["pred_cores"])
+    except InvalidSubmission:
+        raise
+    except Exception as exc:  # unreadable / pickled / corrupt archive
+        raise InvalidSubmission(f"{path.name}: unreadable ({type(exc).__name__}: {exc})")
+    if cores.dtype.kind not in "biuf":
+        raise InvalidSubmission(f"{path.name}: non-numeric dtype {cores.dtype}")
+    if cores.shape != (N_TRIALS, n, n):
+        raise InvalidSubmission(
+            f"{path.name}: pred_cores shape {cores.shape}, required {(N_TRIALS, n, n)}")
+    cores = cores.astype(np.float64)
+    if not np.all(np.isfinite(cores)):
+        raise InvalidSubmission(f"{path.name}: non-finite values")
+    if cores.min() < 0.0 or cores.max() > 1.0:
+        raise InvalidSubmission(
+            f"{path.name}: values outside [0, 1] (min {cores.min():.4g}, max {cores.max():.4g})")
+    return cores
 
 
-def evaluate_all_scenarios(
-    data: List[TaskGraphData],
-    do_predictions_dir: Optional[str] = None,
-    method: str = "do",
-    threshold: float = 0.5,
-    allow_partial: bool = False,
-    min_do_seeds: Optional[int] = None,
-) -> Dict[str, Any]:
-    results: Dict[str, Dict[str, float]] = {}
-    seed_f1_totals: Dict[int, List[float]] = {}
+def aggregate(per_procedure: Dict[str, Dict[str, float]]) -> Dict[str, float]:
+    keys = sorted(per_procedure)
+    f1_sorted = sorted(per_procedure[k]["f1"] for k in keys)
+    worst_count = max(1, int(math.ceil(len(f1_sorted) * 0.25)))
+    out = {}
+    for metric in ("precision", "recall", "f1", "edge_density_ratio", "path_coverage",
+                   "topological_distance"):
+        out[metric] = float(np.mean([per_procedure[k][metric] for k in keys]))
+    out["worst_quartile_f1"] = float(np.mean(f1_sorted[:worst_count]))
+    return {metric: out[metric] for metric in METRIC_NAMES}
 
-    for scenario_data in data:
-        scenario_name = scenario_data.scenario_name
-        if method == "count_based":
-            precision, recall, f1, density, path_cov, topo_dist = evaluate_count_based(
-                scenario_data.sequences,
-                scenario_data.gt_adj_matrix,
-                threshold,
-            )
-        elif method == "do":
-            if not do_predictions_dir or not os.path.exists(do_predictions_dir):
-                raise FileNotFoundError(
-                    f"DO evaluation requires a valid predictions directory, got: {do_predictions_dir}"
-                )
-            prediction_file = os.path.join(
-                do_predictions_dir,
-                f"{safe_prediction_name(scenario_name)}_predictions.npz",
-            )
-            if not os.path.exists(prediction_file):
-                if allow_partial:
-                    continue
-                raise FileNotFoundError(f"Missing DO prediction file: {prediction_file}")
 
-            saved = np.load(prediction_file)
-            pred_cores = saved["pred_cores"] if "pred_cores" in saved else saved["pred_core"][None, ...]
-            seed_ids = (
-                [int(seed) for seed in saved["seeds"].tolist()]
-                if "seeds" in saved
-                else list(range(len(pred_cores)))
-            )
-            if min_do_seeds is not None and len(pred_cores) < min_do_seeds:
-                if allow_partial:
-                    continue
-                raise ValueError(
-                    f"{prediction_file} has {len(pred_cores)} seeds, but {min_do_seeds} are required."
-                )
-            per_seed_metrics = [
-                evaluate_from_adjacency(pred_core, scenario_data.gt_adj_matrix)
-                for pred_core in pred_cores
-            ]
-            for seed_id, metric in zip(seed_ids, per_seed_metrics):
-                seed_f1_totals.setdefault(seed_id, []).append(float(metric[2]))
-            precision = float(np.mean([metric[0] for metric in per_seed_metrics]))
-            recall = float(np.mean([metric[1] for metric in per_seed_metrics]))
-            f1 = float(np.mean([metric[2] for metric in per_seed_metrics]))
-            density = float(np.mean([metric[3] for metric in per_seed_metrics]))
-            path_cov = float(np.mean([metric[4] for metric in per_seed_metrics]))
-            topo_dist = float(np.mean([metric[5] for metric in per_seed_metrics]))
-        else:
-            raise ValueError(f"Unknown method: {method}")
+def check_scores(scores: Dict[str, float]) -> None:
+    for metric in METRIC_NAMES:
+        value = scores[metric]
+        if not math.isfinite(value):
+            raise InvalidSubmission(f"non-finite {metric}")
+        upper = 100.0 if metric in ("precision", "recall", "f1", "worst_quartile_f1") else 1.0
+        if value < 0.0 or value > upper:
+            raise InvalidSubmission(f"impossible {metric}={value}")
 
-        results[scenario_name] = {
-            "precision": float(precision),
-            "recall": float(recall),
-            "f1": float(f1),
-            "edge_density_ratio": float(density),
-            "path_coverage": float(path_cov),
-            "topological_distance": float(topo_dist),
+
+def score_method(method_dir: Path, procedures: List[Procedure]) -> Dict:
+    per_procedure: Dict[str, Dict[str, float]] = {}
+    trial_f1 = np.zeros((N_TRIALS, len(procedures)))
+    for j, proc in enumerate(procedures):
+        cores = load_trials(method_dir / f"{proc.key}{PREDICTION_SUFFIX}", proc.n)
+        trial_metrics = [graph_metrics(proc.gt_adj, post_process_pred_adj(cores[t], proc.n))
+                         for t in range(N_TRIALS)]
+        per_procedure[proc.name] = {
+            metric: float(np.mean([tm[metric] for tm in trial_metrics]))
+            for metric in trial_metrics[0]
         }
-
-    if not results:
-        raise ValueError(f"No scenarios were evaluated for {SLICE_NAME} slice")
-
-    all_precision = [result["precision"] for result in results.values()]
-    all_recall = [result["recall"] for result in results.values()]
-    all_f1 = [result["f1"] for result in results.values()]
-    all_density = [result["edge_density_ratio"] for result in results.values()]
-    all_path_cov = [result["path_coverage"] for result in results.values()]
-    all_topo_dist = [result["topological_distance"] for result in results.values()]
-    sorted_f1 = sorted(all_f1)
-    worst_quartile_count = max(1, int(np.ceil(len(sorted_f1) * 0.25)))
-    worst_quartile_f1 = float(np.mean(sorted_f1[:worst_quartile_count]))
-    if method == "do" and len(seed_f1_totals) > 1:
-        seed_means = [float(np.mean(seed_scores)) for _, seed_scores in sorted(seed_f1_totals.items())]
-        std_f1 = float(np.std(seed_means))
-    else:
-        std_f1 = 0.0
+        trial_f1[:, j] = [tm["f1"] for tm in trial_metrics]
+    scores = aggregate(per_procedure)
+    check_scores(scores)
+    trial_means = trial_f1.mean(axis=1)
     return {
-        "per_scenario": results,
-        "aggregate": {
-            "mean_precision": float(np.mean(all_precision)),
-            "mean_recall": float(np.mean(all_recall)),
-            "mean_f1": float(np.mean(all_f1)),
-            "std_precision": float(np.std(all_precision)),
-            "std_recall": float(np.std(all_recall)),
-            "std_f1": std_f1,
-            "worst_quartile_f1": worst_quartile_f1,
-            "edge_density_ratio": float(np.mean(all_density)),
-            "path_coverage": float(np.mean(all_path_cov)),
-            "topological_distance": float(np.mean(all_topo_dist)),
+        "scores": scores,
+        "per_procedure": per_procedure,
+        "diagnostics": {
+            "trial_mean_f1": [float(x) for x in trial_means],
+            "trial_std_f1": float(np.std(trial_means)),
         },
     }
 
 
-def write_scores_json(
-    results: Dict[str, Any],
-    experiment_name: str,
-    output_path: str = OUTPUT_PATH,
-    dataset_override: Optional[str] = None,
-    method_override: Optional[str] = None,
-    artifact_path: Optional[str] = None,
-) -> None:
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    dataset = dataset_override or (
-        "captaincook4d_task_graph" if "captaincook" in experiment_name.lower() else experiment_name
-    )
-    method_name = method_override or (
-        "count_based" if "count" in experiment_name.lower() else experiment_name
-    )
+def score_baseline(procedures: List[Procedure]) -> Dict:
+    per_procedure = {proc.name: graph_metrics(proc.gt_adj, count_based_graph(proc.sequences, proc.n))
+                     for proc in procedures}
+    return {"scores": aggregate(per_procedure), "per_procedure": per_procedure,
+            "diagnostics": {"deterministic": True}}
 
-    scores: Dict[str, Any] = {}
-    if os.path.exists(output_path):
-        with open(output_path) as f:
-            scores = json.load(f)
 
-    scores["slice"] = SLICE_NAME
-    scores["slice_manifest"] = {
+def method_key(method_dir: Path) -> str:
+    name = method_dir.name
+    return name if name != BASELINE_KEY else f"{name}__submitted"
+
+
+def relative(path: Path) -> str:
+    try:
+        return str(path.resolve().relative_to(WORKSPACE))
+    except ValueError:
+        return str(path)
+
+
+def main(argv: Optional[List[str]] = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    parser.add_argument("--predictions-root", type=Path, default=DEFAULT_PREDICTIONS_ROOT)
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--details-output", type=Path, default=None)
+    args = parser.parse_args(argv)
+
+    procedures = load_procedures()
+    print(f"Loaded {len(procedures)} held-out {SLICE_NAME} procedures")
+
+    results: Dict[str, Dict[str, float]] = {}
+    status: Dict[str, Dict] = {}
+    diagnostics: Dict[str, Dict] = {}
+    details: Dict[str, Dict] = {}
+
+    for method_dir in discover_methods(args.predictions_root):
+        key = method_key(method_dir)
+        try:
+            scored = score_method(method_dir, procedures)
+            results[key] = scored["scores"]
+            status[key] = {"status": "ok", "artifact_dir": relative(method_dir)}
+            diagnostics[key] = scored["diagnostics"]
+            details[key] = scored["per_procedure"]
+            print(f"  {key}: F1={scored['scores']['f1']:.2f}")
+        except Exception as exc:  # contract violation (InvalidSubmission) or unscorable artifact
+            reason = str(exc) if isinstance(exc, InvalidSubmission) else f"unscorable: {type(exc).__name__}: {exc}"
+            results[key] = dict(FAILED_SCORES)
+            status[key] = {"status": "failed", "reason": reason, "artifact_dir": relative(method_dir)}
+            print(f"  {key}: FAILED ({reason})")
+
+    baseline = score_baseline(procedures)
+    results[BASELINE_KEY] = baseline["scores"]
+    status[BASELINE_KEY] = {"status": "ok", "artifact_dir": "built-in (eval/test)"}
+    diagnostics[BASELINE_KEY] = baseline["diagnostics"]
+    details[BASELINE_KEY] = baseline["per_procedure"]
+    print(f"  {BASELINE_KEY}: F1={baseline['scores']['f1']:.2f}")
+
+    output = {
         "slice": SLICE_NAME,
-        "dataset": dataset,
-        "split_rule": "balanced fixed 12/12 split over CaptainCook4D procedures by GT node and edge counts",
-        "scenario_count": len(results["per_scenario"]),
-        "scenarios": sorted(results["per_scenario"].keys()),
+        "slice_manifest": {
+            "slice": SLICE_NAME,
+            "dataset": EXPERIMENT,
+            "split_rule": "balanced fixed 12/12 split over CaptainCook4D procedures by GT node and edge counts",
+            "scenario_count": len(procedures),
+            "scenarios": sorted(proc.name for proc in procedures),
+            "trials_per_procedure": N_TRIALS,
+            "predictions_root": relative(args.predictions_root),
+        },
+        "experiments": {EXPERIMENT: {"results": results}},
+        "method_status": status,
+        "diagnostics": diagnostics,
     }
-    scores.setdefault("experiments", {})
-    scores["experiments"].setdefault(dataset, {"results": {}})
-    scores.setdefault("method_artifacts", {})
-    scores["method_artifacts"][method_name] = {
-        "artifact_type": "built_in_count_baseline"
-        if method_name == "count_based"
-        else "npz_prediction_directory",
-        "checkpoint_dir": artifact_path or "",
-    }
-
-    aggregate = results["aggregate"]
-    scores["experiments"][dataset]["results"][method_name] = {
-        "precision": aggregate["mean_precision"],
-        "recall": aggregate["mean_recall"],
-        "f1": aggregate["mean_f1"],
-        "std_f1": aggregate["std_f1"],
-        "worst_quartile_f1": aggregate["worst_quartile_f1"],
-        "edge_density_ratio": aggregate["edge_density_ratio"],
-        "path_coverage": aggregate["path_coverage"],
-        "topological_distance": aggregate["topological_distance"],
-    }
-
-    with open(output_path, "w") as f:
-        json.dump(scores, f, indent=2)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    with open(args.output, "w") as f:
+        json.dump(output, f, indent=2)
         f.write("\n")
-
-
-def select_slice(data: Iterable[TaskGraphData]) -> List[TaskGraphData]:
-    selected = [scenario for scenario in data if scenario.scenario_name in SCENARIOS]
-    missing = sorted(SCENARIOS - {scenario.scenario_name for scenario in selected})
-    if missing:
-        raise ValueError(f"Missing {SLICE_NAME} scenarios from loaded data: {missing}")
-    return selected
-
-
-def main(argv: List[str]) -> None:
-    method_name = argv[1] if len(argv) > 1 else "captaincook4d_do"
-    checkpoint_dir = argv[2] if len(argv) > 2 else "checkpoints/"
-    min_seeds = int(argv[3]) if len(argv) > 3 else 5
-
-    repo_path = "/home/user/data/downloads/Differentiable-Task-Graph-Learning/data/captaincook4d"
-    data = select_slice(load_captaincook4d(repo_path))
-    print(f"Loaded {len(data)} {SLICE_NAME} scenarios")
-
-    if method_name == "captaincook4d_partial_compare":
-        do_results = evaluate_all_scenarios(
-            data,
-            do_predictions_dir=checkpoint_dir,
-            method="do",
-            allow_partial=True,
-            min_do_seeds=min_seeds,
-        )
-        completed = set(do_results["per_scenario"].keys())
-        subset_data = [scenario for scenario in data if scenario.scenario_name in completed]
-        count_results = evaluate_all_scenarios(subset_data, method="count_based")
-        print(f"Completed {SLICE_NAME} subset: {len(completed)} scenarios -> {sorted(completed)}")
-        write_scores_json(
-            count_results,
-            "captaincook4d_count_partial",
-            dataset_override="captaincook4d_task_graph",
-            method_override="count_based",
-        )
-        write_scores_json(
-            do_results,
-            "captaincook4d_do_partial",
-            dataset_override="captaincook4d_task_graph",
-            method_override="do",
-            artifact_path=checkpoint_dir,
-        )
-    elif "count" in method_name:
-        results = evaluate_all_scenarios(data, method="count_based")
-        print(f"Count-Based {SLICE_NAME}: F1={results['aggregate']['mean_f1']:.1f}")
-        write_scores_json(
-            results,
-            method_name,
-            dataset_override="captaincook4d_task_graph",
-            method_override="count_based",
-        )
-    else:
-        if checkpoint_dir in ("", "checkpoints/"):
-            raise SystemExit("DO evaluation requires an explicit checkpoint/results directory.")
-        results = evaluate_all_scenarios(data, do_predictions_dir=checkpoint_dir, method="do")
-        print(f"DO {SLICE_NAME}: F1={results['aggregate']['mean_f1']:.1f}")
-        write_scores_json(
-            results,
-            method_name,
-            dataset_override="captaincook4d_task_graph",
-            method_override=method_name,
-            artifact_path=checkpoint_dir,
-        )
-
-    print(f"Scores written to {OUTPUT_PATH}")
+    if args.details_output is not None:
+        args.details_output.parent.mkdir(parents=True, exist_ok=True)
+        with open(args.details_output, "w") as f:
+            json.dump({"per_procedure": details, "method_status": status}, f, indent=2)
+            f.write("\n")
+    print(f"Scores written to {relative(args.output)}")
+    return 0
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    sys.exit(main())

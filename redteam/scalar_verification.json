@@ -1,7 +1,0 @@
-{
-  "scenario": "Spicedhotchocolate",
-  "seed": 7,
-  "epochs": 1000,
-  "max_core_difference": 2.1457672119140625e-06,
-  "same_evaluated_graph": true
-}

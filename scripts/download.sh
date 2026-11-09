@@ -1,28 +1,55 @@
 #!/bin/bash
-# Fetch all public, pre-existing artifacts needed by the reproduction.
-# Estimated download size: <100 MB; disk usage: <200 MB for the pinned paper repo data.
+# Fetch the public CaptainCook4D task-graph data released with the paper.
+# Estimated download size: ~42 MB (repository tarball); disk usage after extraction: ~5 MB.
+#
+# Source: pinned commit of https://github.com/fpv-iplab/Differentiable-Task-Graph-Learning,
+# downloaded as a tarball (no git history is kept) and reduced to data/captaincook4d/.
+#
+# The 12 held-out procedures scored by the hidden test keep only their node list
+# ("steps", which defines the prediction indexing); their ground-truth edges are
+# withheld here and live only in eval/test/.
+#
+# Idempotent: re-running re-verifies the data and re-applies the withholding step.
 
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-PAPER_REPO_URL="https://github.com/fpv-iplab/Differentiable-Task-Graph-Learning.git"
-PAPER_REPO_COMMIT="536aaa72fca6b4a16de7ffde05e3864466986aa4"
-PAPER_REPO_REF="main"
-PAPER_REPO_DIR="$ROOT_DIR/data/downloads/Differentiable-Task-Graph-Learning"
-CAPTAINCOOK_DIR="$PAPER_REPO_DIR/data/captaincook4d"
+COMMIT="536aaa72fca6b4a16de7ffde05e3864466986aa4"
+URL="https://codeload.github.com/fpv-iplab/Differentiable-Task-Graph-Learning/tar.gz/${COMMIT}"
+REPO_DIR="$ROOT_DIR/data/downloads/Differentiable-Task-Graph-Learning"
+DEST="$REPO_DIR/data/captaincook4d"
+ANNOTATIONS_SHA256="712a78bf63dd1b2a11b2b7a2417f3429586c3d8bca47adf6d2adb630fa50f07e"
+HELD_OUT="blenderbananapancakes breakfastburritos buttercorncup coffee cucumberraita panfriedtofu ramen scrambledeggs spicedhotchocolate spicytunaavocadowraps tomatochutney zoodles"
 
-mkdir -p "$(dirname "$PAPER_REPO_DIR")"
-
-if [ ! -d "$PAPER_REPO_DIR/.git" ]; then
-  rm -rf "$PAPER_REPO_DIR"
-  git clone --depth 1 --branch "$PAPER_REPO_REF" "$PAPER_REPO_URL" "$PAPER_REPO_DIR"
+if [ ! -f "$DEST/.prepared" ]; then
+  tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' EXIT
+  curl -fsSL --retry 3 -o "$tmp/repo.tar.gz" "$URL"
+  tar -xzf "$tmp/repo.tar.gz" -C "$tmp" --wildcards "*/data/captaincook4d/*"
+  rm -rf "$REPO_DIR"
+  mkdir -p "$REPO_DIR/data"
+  mv "$tmp/Differentiable-Task-Graph-Learning-${COMMIT}/data/captaincook4d" "$DEST"
 fi
 
-git -C "$PAPER_REPO_DIR" remote set-url origin "$PAPER_REPO_URL"
-git -C "$PAPER_REPO_DIR" fetch --depth 1 origin "$PAPER_REPO_REF"
-git -C "$PAPER_REPO_DIR" checkout --detach "$PAPER_REPO_COMMIT"
+echo "${ANNOTATIONS_SHA256}  ${DEST}/task_graph_generation_annotations.json" | sha256sum -c -
 
-test -f "$CAPTAINCOOK_DIR/task_graph_generation_annotations.json"
-test -d "$CAPTAINCOOK_DIR/ground_truth_task_graphs"
+python3 - "$DEST/ground_truth_task_graphs" $HELD_OUT <<'PY'
+import json
+import os
+import sys
 
-echo "Downloaded paper repository and verified CaptainCook4D task-graph data."
+graph_dir = sys.argv[1]
+for key in sys.argv[2:]:
+    path = os.path.join(graph_dir, key + ".json")
+    with open(path) as f:
+        graph = json.load(f)
+    if "edges" in graph:
+        with open(path, "w") as f:
+            json.dump({"steps": graph["steps"],
+                       "edges_withheld": "held-out test procedure; ground truth is not public in this gym"},
+                      f, indent=1)
+            f.write("\n")
+PY
+
+touch "$DEST/.prepared"
+echo "CaptainCook4D task-graph data ready in $DEST (held-out edges withheld)."

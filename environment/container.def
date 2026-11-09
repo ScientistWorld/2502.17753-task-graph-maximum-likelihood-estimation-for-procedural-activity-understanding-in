@@ -11,4 +11,4 @@ From: python:3.12-slim-bookworm
     export PATH=/usr/local/bin:/usr/bin:/bin
     export PYTHONUNBUFFERED=1
     export PYTHONNOUSERSITE=1
-    export PYTHONPATH=/home/user/environment/pylibs:/home/user:/usr/local/lib/python3.12/site-packages:/usr/local/lib/python3.12/dist-packages
+    export PYTHONPATH=/home/user:/usr/local/lib/python3.12/site-packages:/usr/local/lib/python3.12/dist-packages

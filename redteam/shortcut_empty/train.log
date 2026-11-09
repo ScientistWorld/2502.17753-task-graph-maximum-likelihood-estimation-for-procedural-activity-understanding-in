@@ -1,9 +1,0 @@
-Evaluating do on train slice...
-Loaded 12 train scenarios
-/usr/local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:3904: RuntimeWarning: Mean of empty slice.
-  return _methods._mean(a, axis=axis, dtype=dtype,
-/usr/local/lib/python3.12/site-packages/numpy/_core/_methods.py:147: RuntimeWarning: invalid value encountered in scalar divide
-  ret = ret.dtype.type(ret / rcount)
-DO train: F1=nan
-Scores written to scoring/scores_train.json
-Train-slice evaluation complete.

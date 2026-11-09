@@ -158,6 +158,55 @@ def task_graph_maximum_likelihood_loss_efficient(
     return total_loss
 
 
+def build_tgml_events(sequences: List[List[int]], num_nodes: int):
+    """Precompute the (current, observed, unobserved) sets of every term of Eq. (11).
+
+    ``sequences`` use matrix indices [beta=0, START=1, ..., END=num_nodes-2,
+    gamma=num_nodes-1] without repeated key-steps. One event per scored position
+    t: the observed set J_t, the unobserved set (complement within START..END)
+    and the current key-step. Positions where either set is empty are skipped,
+    exactly as in ``task_graph_maximum_likelihood_loss``.
+    """
+    inner = set(range(1, num_nodes - 1))
+    gamma = num_nodes - 1
+    observed, remaining, current = [], [], []
+    for seq in sequences:
+        seq = [int(x) for x in seq]
+        if gamma in seq:
+            seq = seq[:seq.index(gamma) + 1]
+        if len(seq) != len(set(seq)):
+            raise ValueError("batched TGML loss requires sequences without repeated key-steps")
+        for i in range(1, len(seq) - 1):
+            before = set(seq[:i]) & inner
+            after = inner - before
+            if not before or not after:
+                continue
+            observed.append([1.0 if j in before else 0.0 for j in range(num_nodes)])
+            remaining.append([1.0 if j in after else 0.0 for j in range(num_nodes)])
+            current.append(seq[i])
+    return (
+        torch.tensor(observed, dtype=torch.float32).reshape(-1, num_nodes)[:, 1:-1],
+        torch.tensor(remaining, dtype=torch.float32).reshape(-1, num_nodes)[:, 1:-1],
+        torch.tensor(current, dtype=torch.long).reshape(-1) - 1,
+    )
+
+
+def task_graph_maximum_likelihood_loss_batched(A: torch.Tensor, events, beta: float = 0.005) -> torch.Tensor:
+    """TGML loss (Eq. 11) for all positions at once; identical to
+    ``task_graph_maximum_likelihood_loss`` for sequences without repetitions.
+
+    num_t = sum_{j in J_t} A[y_t, j];  den_t = sum_{h not in J_t} sum_{j in J_t} A[h, j];
+    loss  = sum_t beta * log(den_t) - log(num_t).
+    Only the START..END block of A is used (the beta row is undefined after the
+    masked softmax and never enters the loss).
+    """
+    observed, remaining, current = events
+    inner = A[1:-1, 1:-1]
+    num = (inner[current] * observed).sum(dim=1)
+    den = ((remaining @ inner) * observed).sum(dim=1)
+    return (beta * torch.log(den) - torch.log(num)).sum()
+
+
 class TaskGraph(nn.Module):
     """Task graph as a learnable adjacency matrix parameter."""
     def __init__(self, num_nodes: int):

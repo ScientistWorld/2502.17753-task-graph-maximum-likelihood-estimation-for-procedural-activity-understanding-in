@@ -32,6 +32,7 @@ class TaskGraphData:
     gt_adj_matrix: np.ndarray  # ground truth adjacency matrix (n) x (n), indexed by GT node ID
     step_names: Dict[int, str]  # GT_node_id -> step name
     gt_node_count: int  # total GT nodes = n (includes START and END)
+    has_ground_truth: bool = True  # False for held-out procedures (edges withheld; zeros in gt_adj_matrix)
 
 
 def load_captaincook4d(repo_data_path: str) -> List[TaskGraphData]:
@@ -66,7 +67,11 @@ def load_captaincook4d(repo_data_path: str) -> List[TaskGraphData]:
         GT = nx.DiGraph()
         for node_str, label in task_graph_json["steps"].items():
             GT.add_node(int(node_str), label=label)
-        for edge in task_graph_json["edges"]:
+        # Held-out (hidden-test) procedures ship only their node list: edges are withheld.
+        gt_edges = task_graph_json.get("edges")
+        has_ground_truth = gt_edges is not None
+        gt_edges = gt_edges or []
+        for edge in gt_edges:
             # edge = [dst, src] means src → dst (src is precondition of dst)
             GT.add_edge(edge[1], edge[0])
 
@@ -138,7 +143,7 @@ def load_captaincook4d(repo_data_path: str) -> List[TaskGraphData]:
         # and by NetworkX's adjacency_matrix with nodelist=sorted(GT.nodes).
         # Official code: GT.add_edge(edge[1], edge[0]) where edge = [dst, src] -> edge src -> dst
         gt_adj = np.zeros((n_gt_nodes, n_gt_nodes), dtype=np.float32)
-        for edge in task_graph_json["edges"]:
+        for edge in gt_edges:
             dst, src = edge[0], edge[1]
             if dst < n_gt_nodes and src < n_gt_nodes:
                 gt_adj[src, dst] = 1.0  # Graph orientation: src -> dst
@@ -152,6 +157,7 @@ def load_captaincook4d(repo_data_path: str) -> List[TaskGraphData]:
             gt_adj_matrix=gt_adj,
             step_names=step_names,
             gt_node_count=n_gt_nodes,
+            has_ground_truth=has_ground_truth,
         ))
 
     return results
