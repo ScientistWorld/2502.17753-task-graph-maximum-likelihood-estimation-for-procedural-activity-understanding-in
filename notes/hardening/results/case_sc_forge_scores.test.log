@@ -2,9 +2,9 @@
   do: F1=88.35
   sc_forge_scores: F1=17.24
   count_based: F1=61.40
-[noisy_demonstrations_task_graph] 40 held-out test procedures
-  do: F1=69.17
-  sc_forge_scores: F1=20.95
-  count_based: F1=66.63
+[noisy_demonstrations_task_graph] 100 held-out test procedures
+  do: F1=68.05
+  sc_forge_scores: F1=21.29
+  count_based: F1=63.36
 Scores written to scoring/scores_test.json
 Test-slice evaluation complete.

@@ -2,9 +2,9 @@
   always_before_hasse: F1=89.74
   do: F1=88.55
   do_best_sa_checkpoint: F1=86.89
-  do_beta_0p005: F1=88.55
   do_beta_0p05: F1=84.97
   do_beta_0p5: F1=69.99
+  do_beta_selected_by_sa: F1=88.55
   do_no_early_stopping: F1=76.53
   do_one_step: F1=9.80
   do_rerun_seedset_b: F1=88.91
@@ -26,33 +26,33 @@
   sc_wrong_shape: FAILED (broccolistirfry_predictions.npz: pred_cores shape (5, 26, 26), required (5, 27, 27))
   sc_zero: F1=18.78
   count_based: F1=61.43
-[noisy_demonstrations_task_graph] 40 public train procedures
-  always_before_hasse: F1=75.29
-  do: F1=69.64
-  do_best_sa_checkpoint: F1=69.14
-  do_beta_0p005: F1=69.64
-  do_beta_0p05: F1=71.91
-  do_beta_0p5: F1=82.47
-  do_no_early_stopping: F1=71.98
-  do_one_step: F1=10.38
-  do_rerun_seedset_b: F1=69.63
-  do_rerun_seedset_c: F1=69.78
-  do_rerun_seedset_d: F1=69.73
-  do_seed_ensemble: F1=69.43
-  do_seed_ensemble20: F1=69.55
-  precedence_vote_hasse: F1=75.72
+[noisy_demonstrations_task_graph] 100 public train procedures
+  always_before_hasse: F1=76.14
+  do: F1=66.98
+  do_best_sa_checkpoint: F1=66.33
+  do_beta_0p05: F1=67.84
+  do_beta_0p5: F1=79.75
+  do_beta_selected_by_sa: F1=67.35
+  do_no_early_stopping: F1=67.90
+  do_one_step: F1=11.02
+  do_rerun_seedset_b: F1=66.97
+  do_rerun_seedset_c: F1=67.01
+  do_rerun_seedset_d: F1=67.04
+  do_seed_ensemble: F1=67.08
+  do_seed_ensemble20: F1=66.95
+  precedence_vote_hasse: F1=78.17
   sc_empty: FAILED (noisytrain_00_predictions.npz: pred_cores shape (0, 18, 18), required (5, 18, 18))
   sc_inf: FAILED (noisytrain_00_predictions.npz: non-finite values)
   sc_nan: FAILED (noisytrain_00_predictions.npz: non-finite values)
   sc_neginf: FAILED (noisytrain_00_predictions.npz: non-finite values)
-  sc_ones: F1=21.72
+  sc_ones: F1=19.67
   sc_out_of_range: FAILED (noisytrain_00_predictions.npz: values outside [0, 1] (min 0, max 3.998))
-  sc_seed_ids: F1=69.64
+  sc_seed_ids: F1=66.98
   sc_single_seed: FAILED (noisytrain_00_predictions.npz: pred_cores shape (1, 18, 18), required (5, 18, 18))
-  sc_single_seed_x5: F1=69.44
+  sc_single_seed_x5: F1=66.85
   sc_visible_labels: F1=100.00
   sc_wrong_shape: FAILED (noisytrain_00_predictions.npz: pred_cores shape (5, 17, 17), required (5, 18, 18))
-  sc_zero: F1=24.40
-  count_based: F1=61.31
+  sc_zero: F1=22.18
+  count_based: F1=62.65
 Scores written to scoring/scores_train.json
 Train-slice evaluation complete.

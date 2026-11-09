@@ -1,0 +1,18 @@
+{
+  "captaincook4d_task_graph": {
+    "chosen": "do",
+    "train_f1": {
+      "do": 88.55278809619794,
+      "do_beta_0p05": 84.96752075036828,
+      "do_beta_0p5": 69.99143889360599
+    }
+  },
+  "noisy_demonstrations_task_graph": {
+    "chosen": "do_beta_0p5",
+    "train_f1": {
+      "do": 66.97543988951696,
+      "do_beta_0p05": 67.84000290236793,
+      "do_beta_0p5": 79.74907784770038
+    }
+  }
+}

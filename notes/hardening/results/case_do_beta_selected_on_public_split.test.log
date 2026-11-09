@@ -1,0 +1,10 @@
+[captaincook4d_task_graph] 12 held-out test procedures
+  do: F1=88.35
+  do_beta_selected_on_public_split: F1=88.35
+  count_based: F1=61.40
+[noisy_demonstrations_task_graph] 100 held-out test procedures
+  do: F1=68.05
+  do_beta_selected_on_public_split: F1=81.16
+  count_based: F1=63.36
+Scores written to scoring/scores_test.json
+Test-slice evaluation complete.

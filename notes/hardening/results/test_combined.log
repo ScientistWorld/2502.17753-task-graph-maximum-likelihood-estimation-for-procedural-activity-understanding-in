@@ -2,9 +2,9 @@
   always_before_hasse: F1=89.58
   do: F1=88.35
   do_best_sa_checkpoint: F1=88.21
-  do_beta_0p005: F1=88.35
   do_beta_0p05: F1=84.81
   do_beta_0p5: F1=73.45
+  do_beta_selected_by_sa: F1=88.35
   do_no_early_stopping: F1=76.19
   do_one_step: F1=9.40
   do_rerun_seedset_b: F1=88.16
@@ -26,33 +26,33 @@
   sc_wrong_shape: FAILED (blenderbananapancakes_predictions.npz: pred_cores shape (5, 15, 15), required (5, 16, 16))
   sc_zero: F1=17.24
   count_based: F1=61.40
-[noisy_demonstrations_task_graph] 40 held-out test procedures
-  always_before_hasse: F1=77.84
-  do: F1=69.17
-  do_best_sa_checkpoint: F1=68.88
-  do_beta_0p005: F1=68.19
-  do_beta_0p05: F1=70.12
-  do_beta_0p5: F1=83.42
-  do_no_early_stopping: F1=71.25
-  do_one_step: F1=9.91
-  do_rerun_seedset_b: F1=69.08
-  do_rerun_seedset_c: F1=69.13
-  do_rerun_seedset_d: F1=69.04
-  do_seed_ensemble: F1=69.24
-  do_seed_ensemble20: F1=69.09
-  precedence_vote_hasse: F1=79.04
-  sc_empty: FAILED (noisytest_00_predictions.npz: pred_cores shape (0, 27, 27), required (5, 27, 27))
+[noisy_demonstrations_task_graph] 100 held-out test procedures
+  always_before_hasse: F1=77.48
+  do: F1=68.05
+  do_best_sa_checkpoint: F1=67.90
+  do_beta_0p05: F1=69.11
+  do_beta_0p5: F1=81.16
+  do_beta_selected_by_sa: F1=68.32
+  do_no_early_stopping: F1=68.62
+  do_one_step: F1=9.88
+  do_rerun_seedset_b: F1=68.06
+  do_rerun_seedset_c: F1=68.13
+  do_rerun_seedset_d: F1=68.14
+  do_seed_ensemble: F1=67.98
+  do_seed_ensemble20: F1=68.14
+  precedence_vote_hasse: F1=78.53
+  sc_empty: FAILED (noisytest_00_predictions.npz: pred_cores shape (0, 10, 10), required (5, 10, 10))
   sc_inf: FAILED (noisytest_00_predictions.npz: non-finite values)
   sc_nan: FAILED (noisytest_00_predictions.npz: non-finite values)
   sc_neginf: FAILED (noisytest_00_predictions.npz: non-finite values)
-  sc_ones: F1=19.89
-  sc_out_of_range: FAILED (noisytest_00_predictions.npz: values outside [0, 1] (min 0, max 3.972))
-  sc_seed_ids: F1=69.17
-  sc_single_seed: FAILED (noisytest_00_predictions.npz: pred_cores shape (1, 27, 27), required (5, 27, 27))
-  sc_single_seed_x5: F1=69.29
-  sc_visible_labels: F1=20.95
-  sc_wrong_shape: FAILED (noisytest_00_predictions.npz: pred_cores shape (5, 26, 26), required (5, 27, 27))
-  sc_zero: F1=20.95
-  count_based: F1=66.63
+  sc_ones: F1=19.52
+  sc_out_of_range: FAILED (noisytest_00_predictions.npz: values outside [0, 1] (min 0, max 3.998))
+  sc_seed_ids: F1=68.05
+  sc_single_seed: FAILED (noisytest_00_predictions.npz: pred_cores shape (1, 10, 10), required (5, 10, 10))
+  sc_single_seed_x5: F1=68.08
+  sc_visible_labels: F1=21.29
+  sc_wrong_shape: FAILED (noisytest_00_predictions.npz: pred_cores shape (5, 9, 9), required (5, 10, 10))
+  sc_zero: F1=21.29
+  count_based: F1=63.36
 Scores written to scoring/scores_test.json
 Test-slice evaluation complete.

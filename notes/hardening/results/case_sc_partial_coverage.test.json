@@ -24,7 +24,7 @@
         ]
       },
       "noisy_demonstrations_task_graph": {
-        "scenario_count": 40,
+        "scenario_count": 100,
         "scenarios": [
           "noisytest_00",
           "noisytest_01",
@@ -65,7 +65,67 @@
           "noisytest_36",
           "noisytest_37",
           "noisytest_38",
-          "noisytest_39"
+          "noisytest_39",
+          "noisytest_40",
+          "noisytest_41",
+          "noisytest_42",
+          "noisytest_43",
+          "noisytest_44",
+          "noisytest_45",
+          "noisytest_46",
+          "noisytest_47",
+          "noisytest_48",
+          "noisytest_49",
+          "noisytest_50",
+          "noisytest_51",
+          "noisytest_52",
+          "noisytest_53",
+          "noisytest_54",
+          "noisytest_55",
+          "noisytest_56",
+          "noisytest_57",
+          "noisytest_58",
+          "noisytest_59",
+          "noisytest_60",
+          "noisytest_61",
+          "noisytest_62",
+          "noisytest_63",
+          "noisytest_64",
+          "noisytest_65",
+          "noisytest_66",
+          "noisytest_67",
+          "noisytest_68",
+          "noisytest_69",
+          "noisytest_70",
+          "noisytest_71",
+          "noisytest_72",
+          "noisytest_73",
+          "noisytest_74",
+          "noisytest_75",
+          "noisytest_76",
+          "noisytest_77",
+          "noisytest_78",
+          "noisytest_79",
+          "noisytest_80",
+          "noisytest_81",
+          "noisytest_82",
+          "noisytest_83",
+          "noisytest_84",
+          "noisytest_85",
+          "noisytest_86",
+          "noisytest_87",
+          "noisytest_88",
+          "noisytest_89",
+          "noisytest_90",
+          "noisytest_91",
+          "noisytest_92",
+          "noisytest_93",
+          "noisytest_94",
+          "noisytest_95",
+          "noisytest_96",
+          "noisytest_97",
+          "noisytest_98",
+          "noisytest_99"
         ]
       }
     }
@@ -82,14 +142,14 @@
           "path_coverage": 0.5824404761904761,
           "topological_distance": 0.01610099280377918
         },
-        "sc_rewrite_ground_truth": {
-          "precision": 14.546526097984065,
-          "recall": 21.227859851034236,
-          "f1": 17.239223445853888,
-          "worst_quartile_f1": 12.19572776949826,
-          "edge_density_ratio": 0.6832531060009522,
+        "sc_partial_coverage": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "worst_quartile_f1": 0.0,
+          "edge_density_ratio": 0.0,
           "path_coverage": 0.0,
-          "topological_distance": 0.2990010983025689
+          "topological_distance": 1.0
         },
         "count_based": {
           "precision": 67.3310162060162,
@@ -105,31 +165,31 @@
     "noisy_demonstrations_task_graph": {
       "results": {
         "do": {
-          "precision": 65.02283504926913,
-          "recall": 74.46591111706184,
-          "f1": 69.17194450594744,
-          "worst_quartile_f1": 51.47273326112759,
-          "edge_density_ratio": 0.8634380804574526,
-          "path_coverage": 0.16942725575078516,
-          "topological_distance": 0.10331099968199342
+          "precision": 64.55652364476863,
+          "recall": 72.23405953325603,
+          "f1": 68.04804674959448,
+          "worst_quartile_f1": 50.91177793157678,
+          "edge_density_ratio": 0.8849642559502935,
+          "path_coverage": 0.1467022644022644,
+          "topological_distance": 0.11184124292639502
         },
-        "sc_rewrite_ground_truth": {
-          "precision": 17.417949027703873,
-          "recall": 26.335263683486666,
-          "f1": 20.946062888175977,
-          "worst_quartile_f1": 13.816530424762131,
-          "edge_density_ratio": 0.6533451812060938,
-          "path_coverage": 0.03499331550802139,
-          "topological_distance": 0.2544018148793943
+        "sc_partial_coverage": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "worst_quartile_f1": 0.0,
+          "edge_density_ratio": 0.0,
+          "path_coverage": 0.0,
+          "topological_distance": 1.0
         },
         "count_based": {
-          "precision": 71.2197953947076,
-          "recall": 62.73485703659965,
-          "f1": 66.62548111787642,
-          "worst_quartile_f1": 50.09913667877493,
-          "edge_density_ratio": 0.8773810539939106,
-          "path_coverage": 0.0125,
-          "topological_distance": 0.12943615291931013
+          "precision": 68.13344485315557,
+          "recall": 59.338375777482135,
+          "f1": 63.35987258962409,
+          "worst_quartile_f1": 46.39694570059033,
+          "edge_density_ratio": 0.8679979332414893,
+          "path_coverage": 0.03292857142857143,
+          "topological_distance": 0.1352629739466797
         }
       }
     }
@@ -140,9 +200,10 @@
         "status": "ok",
         "artifact_dir": "checkpoints/do"
       },
-      "sc_rewrite_ground_truth": {
-        "status": "ok",
-        "artifact_dir": "checkpoints/sc_rewrite_ground_truth"
+      "sc_partial_coverage": {
+        "status": "failed",
+        "reason": "missing blenderbananapancakes_predictions.npz",
+        "artifact_dir": "checkpoints/sc_partial_coverage"
       },
       "count_based": {
         "status": "ok",
@@ -154,9 +215,10 @@
         "status": "ok",
         "artifact_dir": "checkpoints/do"
       },
-      "sc_rewrite_ground_truth": {
-        "status": "ok",
-        "artifact_dir": "checkpoints/sc_rewrite_ground_truth"
+      "sc_partial_coverage": {
+        "status": "failed",
+        "reason": "missing noisytest_00_predictions.npz",
+        "artifact_dir": "checkpoints/sc_partial_coverage"
       },
       "count_based": {
         "status": "ok",
@@ -176,16 +238,6 @@
         ],
         "trial_std_f1": 0.37155056777078604
       },
-      "sc_rewrite_ground_truth": {
-        "trial_mean_f1": [
-          17.239223445853888,
-          17.239223445853888,
-          17.239223445853888,
-          17.239223445853888,
-          17.239223445853888
-        ],
-        "trial_std_f1": 0.0
-      },
       "count_based": {
         "deterministic": true
       }
@@ -193,23 +245,13 @@
     "noisy_demonstrations_task_graph": {
       "do": {
         "trial_mean_f1": [
-          69.28702011479348,
-          68.63504525559952,
-          69.54527977418313,
-          69.04757064989617,
-          69.34480673526483
+          68.07661044752356,
+          67.99992435143524,
+          68.20109457481283,
+          68.01105606665537,
+          67.9515483075454
         ],
-        "trial_std_f1": 0.3118437524394851
-      },
-      "sc_rewrite_ground_truth": {
-        "trial_mean_f1": [
-          20.946062888175977,
-          20.946062888175977,
-          20.946062888175977,
-          20.946062888175977,
-          20.946062888175977
-        ],
-        "trial_std_f1": 0.0
+        "trial_std_f1": 0.08629663584433493
       },
       "count_based": {
         "deterministic": true
