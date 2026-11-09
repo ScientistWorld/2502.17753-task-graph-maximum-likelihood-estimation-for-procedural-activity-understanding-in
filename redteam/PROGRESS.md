@@ -1,0 +1,3 @@
+Audit start commit is in start_commit.txt. The first CPU job runs the quality checks and concrete shortcuts in one suite. Inspect training.log, case status.json and scores_test.json, then analysis.json. Write REDTEAM.md from actual results.
+
+Before finishing restore scripts/run.sh from the start commit; verify scoring, baseline, eval and ground truth data restoration. Keep only redteam/ and REDTEAM.md changes, except the required final action.yaml. Preexisting dirty README.md and manifest.json are special device mounts; trajectory deletions were also already present. Avoid touching those unrelated files. Do not git push.
