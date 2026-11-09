@@ -1,4 +1,4 @@
 action: submit
 gpus: 0
 test: false
-notes: "Run bundled audit with batched TGML restricted to the original all_nodes; verify scalar loss and gradients before training, then evaluate all variants and shortcuts."
+notes: "Record stock no-argument test without dependency repair, then score explicit single-seed shortcut and update audit normalization; reuse completed training outputs."

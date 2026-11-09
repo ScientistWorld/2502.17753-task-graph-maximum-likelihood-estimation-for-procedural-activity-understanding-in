@@ -1,0 +1,5 @@
+{
+  "command": "bash scripts/evaluate_test.sh",
+  "exit_code": 1,
+  "prerequisite_repair": false
+}
