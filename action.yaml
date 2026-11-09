@@ -3,4 +3,4 @@ action: submit
 gpus: 0
 test: false
 milestone: core_claim_plus
-notes: "Hardening job (CPU): retrain DO reference with the paper's SA early stopping (5 seeds x 24 procedures), train audit variants (reruns, best-SA, one-step, ensembles, beta ablation, always-before Hasse), replay shortcuts through the no-arg hidden test, regenerate reference-only score files and analysis."
+notes: "Hardening job 2 (CPU): choose noisy-demonstration noise level on the public split (predeclared rule), retrain DO reference on CaptainCook4D + noisy benchmark, rerun variants (reruns, beta ablation, no-ES, ensembles, always-before and precedence-vote heuristics) and shortcuts through the no-arg hidden test, regenerate reference-only scores and analysis."
