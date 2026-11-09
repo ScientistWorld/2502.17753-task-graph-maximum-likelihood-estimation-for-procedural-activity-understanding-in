@@ -137,14 +137,19 @@
       },
       "results": {
         "count_based": {
-          "type": "baseline"
+          "type": "baseline",
+          "precision": 68.13,
+          "recall": 59.34,
+          "f1": 63.36
         },
         "do": {
           "type": "proposed",
-          "f1": 0.0
+          "precision": 64.56,
+          "recall": 72.23,
+          "f1": 68.05
         }
       },
-      "_note": "The paper reports no task-graph numbers for noisy demonstrations; results.do is the reference measured in this gym (held-out procedures), not a paper number."
+      "_note": "The paper reports no task-graph numbers for noisy demonstrations. These results are measured in this gym on the 100 held-out procedures (reference: the paper's DO protocol, 5 seeds; baseline: the evaluator's Count-Based), not paper numbers. The noise rate p = 0.05 was chosen on the public split by a predeclared rule (notes/hardening/noise_level_selection_40.json)."
     }
   }
 }

@@ -2,62 +2,31 @@
 
 ## What Works
 
-- Implemented the paper's actual TGML Direct Optimization method, not a surrogate: a learnable adjacency-score matrix is row-softmaxed under the official DAG mask and optimized with the TGML likelihood loss over observed action sequences.
-- Loaded CaptainCook4D task-graph generation data from the pinned paper repository mirrored by `scripts/download.sh` into `data/downloads/Differentiable-Task-Graph-Learning/data/captaincook4d`.
-- Completed a corrected full CaptainCook4D rerun: all 24 procedures have 5 DO seeds in `checkpoints/do_captaincook4d_fixedtgml/`.
-- The reusable evaluator is method-agnostic with no imports from `method/`; it reads saved prediction artifacts and writes `scoring/scores.json`.
-- The main score file now includes benefit metrics (`precision`, `recall`, `f1`) and constraint/structure metrics (`std_f1`, `worst_quartile_f1`, `edge_density_ratio`, `path_coverage`, `topological_distance`).
-- `scores_train.json` and `scores_test.json` provide additional fixed 12-procedure slices for future agents.
-- Added faithful postprocessing for the paper's graph cleanup step: inclusive `1/n` thresholding and cycle removal by deleting the lowest-score edge in each detected cycle.
+- The paper's TGML Direct Optimization is implemented, not a surrogate. `method/tgml.py` holds the masked row-softmax adjacency and the TGML loss (Eq. 11), plus an exact batched form. `method/train.py` holds the paper's training protocol: Adam with lr 0.1, beta 0.005 (0.5 for a procedure without any complete demonstration), at most 1000 epochs, and Sequence-Accuracy early stopping with patience 25. The state at the halting epoch is the output, as in the released `train_with_gt.py`.
+- `bash scripts/method.sh` trains five seeds on every procedure of both scored experiments into `checkpoints/do/` (CPU, about 15 minutes). The result is bit-for-bit deterministic.
+- `eval/train/` (public procedures) and `eval/test/` (hidden test, held-out procedures) are self-contained and method-agnostic. They score every `checkpoints/*/` directory plus their own Count-Based baseline, and reject invalid artifacts.
+- `scripts/download.sh` fetches the pinned CaptainCook4D data as a tarball and withholds the held-out graphs.
 
-## Continuation Audit
+## Results (hidden test, held-out procedures)
 
-- Reviewed `method/`, `eval/`, briefing, scoring, scripts, and environment files after the milestone reset.
-- Confirmed the reproduction is not a surrogate: `method/tgml.py` contains the TGML likelihood loss and Direct Optimization adjacency learning described by the paper.
-- Confirmed `eval/` remains independent of `method/` and scores saved prediction artifacts instead of rerunning the method.
-- Re-ran `bash scripts/evaluate.sh captaincook4d_do checkpoints/do_captaincook4d_fixedtgml`, `bash scripts/evaluate_train.sh checkpoints/do_captaincook4d_fixedtgml`, `bash scripts/evaluate_test.sh checkpoints/do_captaincook4d_fixedtgml`, and `python3 validate.py --compare`; all passed.
-- Fixed a reusable scoring edge case so future non-DO prediction methods do not accidentally overwrite the `count_based` row.
-- Final verification confirmed `scripts/download.sh` has a verified public GitHub source, no committed code references `shared/`, `eval/` and `data/` do not import from `method/`, and no-argument `bash scripts/evaluate.sh` now works standalone by scoring discoverable methods.
+| Experiment | Method | Precision | Recall | F1 |
+|---|---|---:|---:|---:|
+| CaptainCook4D (paper, 24 procedures) | Count-Based | 66.0 | 55.4 | 60.2 |
+| CaptainCook4D (paper, 24 procedures) | DO | 86.4 | 89.7 | 87.8 |
+| CaptainCook4D (12 held-out) | Count-Based | 67.33 | 56.63 | 61.40 |
+| CaptainCook4D (12 held-out) | DO (reference) | 87.26 | 89.85 | 88.35 |
+| Noisy demonstrations (100 held-out) | Count-Based | 68.13 | 59.34 | 63.36 |
+| Noisy demonstrations (100 held-out) | DO (reference) | 64.56 | 72.23 | 68.05 |
 
-## Results
+Public procedures: DO scores 88.55 F1 on CaptainCook4D and 66.98 on noisy demonstrations; Count-Based scores 61.43 and 62.65.
 
-### `captaincook4d_task_graph`
+## History
 
-| Method | Precision | Recall | F1 | std_f1 | Edge density | Path coverage | Topological distance |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Paper: Count-Based | 66.0 | 55.4 | 60.2 | - | - | - | - |
-| Reproduced: Count-Based | 67.13 | 56.76 | 61.41 | 0.00 | 0.841 | 0.008 | 0.074 |
-| Paper: DO | 86.4 | 89.7 | 87.8 | 1.5 | - | - | - |
-| Reproduced: DO | 77.19 | 75.61 | 76.36 | 0.129 | 0.974 | 0.126 | 0.096 |
-
-The reproduced DO result trails the paper's reported DO by about 11.4 F1, but it clearly supports the central claim on the full CaptainCook4D benchmark: TGML Direct Optimization outperforms the Count-Based baseline by about 15.0 F1 points.
-
-Additional split checks:
-
-| Slice | Count-Based F1 | DO F1 |
-|---|---:|---:|
-| Train split | 61.43 | 76.53 |
-| Test split | 61.40 | 76.19 |
-
-## Issues Encountered
-
-1. GT and prediction adjacency orientation were audited and aligned to graph orientation `adj[u, v] = 1` for edge `u -> v`.
-2. Earlier TGML loss code detached tensors through NumPy; this was fixed with a torch-only differentiable loss.
-3. Earlier reruns risked stale broken checkpoints; corrected outputs are isolated under `checkpoints/do_captaincook4d_fixedtgml/`.
-4. Repeated worker-node deaths were handled by making the DO runner resumable and flushing each seed to disk.
-5. The standard evaluator previously thresholded DO outputs at `1/(n_gt+2)`; it now uses the official threshold `1/n_gt`.
-6. The standard evaluator previously reported `std_f1` as scenario spread; it now reports seed-to-seed spread and writes structural metrics into `scores.json`.
-7. `eval/evaluator.py` previously imported the baseline implementation from `baseline/`; the Count-Based scoring helper now lives inside `eval/` so the standard evaluator remains self-contained.
-8. Postprocessing previously omitted the paper's lowest-score cycle cleanup in the standard evaluator; this is now applied consistently in full, train, and test evaluation.
-
-## What Remains
-
-- Higher milestones would require additional paper sections: EgoPER, EgoProceL, TGT-text/video, Ego-Exo4D downstream tasks, or online mistake detection.
-- The current packaged gym is scoped to CaptainCook4D task graph generation, which is enough for the core claim and additional train/test split checks.
-- `scripts/run.sh` now performs final CPU verification from the saved artifacts; sequence-selection reruns remain available through `METHOD_SELECTION=sequence_accuracy bash scripts/method.sh`.
+- Earlier iterations omitted the paper's early stopping and reported 76.36 F1 (24 procedures). The final-iteration hardening restored it; see `HARDENING.md` for the audit of variants and shortcuts.
 
 ## Deviations from Paper
 
-- Scoped to CaptainCook4D only rather than all datasets and downstream tasks.
-- Count-Based baseline is reimplemented without heavyweight optional dependencies.
-- Full corrected benchmark was completed across resumable CPU jobs rather than a single uninterrupted run.
+- Scoped to CaptainCook4D task-graph generation. EgoPER, EgoProceL, TGT and the downstream tasks are not reproduced.
+- Results are reported on two fixed 12-procedure halves rather than on all 24 procedures.
+- The noisy-demonstration experiment is an added, semi-synthetic benchmark for headroom; the paper has no numbers for it.
+- The Count-Based baseline is a reimplementation built into the evaluators.

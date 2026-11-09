@@ -1,3 +1,5 @@
+> **Superseded (final hardening iteration):** the evaluation contract, splits, metrics and reference described below were revised. See `HARDENING.md`, `briefing/evaluation.md` and `scoring/TARGETS.md` for the current gym.
+
 # Verification Report
 
 ## Initial Assessment

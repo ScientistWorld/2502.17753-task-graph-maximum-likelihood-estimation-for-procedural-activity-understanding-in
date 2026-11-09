@@ -38,5 +38,10 @@
 - Fixed no-argument `scripts/evaluate.sh` so it works as a standalone reusable evaluator for existing result rows or complete prediction directories.
 - Re-ran `bash scripts/evaluate.sh` and `python3 validate.py --compare --post-design`; all checks passed.
 
+### [2026-11-09] - core_claim_plus (hardening, final iteration)
+- Reference now includes the paper's Sequence-Accuracy early stopping (Appendix A-B/A-C, released code): CaptainCook4D held-out P/R/F1 87.26 / 89.85 / 88.35 (paper 86.4 / 89.7 / 87.8); Count-Based 61.40 (paper 60.2).
+- Held-out ground truth moved to `eval/test/`; hidden evaluator rewritten (every `checkpoints/*` method, strict artifact validation, failed runs at the floor); all `REDTEAM.md` shortcuts closed (see `HARDENING.md`).
+- Added the weighted `noisy_demonstrations_task_graph` experiment (paper's insert/delete/replace noise model, hidden graphs) for headroom; reference 68.05 F1, better variants up to 81.16.
+
 ## Stop Justification
 - Completed at milestone `core_claim_plus`.
