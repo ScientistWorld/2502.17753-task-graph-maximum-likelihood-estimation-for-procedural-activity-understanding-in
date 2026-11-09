@@ -1,6 +1,10 @@
-Loaded 12 held-out test procedures
+[captaincook4d_task_graph] 12 held-out test procedures
   do: F1=88.35
   sc_partial_coverage: FAILED (missing blenderbananapancakes_predictions.npz)
   count_based: F1=61.40
+[noisy_demonstrations_task_graph] 40 held-out test procedures
+  do: F1=69.17
+  sc_partial_coverage: FAILED (missing noisytest_00_predictions.npz)
+  count_based: F1=66.63
 Scores written to scoring/scores_test.json
 Test-slice evaluation complete.

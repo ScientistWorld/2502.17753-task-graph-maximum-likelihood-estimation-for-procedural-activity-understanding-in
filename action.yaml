@@ -3,4 +3,4 @@ action: submit
 gpus: 0
 test: false
 milestone: core_claim_plus
-notes: "Hardening job 2 (CPU): choose noisy-demonstration noise level on the public split (predeclared rule), retrain DO reference on CaptainCook4D + noisy benchmark, rerun variants (reruns, beta ablation, no-ES, ensembles, always-before and precedence-vote heuristics) and shortcuts through the no-arg hidden test, regenerate reference-only scores and analysis."
+notes: "Hardening job 2 retry (CPU): fix importlib/dataclass registration; choose noisy-demonstration noise level on the public split, retrain DO reference on both experiments, audit variants and shortcuts through the no-arg hidden test, regenerate reference-only scores."

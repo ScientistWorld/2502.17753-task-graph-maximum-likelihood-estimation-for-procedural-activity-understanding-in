@@ -1,6 +1,10 @@
-Loaded 12 held-out test procedures
+[captaincook4d_task_graph] 12 held-out test procedures
   do: F1=88.35
   sc_forge_scores: F1=17.24
   count_based: F1=61.40
+[noisy_demonstrations_task_graph] 40 held-out test procedures
+  do: F1=69.17
+  sc_forge_scores: F1=20.95
+  count_based: F1=66.63
 Scores written to scoring/scores_test.json
 Test-slice evaluation complete.

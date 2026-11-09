@@ -70,5 +70,245 @@
   },
   "zoodles": {
     "public_edges_found": 0
+  },
+  "noisytrain_00": {
+    "public_edges_found": 23
+  },
+  "noisytrain_01": {
+    "public_edges_found": 17
+  },
+  "noisytrain_02": {
+    "public_edges_found": 20
+  },
+  "noisytrain_03": {
+    "public_edges_found": 18
+  },
+  "noisytrain_04": {
+    "public_edges_found": 14
+  },
+  "noisytrain_05": {
+    "public_edges_found": 10
+  },
+  "noisytrain_06": {
+    "public_edges_found": 27
+  },
+  "noisytrain_07": {
+    "public_edges_found": 24
+  },
+  "noisytrain_08": {
+    "public_edges_found": 14
+  },
+  "noisytrain_09": {
+    "public_edges_found": 18
+  },
+  "noisytrain_10": {
+    "public_edges_found": 30
+  },
+  "noisytrain_11": {
+    "public_edges_found": 9
+  },
+  "noisytrain_12": {
+    "public_edges_found": 15
+  },
+  "noisytrain_13": {
+    "public_edges_found": 23
+  },
+  "noisytrain_14": {
+    "public_edges_found": 10
+  },
+  "noisytrain_15": {
+    "public_edges_found": 27
+  },
+  "noisytrain_16": {
+    "public_edges_found": 31
+  },
+  "noisytrain_17": {
+    "public_edges_found": 27
+  },
+  "noisytrain_18": {
+    "public_edges_found": 28
+  },
+  "noisytrain_19": {
+    "public_edges_found": 13
+  },
+  "noisytrain_20": {
+    "public_edges_found": 18
+  },
+  "noisytrain_21": {
+    "public_edges_found": 13
+  },
+  "noisytrain_22": {
+    "public_edges_found": 30
+  },
+  "noisytrain_23": {
+    "public_edges_found": 31
+  },
+  "noisytrain_24": {
+    "public_edges_found": 12
+  },
+  "noisytrain_25": {
+    "public_edges_found": 14
+  },
+  "noisytrain_26": {
+    "public_edges_found": 12
+  },
+  "noisytrain_27": {
+    "public_edges_found": 15
+  },
+  "noisytrain_28": {
+    "public_edges_found": 32
+  },
+  "noisytrain_29": {
+    "public_edges_found": 32
+  },
+  "noisytrain_30": {
+    "public_edges_found": 16
+  },
+  "noisytrain_31": {
+    "public_edges_found": 14
+  },
+  "noisytrain_32": {
+    "public_edges_found": 29
+  },
+  "noisytrain_33": {
+    "public_edges_found": 27
+  },
+  "noisytrain_34": {
+    "public_edges_found": 27
+  },
+  "noisytrain_35": {
+    "public_edges_found": 21
+  },
+  "noisytrain_36": {
+    "public_edges_found": 26
+  },
+  "noisytrain_37": {
+    "public_edges_found": 18
+  },
+  "noisytrain_38": {
+    "public_edges_found": 33
+  },
+  "noisytrain_39": {
+    "public_edges_found": 20
+  },
+  "noisytest_00": {
+    "public_edges_found": 0
+  },
+  "noisytest_01": {
+    "public_edges_found": 0
+  },
+  "noisytest_02": {
+    "public_edges_found": 0
+  },
+  "noisytest_03": {
+    "public_edges_found": 0
+  },
+  "noisytest_04": {
+    "public_edges_found": 0
+  },
+  "noisytest_05": {
+    "public_edges_found": 0
+  },
+  "noisytest_06": {
+    "public_edges_found": 0
+  },
+  "noisytest_07": {
+    "public_edges_found": 0
+  },
+  "noisytest_08": {
+    "public_edges_found": 0
+  },
+  "noisytest_09": {
+    "public_edges_found": 0
+  },
+  "noisytest_10": {
+    "public_edges_found": 0
+  },
+  "noisytest_11": {
+    "public_edges_found": 0
+  },
+  "noisytest_12": {
+    "public_edges_found": 0
+  },
+  "noisytest_13": {
+    "public_edges_found": 0
+  },
+  "noisytest_14": {
+    "public_edges_found": 0
+  },
+  "noisytest_15": {
+    "public_edges_found": 0
+  },
+  "noisytest_16": {
+    "public_edges_found": 0
+  },
+  "noisytest_17": {
+    "public_edges_found": 0
+  },
+  "noisytest_18": {
+    "public_edges_found": 0
+  },
+  "noisytest_19": {
+    "public_edges_found": 0
+  },
+  "noisytest_20": {
+    "public_edges_found": 0
+  },
+  "noisytest_21": {
+    "public_edges_found": 0
+  },
+  "noisytest_22": {
+    "public_edges_found": 0
+  },
+  "noisytest_23": {
+    "public_edges_found": 0
+  },
+  "noisytest_24": {
+    "public_edges_found": 0
+  },
+  "noisytest_25": {
+    "public_edges_found": 0
+  },
+  "noisytest_26": {
+    "public_edges_found": 0
+  },
+  "noisytest_27": {
+    "public_edges_found": 0
+  },
+  "noisytest_28": {
+    "public_edges_found": 0
+  },
+  "noisytest_29": {
+    "public_edges_found": 0
+  },
+  "noisytest_30": {
+    "public_edges_found": 0
+  },
+  "noisytest_31": {
+    "public_edges_found": 0
+  },
+  "noisytest_32": {
+    "public_edges_found": 0
+  },
+  "noisytest_33": {
+    "public_edges_found": 0
+  },
+  "noisytest_34": {
+    "public_edges_found": 0
+  },
+  "noisytest_35": {
+    "public_edges_found": 0
+  },
+  "noisytest_36": {
+    "public_edges_found": 0
+  },
+  "noisytest_37": {
+    "public_edges_found": 0
+  },
+  "noisytest_38": {
+    "public_edges_found": 0
+  },
+  "noisytest_39": {
+    "public_edges_found": 0
   }
 }

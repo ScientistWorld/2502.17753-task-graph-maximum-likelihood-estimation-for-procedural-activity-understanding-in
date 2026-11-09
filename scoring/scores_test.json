@@ -2,25 +2,73 @@
   "slice": "test",
   "slice_manifest": {
     "slice": "test",
-    "dataset": "captaincook4d_task_graph",
-    "split_rule": "balanced fixed 12/12 split over CaptainCook4D procedures by GT node and edge counts",
-    "scenario_count": 12,
-    "scenarios": [
-      "Blenderbananapancakes",
-      "Breakfastburritos",
-      "Buttercorncup",
-      "Coffee",
-      "Cucumberraita",
-      "Panfriedtofu",
-      "Ramen",
-      "Scrambledeggs",
-      "Spicedhotchocolate",
-      "Spicytunaavocadowraps",
-      "Tomatochutney",
-      "Zoodles"
-    ],
+    "split_rule": "fixed public/held-out split; CaptainCook4D balanced 12/12 by GT node and edge counts",
     "trials_per_procedure": 5,
-    "predictions_root": "checkpoints"
+    "predictions_root": "checkpoints",
+    "experiments": {
+      "captaincook4d_task_graph": {
+        "scenario_count": 12,
+        "scenarios": [
+          "Blenderbananapancakes",
+          "Breakfastburritos",
+          "Buttercorncup",
+          "Coffee",
+          "Cucumberraita",
+          "Panfriedtofu",
+          "Ramen",
+          "Scrambledeggs",
+          "Spicedhotchocolate",
+          "Spicytunaavocadowraps",
+          "Tomatochutney",
+          "Zoodles"
+        ]
+      },
+      "noisy_demonstrations_task_graph": {
+        "scenario_count": 40,
+        "scenarios": [
+          "noisytest_00",
+          "noisytest_01",
+          "noisytest_02",
+          "noisytest_03",
+          "noisytest_04",
+          "noisytest_05",
+          "noisytest_06",
+          "noisytest_07",
+          "noisytest_08",
+          "noisytest_09",
+          "noisytest_10",
+          "noisytest_11",
+          "noisytest_12",
+          "noisytest_13",
+          "noisytest_14",
+          "noisytest_15",
+          "noisytest_16",
+          "noisytest_17",
+          "noisytest_18",
+          "noisytest_19",
+          "noisytest_20",
+          "noisytest_21",
+          "noisytest_22",
+          "noisytest_23",
+          "noisytest_24",
+          "noisytest_25",
+          "noisytest_26",
+          "noisytest_27",
+          "noisytest_28",
+          "noisytest_29",
+          "noisytest_30",
+          "noisytest_31",
+          "noisytest_32",
+          "noisytest_33",
+          "noisytest_34",
+          "noisytest_35",
+          "noisytest_36",
+          "noisytest_37",
+          "noisytest_38",
+          "noisytest_39"
+        ]
+      }
+    }
   },
   "experiments": {
     "captaincook4d_task_graph": {
@@ -44,31 +92,82 @@
           "topological_distance": 0.07261334819577854
         }
       }
+    },
+    "noisy_demonstrations_task_graph": {
+      "results": {
+        "do": {
+          "precision": 65.02283504926913,
+          "recall": 74.46591111706184,
+          "f1": 69.17194450594744,
+          "worst_quartile_f1": 51.47273326112759,
+          "edge_density_ratio": 0.8634380804574526,
+          "path_coverage": 0.16942725575078516,
+          "topological_distance": 0.10331099968199342
+        },
+        "count_based": {
+          "precision": 71.2197953947076,
+          "recall": 62.73485703659965,
+          "f1": 66.62548111787642,
+          "worst_quartile_f1": 50.09913667877493,
+          "edge_density_ratio": 0.8773810539939106,
+          "path_coverage": 0.0125,
+          "topological_distance": 0.12943615291931013
+        }
+      }
     }
   },
   "method_status": {
-    "do": {
-      "status": "ok",
-      "artifact_dir": "checkpoints/do"
+    "captaincook4d_task_graph": {
+      "do": {
+        "status": "ok",
+        "artifact_dir": "checkpoints/do"
+      },
+      "count_based": {
+        "status": "ok",
+        "artifact_dir": "built-in (eval/test)"
+      }
     },
-    "count_based": {
-      "status": "ok",
-      "artifact_dir": "built-in (eval/test)"
+    "noisy_demonstrations_task_graph": {
+      "do": {
+        "status": "ok",
+        "artifact_dir": "checkpoints/do"
+      },
+      "count_based": {
+        "status": "ok",
+        "artifact_dir": "built-in (eval/test)"
+      }
     }
   },
   "diagnostics": {
-    "do": {
-      "trial_mean_f1": [
-        88.18806075615771,
-        88.43056516532879,
-        88.65102371912069,
-        87.72509779319473,
-        88.7700713381683
-      ],
-      "trial_std_f1": 0.37155056777078604
+    "captaincook4d_task_graph": {
+      "do": {
+        "trial_mean_f1": [
+          88.18806075615771,
+          88.43056516532879,
+          88.65102371912069,
+          87.72509779319473,
+          88.7700713381683
+        ],
+        "trial_std_f1": 0.37155056777078604
+      },
+      "count_based": {
+        "deterministic": true
+      }
     },
-    "count_based": {
-      "deterministic": true
+    "noisy_demonstrations_task_graph": {
+      "do": {
+        "trial_mean_f1": [
+          69.28702011479348,
+          68.63504525559952,
+          69.54527977418313,
+          69.04757064989617,
+          69.34480673526483
+        ],
+        "trial_std_f1": 0.3118437524394851
+      },
+      "count_based": {
+        "deterministic": true
+      }
     }
   }
 }
