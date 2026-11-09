@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/user/redteam/train_variants.py", line 11, in <module>
+    import networkx as nx
+  File "/home/user/environment/pylibs/networkx/__init__.py", line 46, in <module>
+    from networkx import algorithms
+  File "/home/user/environment/pylibs/networkx/algorithms/__init__.py", line 14, in <module>
+    from networkx.algorithms.core import *
+ModuleNotFoundError: No module named 'networkx.algorithms.core'
