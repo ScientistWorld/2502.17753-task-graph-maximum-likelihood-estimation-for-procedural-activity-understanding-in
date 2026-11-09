@@ -1,4 +1,4 @@
 action: submit
 gpus: 0
 test: false
-notes: "Bundled gym audit: exact TGML three-seed reruns and quality variants, brute force, and stock no-argument hidden-test shortcut cases; results stay in redteam."
+notes: "Resume bundled gym audit after staging the exact hash-verified missing NetworkX source file; all prerequisite changes are temporary and uniformly applied."
