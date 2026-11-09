@@ -32,6 +32,7 @@ MARGIN = 5.0
 
 spec = importlib.util.spec_from_file_location("public_eval", ROOT / "eval" / "train" / "evaluate.py")
 public_eval = importlib.util.module_from_spec(spec)
+sys.modules["public_eval"] = public_eval  # required by @dataclass during module execution
 spec.loader.exec_module(public_eval)
 
 
