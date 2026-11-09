@@ -1,0 +1,39 @@
+[hive] This stdout log is managed by Hive.
+[hive] job_id: c1768dee
+[hive] host: node
+[hive] node_id: 9d6ae85c44257ebfe79f2a3020323d5e0d4198429e73a4c0716e7c0e
+[hive] user: nexus/user (remote)
+[hive] resource: gpu-cpu
+[hive] gpus: 0
+[hive] cpus: 1
+[hive] workdir: /home/user
+[hive] timeout_sec: 21600
+[hive] started_at: 2026-11-09 01:49:14 EST
+[hive] command: apptainer exec --containall --cleanenv --env HF_HOME=/home/user/shared/hf_cache --env TRANSFORMERS_CACHE=/home/user/shared/hf_cache --env HF_DATASETS_CACHE=/home/user/shared/hf_cache/datasets --env TORCH_HOME=/home/user/shared/hf_cache/torch --bind /home/user/scratch/AgentWorkspaces/workspaces/2502.17753:/home/user --overlay /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/overlay.img:ro --bind /home/user/scratch/AgentWorkspaces/shared/datasets:/home/user/shared/datasets:ro --bind /home/user/scratch/AgentWorkspaces/shared/models:/home/user/shared/models:ro --bind /home/user/scratch/AgentWorkspaces/shared/hf_cache:/home/user/shared/hf_cache /home/user/scratch/AgentWorkspaces/workspaces/2502.17753/environment/container.sif bash -c 'cd /home/user && bash /home/user/scripts/run.sh'
+{'command': 'bash scripts/evaluate_test.sh', 'exit_code': 1, 'prerequisite_repair': False}
+{"case": "shortcut_single_seed", "test_command": "bash scripts/evaluate_test.sh", "no_test_arguments": true, "exit_code": 0, "method_key": "do", "checkpoint_dir": "redteam/shortcut_single_seed/predictions", "train_exit_code": 0, "evaluator_sha256": {"scripts/evaluate_test.sh": "ab35f97e150c6c9f47744000efcdceaa0cf2360c70df69ac8bd05e6a5381bfdf", "eval/evaluator.py": "63958953d9b7769dd25e07444757a173208e9f82e20071c176ccf5e7aa625461", "eval/metrics.py": "c4aa198fff3ea7390d2d45e8aee2e1efb1847f40cd2ac8c46c9e32427c1d1d03", "eval/train/evaluate.py": "1233d52882176e345a7277178f7e4a52f82885559f7cedbe5c1e3d43fac58e9a", "eval/test/evaluate.py": "a568ae7f09f2593db7086e30fb4757b071c29b4747079c6f6dc0efdd17748088"}, "seconds": 3.455350875854492}
+CASE, F1, STD_F1, RANK_DELTA, COVERAGE, DOMINATES
+better_more_training 75.098964 0.0 -0.037175 12 False
+better_sequence_selection 87.170911 0.446666 0.73653 12 False
+brute_force 30.178462 0.0 -3.176846 12 False
+reference_rerun 76.141345 0.163682 -0.015748 12 False
+reference_saved 76.194552 0.142553 0.0 12 False
+reference_seed_19 76.025605 0.0 0.043031 12 False
+reference_seed_31 76.025605 0.0 0.044747 12 False
+reference_seed_7 76.372827 0.0 0.068914 12 False
+shortcut_forge_scores 17.239223 0.0 -3.950109 12 False
+shortcut_infinity 6.057296 0.0 -4.499711 12 False
+shortcut_nan 6.057296 0.0 -4.499711 12 False
+shortcut_negative 17.239223 0.0 -3.950109 12 False
+shortcut_ones 6.057296 0.0 -4.499711 12 False
+shortcut_partial_compare 80.0 0.0 0.521149 1 True
+shortcut_replace_baseline 76.194552 0.142553 0.0 12 False
+shortcut_rewrite_ground_truth 100.0 0.0 2.006502 12 True
+shortcut_seed_ids 76.194552 0.0 0.059204 12 True
+shortcut_single_seed 76.372827 0.0 0.068914 12 False
+shortcut_visible_labels 100.0 0.0 2.006502 12 True
+shortcut_zero 17.239223 0.0 -3.950109 12 False
+simple_baseline 61.398095 0.0 -1.02603 12 False
+weaker_one_epoch 10.916257 1.706032 -4.927616 12 False
+INVALID ['shortcut_empty']
+SEED F1 SPREAD 0.3472222222222143 RANK SPREAD 0.02588321023760501

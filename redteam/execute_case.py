@@ -1,8 +1,9 @@
 """Run one case with stock no-argument test evaluation, then restore inputs.
 
 Only this harness runs the hidden test. Shortcut implementations in cases.py
-use the future agent's available inputs. No evaluator process, dependency,
-environment, or import machinery is modified.
+use the future agent's available inputs. No candidate modifies the evaluator
+process, dependency environment, or import machinery. Numerical runs require
+the uniformly restored missing upstream package file documented in README.md.
 """
 import hashlib
 import json
