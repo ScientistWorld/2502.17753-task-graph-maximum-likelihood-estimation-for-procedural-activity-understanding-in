@@ -40,8 +40,13 @@ def event_masks(sequences, n):
 
 def loss_batched(model, masks):
     before, after, current = masks
-    z = model.get_adjacency_matrix() + 1e-6
-    numerator = (z[current] * before).sum(dim=1)
+    # The original all_nodes is [1, n-2]. In particular beta's fully masked
+    # softmax row is NaN, and must never enter a dense product, even weighted
+    # by zero. Slice before multiplying, exactly as the scalar implementation.
+    z = (model.get_adjacency_matrix() + 1e-6)[1:-1, 1:-1]
+    before = before[:, 1:-1]
+    after = after[:, 1:-1]
+    numerator = (z[current - 1] * before).sum(dim=1)
     denominator = ((z @ before.T).T * after).sum(dim=1)
     return (0.005 * denominator.log() - numerator.log()).sum()
 
