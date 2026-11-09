@@ -1,0 +1,5 @@
+Evaluating count_based on train slice...
+Loaded 12 train scenarios
+Count-Based train: F1=61.4
+Scores written to scoring/scores_train.json
+Train-slice evaluation complete.

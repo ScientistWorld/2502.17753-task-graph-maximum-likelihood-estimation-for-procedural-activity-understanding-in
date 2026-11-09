@@ -1,0 +1,5 @@
+Evaluating captaincook4d_partial_compare on train slice...
+Loaded 12 train scenarios
+Completed train subset: 1 scenarios -> ['Tomatomozzarellasalad']
+Scores written to scoring/scores_train.json
+Train-slice evaluation complete.

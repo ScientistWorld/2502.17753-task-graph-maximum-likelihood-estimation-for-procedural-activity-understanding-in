@@ -1,0 +1,48 @@
+{
+  "slice": "test",
+  "slice_manifest": {
+    "slice": "test",
+    "dataset": "captaincook4d_task_graph",
+    "split_rule": "balanced fixed 12/12 split over CaptainCook4D procedures by GT node and edge counts",
+    "scenario_count": 1,
+    "scenarios": [
+      "Spicedhotchocolate"
+    ]
+  },
+  "experiments": {
+    "captaincook4d_task_graph": {
+      "results": {
+        "count_based": {
+          "precision": 75.0,
+          "recall": 60.0,
+          "f1": 66.66666666666667,
+          "std_f1": 0.0,
+          "worst_quartile_f1": 66.66666666666667,
+          "edge_density_ratio": 0.8,
+          "path_coverage": 0.0,
+          "topological_distance": 0.041666666666666664
+        },
+        "do": {
+          "precision": 80.0,
+          "recall": 80.0,
+          "f1": 80.0,
+          "std_f1": 0.0,
+          "worst_quartile_f1": 80.0,
+          "edge_density_ratio": 1.0,
+          "path_coverage": 0.3333333333333333,
+          "topological_distance": 0.05555555555555556
+        }
+      }
+    }
+  },
+  "method_artifacts": {
+    "count_based": {
+      "artifact_type": "built_in_count_baseline",
+      "checkpoint_dir": ""
+    },
+    "do": {
+      "artifact_type": "npz_prediction_directory",
+      "checkpoint_dir": "redteam/shortcut_partial_compare/predictions"
+    }
+  }
+}

@@ -1,4 +1,4 @@
 action: submit
 gpus: 0
 test: false
-notes: "Resume bundled gym audit after staging the exact hash-verified missing NetworkX source file; all prerequisite changes are temporary and uniformly applied."
+notes: "Run bundled audit with batched TGML restricted to the original all_nodes; verify scalar loss and gradients before training, then evaluate all variants and shortcuts."

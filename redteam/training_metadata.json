@@ -1,0 +1,410 @@
+{
+  "Blenderbananapancakes": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 54
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 59
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 46
+    }
+  ],
+  "Breakfastburritos": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 63
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 62
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 64
+    }
+  ],
+  "Broccolistirfry": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 128
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 134
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 127
+    }
+  ],
+  "Buttercorncup": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 15
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 20
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 20
+    }
+  ],
+  "Capresebruschetta": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 51
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 54
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 45
+    }
+  ],
+  "Cheesepimiento": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 39
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 36
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 41
+    }
+  ],
+  "Coffee": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 59
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 65
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 70
+    }
+  ],
+  "Cucumberraita": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 56
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 57
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 53
+    }
+  ],
+  "Dressedupmeatballs": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 58
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 61
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 62
+    }
+  ],
+  "Herbomeletwithfriedtomatoes": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 56
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 59
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 66
+    }
+  ],
+  "Microwaveeggsandwich": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 28
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 30
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 34
+    }
+  ],
+  "Microwavefrenchtoast": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 42
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 40
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 38
+    }
+  ],
+  "Microwavemugpizza": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 40
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 39
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 33
+    }
+  ],
+  "Mugcake": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 58
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 57
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 59
+    }
+  ],
+  "Panfriedtofu": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 64
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 53
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 49
+    }
+  ],
+  "Pinwheels": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 15
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 13
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 12
+    }
+  ],
+  "Ramen": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 85
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 92
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 88
+    }
+  ],
+  "Sautedmushrooms": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 58
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 57
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 63
+    }
+  ],
+  "Scrambledeggs": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 80
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 75
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 71
+    }
+  ],
+  "Spicedhotchocolate": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 10
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 6
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 9
+    }
+  ],
+  "Spicytunaavocadowraps": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 85
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 81
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 84
+    }
+  ],
+  "Tomatochutney": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 55
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 62
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 60
+    }
+  ],
+  "Tomatomozzarellasalad": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 11
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 10
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 10
+    }
+  ],
+  "Zoodles": [
+    {
+      "seed": 7,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 38
+    },
+    {
+      "seed": 19,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 38
+    },
+    {
+      "seed": 31,
+      "sequence_accuracy": 1.0,
+      "selected_epoch": 36
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "slice": "test",
+  "slice_manifest": {
+    "slice": "test",
+    "dataset": "captaincook4d_task_graph",
+    "split_rule": "balanced fixed 12/12 split over CaptainCook4D procedures by GT node and edge counts",
+    "scenario_count": 12,
+    "scenarios": [
+      "Blenderbananapancakes",
+      "Breakfastburritos",
+      "Buttercorncup",
+      "Coffee",
+      "Cucumberraita",
+      "Panfriedtofu",
+      "Ramen",
+      "Scrambledeggs",
+      "Spicedhotchocolate",
+      "Spicytunaavocadowraps",
+      "Tomatochutney",
+      "Zoodles"
+    ]
+  },
+  "experiments": {
+    "captaincook4d_task_graph": {
+      "results": {
+        "do": {
+          "precision": 76.85116833294583,
+          "recall": 75.2445839128939,
+          "f1": 76.02560465478084,
+          "std_f1": 0.0,
+          "worst_quartile_f1": 68.5998578535892,
+          "edge_density_ratio": 0.9786954621029699,
+          "path_coverage": 0.12524388227513225,
+          "topological_distance": 0.09824963363663054
+        }
+      }
+    }
+  },
+  "method_artifacts": {
+    "do": {
+      "artifact_type": "npz_prediction_directory",
+      "checkpoint_dir": "redteam/reference_seed_19/predictions"
+    }
+  }
+}

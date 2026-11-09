@@ -1,0 +1,5 @@
+Evaluating do on test slice...
+Loaded 12 test scenarios
+DO test: F1=76.2
+Scores written to scoring/scores_test.json
+Test-slice evaluation complete.

@@ -1,0 +1,5 @@
+Evaluating do on train slice...
+Loaded 12 train scenarios
+DO train: F1=26.9
+Scores written to scoring/scores_train.json
+Train-slice evaluation complete.

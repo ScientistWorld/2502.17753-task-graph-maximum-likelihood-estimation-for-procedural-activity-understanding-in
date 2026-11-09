@@ -1,0 +1,47 @@
+{
+  "slice": "train",
+  "slice_manifest": {
+    "slice": "train",
+    "dataset": "captaincook4d_task_graph",
+    "split_rule": "balanced fixed 12/12 split over CaptainCook4D procedures by GT node and edge counts",
+    "scenario_count": 12,
+    "scenarios": [
+      "Broccolistirfry",
+      "Capresebruschetta",
+      "Cheesepimiento",
+      "Dressedupmeatballs",
+      "Herbomeletwithfriedtomatoes",
+      "Microwaveeggsandwich",
+      "Microwavefrenchtoast",
+      "Microwavemugpizza",
+      "Mugcake",
+      "Pinwheels",
+      "Sautedmushrooms",
+      "Tomatomozzarellasalad"
+    ]
+  },
+  "experiments": {
+    "captaincook4d_task_graph": {
+      "results": {
+        "do": {
+          "precision": 100,
+          "recall": 100,
+          "f1": 1000000000.0,
+          "std_f1": null,
+          "worst_quartile_f1": 100,
+          "edge_density_ratio": 1,
+          "path_coverage": 1,
+          "topological_distance": 0,
+          "success": true,
+          "seconds": 0
+        }
+      }
+    }
+  },
+  "method_artifacts": {
+    "do": {
+      "artifact_type": "npz_prediction_directory",
+      "checkpoint_dir": "redteam/shortcut_forge_scores/predictions"
+    }
+  }
+}

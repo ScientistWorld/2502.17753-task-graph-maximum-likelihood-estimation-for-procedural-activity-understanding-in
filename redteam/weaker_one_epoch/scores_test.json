@@ -1,0 +1,45 @@
+{
+  "slice": "test",
+  "slice_manifest": {
+    "slice": "test",
+    "dataset": "captaincook4d_task_graph",
+    "split_rule": "balanced fixed 12/12 split over CaptainCook4D procedures by GT node and edge counts",
+    "scenario_count": 12,
+    "scenarios": [
+      "Blenderbananapancakes",
+      "Breakfastburritos",
+      "Buttercorncup",
+      "Coffee",
+      "Cucumberraita",
+      "Panfriedtofu",
+      "Ramen",
+      "Scrambledeggs",
+      "Spicedhotchocolate",
+      "Spicytunaavocadowraps",
+      "Tomatochutney",
+      "Zoodles"
+    ]
+  },
+  "experiments": {
+    "captaincook4d_task_graph": {
+      "results": {
+        "do": {
+          "precision": 11.933940151457229,
+          "recall": 10.103660849457166,
+          "f1": 10.916257005746907,
+          "std_f1": 1.706032354704547,
+          "worst_quartile_f1": 5.8384346564601195,
+          "edge_density_ratio": 0.8521112914188472,
+          "path_coverage": 0.0,
+          "topological_distance": 0.3846877017413653
+        }
+      }
+    }
+  },
+  "method_artifacts": {
+    "do": {
+      "artifact_type": "npz_prediction_directory",
+      "checkpoint_dir": "redteam/weaker_one_epoch/predictions"
+    }
+  }
+}
